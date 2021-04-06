@@ -37,15 +37,15 @@ Citizen.CreateThread(function()
             DisableAllControlActions(0)
             EnableControlAction(0, 1, true)
 			EnableControlAction(0, 2, true)
-			EnableControlAction(0, Keys['T'], true)
-            EnableControlAction(0, Keys['E'], true)
-            EnableControlAction(0, Keys['V'], true)
-            EnableControlAction(0, Keys['N'], true)
-            EnableControlAction(0, Keys['ESC'], true)
-            EnableControlAction(0, Keys['F1'], true)
-            EnableControlAction(0, Keys['HOME'], true)
-			EnableControlAction(0, Keys['U'], true)
-			EnableControlAction(0, Keys['M'], true)
+			EnableControlAction(0, 245, true) -- T
+            EnableControlAction(0, 38, true) -- E
+            EnableControlAction(0, 0, true) -- V
+            EnableControlAction(0, 249, true) -- N
+            EnableControlAction(0, 322, true) -- ESC
+            EnableControlAction(0, 288, true) -- F1
+            EnableControlAction(0, 213, true) -- HOME
+			EnableControlAction(0, 303, true) -- U
+			EnableControlAction(0, 244, true) -- M
             
             if not isInHospitalBed then 
                 if deathTime > 0 then
@@ -119,12 +119,12 @@ function DeathTimer()
         deathTime = deathTime - 1
 
         if deathTime <= 0 then
-            if IsControlPressed(0, Keys["E"]) and hold <= 0 and not isInHospitalBed then
+            if IsControlPressed(0, 38) and hold <= 0 and not isInHospitalBed then
                 TriggerEvent("hospital:client:RespawnAtHospital")
                 hold = 5
             end
 
-            if IsControlPressed(0, Keys["E"]) then
+            if IsControlPressed(0, 38) then
                 if hold - 1 >= 0 then
                     hold = hold - 1
                 else
@@ -132,7 +132,7 @@ function DeathTimer()
                 end
             end
 
-            if IsControlReleased(0, Keys["E"]) then
+            if IsControlReleased(0, 38) then
                 hold = 5
             end
         end

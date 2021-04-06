@@ -38,7 +38,7 @@ CreateThread(function()
                                 --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~r~E~w~ - Off Duty")
                                 text = '[E] - To off duty'
                             end
-                            if IsControlJustReleased(0, Keys["E"]) then
+                            if IsControlJustReleased(0, 38) then -- E
                                 onDuty = not onDuty
                                 TriggerServerEvent("QBCore:ToggleDuty")
                                 TriggerServerEvent("police:server:UpdateBlips")
@@ -57,7 +57,7 @@ CreateThread(function()
                             inZone = true
                             --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Change Outfit")
                             text = '[E] - To change outfit'
-                            if IsControlJustReleased(0, Keys["E"]) then
+                            if IsControlJustReleased(0, 38) then -- E
                                 TriggerServerEvent("qb-outfits:server:openUI", true)
                                 TriggerEvent('qb-interact:HideUI')
                             end
@@ -75,7 +75,7 @@ CreateThread(function()
                             inZone = true
                                 --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Safe")
                                 text = '[E] - To open safe'
-                                if IsControlJustReleased(0, Keys["E"]) then
+                                if IsControlJustReleased(0, 38) then -- E
                                     TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
                                     TriggerEvent('qb-interact:HideUI')
                                 end
@@ -99,7 +99,7 @@ CreateThread(function()
                                 --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Vehicles")
                                 text = '[E] - To open vehicle list'
                             end
-                            if IsControlJustReleased(0, Keys["E"]) then
+                            if IsControlJustReleased(0, 38) then -- E
                                 if IsPedInAnyVehicle(PlayerPedId(), false) then
                                     QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
                                 else
@@ -130,7 +130,7 @@ CreateThread(function()
                                     --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Spawn Helicopter")
                                     text = '[E] - To spawn helicopter'
                                 end
-                                if IsControlJustReleased(0, Keys["E"]) then
+                                if IsControlJustReleased(0, 38) then -- E
                                     if IsPedInAnyVehicle(PlayerPedId(), false) then
                                         QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(PlayerPedId()))
                                     else
@@ -163,7 +163,7 @@ CreateThread(function()
                             inZone = true
                                 --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Boss Menu")
                                 text = '[E] - To open boss menu'
-                                if IsControlJustReleased(0, Keys["E"]) then
+                                if IsControlJustReleased(0, 38) then -- E
                                     TriggerServerEvent("qb-bossmenu:server:openMenu")
                                     TriggerEvent('qb-interact:HideUI')
                                 end
@@ -185,7 +185,7 @@ CreateThread(function()
                     inZone = true
                     --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Take the elevator to the roof")
                     text = '[E] - To take the elevator to the roof'
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         TriggerEvent('qb-interact:HideUI')
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
@@ -213,7 +213,7 @@ CreateThread(function()
                     inZone = true
                     --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Take the elevator down")
                     text = '[E] - To take the elevator down'
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         TriggerEvent('qb-interact:HideUI')
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
@@ -241,7 +241,7 @@ CreateThread(function()
                     inZone = true
                     --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Take the elevator to the upper floor")
                     text = '[E] - To take the elevator to the upper floor'
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         TriggerEvent('qb-interact:HideUI')
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
@@ -269,7 +269,7 @@ CreateThread(function()
                     inZone = true
                     --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Take the elevator to the ground floor")
                     text = '[E] - To take the elevator to the ground floor'
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         TriggerEvent('qb-interact:HideUI')
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
@@ -297,7 +297,7 @@ CreateThread(function()
                     inZone = true
                     --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Take the elevator to the upper floor")
                     text = '[E] - To take the elevator to the upper floor'
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         TriggerEvent('qb-interact:HideUI')
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
@@ -325,7 +325,7 @@ CreateThread(function()
                     inZone = true
                     --DrawText3D(takeAway.x, takeAway.y, takeAway.z, "~g~E~w~ - Take the elevator to the ground floor")
                     text = '[E] - To take the elevator to the ground floor'
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         TriggerEvent('qb-interact:HideUI')
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do

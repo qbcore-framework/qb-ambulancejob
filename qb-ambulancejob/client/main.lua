@@ -289,7 +289,7 @@ Citizen.CreateThread(function()
                         --QBCore.Functions.DrawText3D(checkin.x, checkin.y, checkin.z, "You need to check out because you have a pending debt in hospital")
                         text = 'You need to check out because you have a pending debt in hospital'
                     end
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         if not patient then
                             if doctorCount >= Config.MinimalDoctors then
                                 TriggerServerEvent("hospital:server:SendDoctorAlert")
@@ -331,7 +331,7 @@ Citizen.CreateThread(function()
                 inZone = true
                     --QBCore.Functions.DrawText3D(Config.Locations["beds"][closestBed].x, Config.Locations["beds"][closestBed].y, Config.Locations["beds"][closestBed].z + 0.3, "~g~E~w~ - To lie in bed")
                     text = '[E] - To lie in bed'
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         if GetAvailableBed(closestBed) ~= nil then 
                             TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
                             patient = true
@@ -352,7 +352,7 @@ Citizen.CreateThread(function()
                 inZone = true
                     --QBCore.Functions.DrawText3D(checkoutMarker.x, checkoutMarker.y, checkoutMarker.z, "[E] - checkout")
                     text = '[E] - To checkout'
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then -- E
                         TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
                         QBCore.Functions.Progressbar("hospital_checkout", "Bill Out", 6000, false, true, {
                             disableMovement = true,
@@ -410,7 +410,7 @@ Citizen.CreateThread(function()
             if isInHospitalBed and canLeaveBed then
                 local pos = GetEntityCoords(GetPlayerPed(-1))
                 QBCore.Functions.DrawText3D(pos.x, pos.y, pos.z, "~g~E~w~ - To get out of bed..")
-                if IsControlJustReleased(0, Keys["E"]) then
+                if IsControlJustReleased(0, 38) then -- E
                     LeaveBed()
                 end
             else
