@@ -472,8 +472,8 @@ AddEventHandler('hospital:client:RevivePlayer', function()
         --if PlayerJob.name == "ambulance" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
-                QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
-                if result then 
+                --QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
+                --if result then 
                     local playerId = GetPlayerServerId(player)
                     isHealingPerson = true
                     QBCore.Functions.Progressbar("hospital_revive", "Reviving person..", 5000, false, true, {
@@ -498,7 +498,9 @@ AddEventHandler('hospital:client:RevivePlayer', function()
                 else
                     TriggerEvent("DoShortHudText", "You don\'t have medkit on you", 2)
                 end
-            end, "medkit")
+            --end, "medkit")
+            else
+                QBCore.Functions.Notify('No Player Nearby', 'error')
             end
         --end
     --end)
