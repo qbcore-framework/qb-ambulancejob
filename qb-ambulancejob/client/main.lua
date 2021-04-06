@@ -680,14 +680,15 @@ function SetClosestBed()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local current = nil
     local dist = nil
+    local dist2 = #(pos - vector3(Config.Locations["beds"][k].x, Config.Locations["beds"][k].y, Config.Locations["beds"][k].z)
     for k, v in pairs(Config.Locations["beds"]) do
         if current ~= nil then
-            if(GetDistanceBetweenCoords(pos, Config.Locations["beds"][k].x, Config.Locations["beds"][k].y, Config.Locations["beds"][k].z, true) < dist)then
+            if dist2 < dist)then
                 current = k
-                dist = GetDistanceBetweenCoords(pos, Config.Locations["beds"][k].x, Config.Locations["beds"][k].y, Config.Locations["beds"][k].z, true)
+                dist = dist2
             end
         else
-            dist = GetDistanceBetweenCoords(pos, Config.Locations["beds"][k].x, Config.Locations["beds"][k].y, Config.Locations["beds"][k].z, true)
+            dist = dist2
             current = k
         end
     end
@@ -913,7 +914,7 @@ function GetClosestPlayer()
     for i=1, #closestPlayers, 1 do
         if closestPlayers[i] ~= PlayerId() then
             local pos = GetEntityCoords(GetPlayerPed(closestPlayers[i]))
-            local distance = GetDistanceBetweenCoords(pos.x, pos.y, pos.z, coords.x, coords.y, coords.z, true)
+            local distance = #(pos - coords)
 
             if closestDistance == -1 or closestDistance > distance then
                 closestPlayer = closestPlayers[i]

@@ -414,7 +414,8 @@ function MakeCall(ped, male, street1, street2)
     local callAnim = "cellphone_call_listen_base"
     local rand = (math.random(6,9) / 100) + 0.3
     local rand2 = (math.random(6,9) / 100) + 0.3
-    local coords = GetEntityCoords(PlayerPedId())
+    local player = PlayerPedId()
+    local coords = GetEntityCoords(player)
     local blipsettings = {
         x = coords.x,
         y = coords.y,
@@ -433,22 +434,22 @@ function MakeCall(ped, male, street1, street2)
         rand2 = 0.0 - rand2
     end
 
-    local moveto = GetOffsetFromEntityInWorldCoords(PlayerPedId(), rand, rand2, 0.0)
+    local moveto = GetOffsetFromEntityInWorldCoords(player, rand, rand2, 0.0)
 
     TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
     SetPedKeepTask(ped, true) 
 
-    local dist = GetDistanceBetweenCoords(moveto, GetEntityCoords(ped), false)
+    local dist = #(moveto - GetEntityCoords(ped))
 
     while dist > 3.5 and isDead do
         TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
-        dist = GetDistanceBetweenCoords(moveto, GetEntityCoords(ped), false)
+        dist = #(moveto - GetEntityCoords(ped))
         Citizen.Wait(100)
     end
 
     ClearPedTasksImmediately(ped)
-    TaskLookAtEntity(ped, PlayerPedId(), 5500.0, 2048, 3)
-    TaskTurnPedToFaceEntity(ped, PlayerPedId(), 5500)
+    TaskLookAtEntity(ped, player, 5500.0, 2048, 3)
+    TaskTurnPedToFaceEntity(ped, player, 5500)
 
     Citizen.Wait(3000)
 
