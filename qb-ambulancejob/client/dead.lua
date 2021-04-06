@@ -55,7 +55,7 @@ Citizen.CreateThread(function()
                 end
             end
 
-            if IsPedInAnyVehicle(GetPlayerPed(-1), false) then
+            if IsPedInAnyVehicle(PlayerPedId(), false) then
                 loadAnimDict("veh@low@front_ps@idle_duck")
                 if not IsEntityPlayingAnim(PlayerPedId(), "veh@low@front_ps@idle_duck", "sit", 3) then
                     TaskPlayAnim(PlayerPedId(), "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
@@ -74,7 +74,7 @@ Citizen.CreateThread(function()
                 end
             end
 
-            SetCurrentPedWeapon(GetPlayerPed(-1), GetHashKey("WEAPON_UNARMED"), true)
+            SetCurrentPedWeapon(PlayerPedId(), GetHashKey("WEAPON_UNARMED"), true)
 		else
 			Citizen.Wait(500)
 		end
@@ -86,7 +86,7 @@ function OnDeath(spawn)
         isDead = true
         TriggerServerEvent("hospital:server:SetDeathStatus", true)
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
-        local player = GetPlayerPed(-1)
+        local player = PlayerPedId()
 
         while GetEntitySpeed(player) > 0.5 or IsPedRagdoll(player) do
             Citizen.Wait(10)
@@ -99,8 +99,8 @@ function OnDeath(spawn)
 
             NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
             SetEntityInvincible(player, true)
-            SetEntityHealth(player, GetEntityMaxHealth(GetPlayerPed(-1)))
-            if IsPedInAnyVehicle(GetPlayerPed(-1), false) then
+            SetEntityHealth(player, GetEntityMaxHealth(PlayerPedId()))
+            if IsPedInAnyVehicle(PlayerPedId(), false) then
                 loadAnimDict("veh@low@front_ps@idle_duck")
                 TaskPlayAnim(player, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
             else

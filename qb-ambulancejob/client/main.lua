@@ -146,7 +146,7 @@ Citizen.CreateThread(function()
                         if armorDamaged and (bodypart == 'SPINE' or bodypart == 'UPPER_BODY') or weapon == Config.WeaponClasses['NOTHING'] then
                             checkDamage = false -- Don't check damage if the it was a body shot and the weapon class isn't that strong
                             if armorDamaged then
-                                TriggerServerEvent("hospital:server:SetArmor", GetPedArmour(GetPlayerPed(-1)))
+                                TriggerServerEvent("hospital:server:SetArmor", GetPedArmour(PlayerPedId()))
                             end
                         end
     
@@ -408,7 +408,7 @@ Citizen.CreateThread(function()
         Citizen.Wait(7)
         if QBCore ~= nil then
             if isInHospitalBed and canLeaveBed then
-                local pos = GetEntityCoords(GetPlayerPed(-1))
+                local pos = GetEntityCoords(PlayerPedId())
                 QBCore.Functions.DrawText3D(pos.x, pos.y, pos.z, "~g~E~w~ - To get out of bed..")
                 if IsControlJustReleased(0, 38) then -- E
                     LeaveBed()
@@ -430,7 +430,7 @@ AddEventHandler('hospital:client:Revive', function()
 		local playerPos = GetEntityCoords(player, true)
         NetworkResurrectLocalPlayer(playerPos, true, true, false)
         isDead = false
-        SetEntityInvincible(GetPlayerPed(-1), false)
+        SetEntityInvincible(PlayerPedId(), false)
         patient = true
 		TriggerEvent("hospital:client:injurystart", 20)
         TriggerServerEvent("hospital:server:SetPatientStatus", true)
@@ -439,13 +439,13 @@ AddEventHandler('hospital:client:Revive', function()
     if isInHospitalBed then
         loadAnimDict(inBedDict)
         TaskPlayAnim(player, inBedDict , inBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0 )
-        SetEntityInvincible(GetPlayerPed(-1), true)
+        SetEntityInvincible(PlayerPedId(), true)
         canLeaveBed = true
     end
 
     TriggerServerEvent("hospital:server:RestoreWeaponDamage")
 
-    local ped = GetPlayerPed(-1)
+    local ped = PlayerPedId()
     SetEntityMaxHealth(ped, 200)
     SetEntityHealth(ped, 200)
     ClearPedBloodDamage(player)
@@ -490,7 +490,7 @@ end)
 
 RegisterNetEvent('hospital:client:KillPlayer')
 AddEventHandler('hospital:client:KillPlayer', function()
-    SetEntityHealth(GetPlayerPed(-1), 0)
+    SetEntityHealth(PlayerPedId(), 0)
 end)
 
 RegisterNetEvent('hospital:client:HealInjuries')
@@ -579,7 +579,7 @@ AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     QBCore.Functions.GetPlayerData(function(PlayerData)
         PlayerJob = PlayerData.job
         onDuty = PlayerData.job.onduty
-        SetPedArmour(GetPlayerPed(-1), PlayerData.metadata["armor"])
+        SetPedArmour(PlayerPedId(), PlayerData.metadata["armor"])
         isDead = PlayerData.metadata["isdead"]
         if isDead then 
             deathTime = Config.DeathTime
@@ -602,14 +602,14 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload')
 AddEventHandler('QBCore:Client:OnPlayerUnload', function()
     isLoggedIn = false
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
-    TriggerServerEvent("hospital:server:SetArmor", GetPedArmour(GetPlayerPed(-1)))
+    TriggerServerEvent("hospital:server:SetArmor", GetPedArmour(PlayerPedId()))
     if bedOccupying ~= nil then 
         TriggerServerEvent("hospital:server:LeaveBed", bedOccupying)
     end
     isDead = false
     deathTime = 0
-    SetEntityInvincible(GetPlayerPed(-1), false)
-    SetPedArmour(GetPlayerPed(-1), 0)
+    SetEntityInvincible(PlayerPedId(), false)
+    SetPedArmour(PlayerPedId(), 0)
     ResetAll()
 end)
 
@@ -677,7 +677,7 @@ function IsInjuryCausingLimp()
 end
 
 function SetClosestBed() 
-    local pos = GetEntityCoords(GetPlayerPed(-1), true)
+    local pos = GetEntityCoords(PlayerPedId(), true)
     local current = nil
     local dist = nil
     for k, v in pairs(Config.Locations["beds"]) do
@@ -842,7 +842,7 @@ function LeaveBed()
 end
 
 function MenuOutfits()
-    ped = GetPlayerPed(-1);
+    ped = PlayerPedId();
     MenuTitle = "Outfits"
     ClearMenu()
     Menu.addButton("My Outfits", "OutfitsLijst", nil)
@@ -852,14 +852,14 @@ end
 function changeOutfit()
 	Wait(200)
     loadAnimDict("clothingshirt")    	
-	TaskPlayAnim(GetPlayerPed(-1), "clothingshirt", "try_shirt_positive_d", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
+	TaskPlayAnim(PlayerPedId(), "clothingshirt", "try_shirt_positive_d", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
 	Wait(3100)
-	TaskPlayAnim(GetPlayerPed(-1), "clothingshirt", "exit", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
+	TaskPlayAnim(PlayerPedId(), "clothingshirt", "exit", 8.0, 1.0, -1, 49, 0, 0, 0, 0)
 end
 
 function OutfitsLijst()
     QBCore.Functions.TriggerCallback('apartments:GetOutfits', function(outfits)
-        ped = GetPlayerPed(-1);
+        ped = PlayerPedId();
         MenuTitle = "My Outfits :"
         ClearMenu()
 
@@ -876,7 +876,7 @@ function OutfitsLijst()
 end
 
 function optionMenu(outfitData)
-    ped = GetPlayerPed(-1);
+    ped = PlayerPedId();
     MenuTitle = "What now?"
     ClearMenu()
 
@@ -908,7 +908,7 @@ function GetClosestPlayer()
     local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
-    local coords = GetEntityCoords(GetPlayerPed(-1))
+    local coords = GetEntityCoords(PlayerPedId())
 
     for i=1, #closestPlayers, 1 do
         if closestPlayers[i] ~= PlayerId() then

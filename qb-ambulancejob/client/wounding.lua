@@ -262,7 +262,7 @@ function CheckWeaponDamage(ped)
 	for k, v in pairs(WeaponDamageList) do
         if HasPedBeenDamagedByWeapon(ped, GetHashKey(k), 0) then
             if not IsInDamageList(k) then
-                TriggerEvent("chatMessage", "STATUS", "error", v)
+                QBCore.Functions.Notify('Status: '..v, 'error')
                 table.insert(CurrentDamageList, k)
             end
 		end
@@ -375,10 +375,10 @@ AddEventHandler('hospital:client:UseBandage', function()
 		anim = "weed_inspecting_high_base_inspector",
 		flags = 49,
     }, {}, {}, function() -- Done
-        StopAnimTask(GetPlayerPed(-1), "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
+        StopAnimTask(PlayerPedId(), "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
         TriggerServerEvent("QBCore:Server:RemoveItem", "bandage", 1)
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["bandage"], "remove")
-        SetEntityHealth(GetPlayerPed(-1), GetEntityHealth(GetPlayerPed(-1)) + 10)
+        SetEntityHealth(PlayerPedId(), GetEntityHealth(PlayerPedId()) + 10)
         if math.random(1, 100) < 50 then
             RemoveBleed(1)
         end
@@ -386,7 +386,7 @@ AddEventHandler('hospital:client:UseBandage', function()
             ResetPartial()
         end
     end, function() -- Cancel
-        StopAnimTask(GetPlayerPed(-1), "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
+        StopAnimTask(PlayerPedId(), "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
         TriggerEvent("DoShortHudText", "Failed", 2)
     end)
 end)
@@ -403,7 +403,7 @@ AddEventHandler('hospital:client:UsePainkillers', function()
 		anim = "pill",
 		flags = 49,
     }, {}, {}, function() -- Done
-        StopAnimTask(GetPlayerPed(-1), "mp_suicide", "pill", 1.0)
+        StopAnimTask(PlayerPedId(), "mp_suicide", "pill", 1.0)
         TriggerServerEvent("QBCore:Server:RemoveItem", "painkillers", 1)
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["painkillers"], "remove")
         onPainKillers = true
@@ -411,7 +411,7 @@ AddEventHandler('hospital:client:UsePainkillers', function()
             painkillerAmount = painkillerAmount + 1
         end
     end, function() -- Cancel
-        StopAnimTask(GetPlayerPed(-1), "mp_suicide", "pill", 1.0)
+        StopAnimTask(PlayerPedId(), "mp_suicide", "pill", 1.0)
         TriggerEvent("DoShortHudText", "Failed", 2)
     end)
 end)

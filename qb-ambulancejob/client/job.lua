@@ -376,9 +376,9 @@ Citizen.CreateThread(function()
         end
 
         if isHealingPerson then
-            if not IsEntityPlayingAnim(GetPlayerPed(-1), healAnimDict, healAnim, 3) then
+            if not IsEntityPlayingAnim(PlayerPedId(), healAnimDict, healAnim, 3) then
                 loadAnimDict(healAnimDict)	
-                TaskPlayAnim(GetPlayerPed(-1), healAnimDict, healAnim, 3.0, 3.0, -1, 49, 0, 0, 0, 0)
+                TaskPlayAnim(PlayerPedId(), healAnimDict, healAnim, 3.0, 3.0, -1, 49, 0, 0, 0, 0)
             end
         end
     end
@@ -387,7 +387,7 @@ end)
 RegisterNetEvent('hospital:client:SendAlert')
 AddEventHandler('hospital:client:SendAlert', function(msg)
     PlaySound(-1, "Menu_Accept", "Phone_SoundSet_Default", 0, 0, 1)
-    TriggerEvent("chatMessage", "PAGER", "error", msg)
+    QBCore.Functions.Notify('Pager: '..msg, 'error')
 end)
 
 RegisterNetEvent('hospital:client:AiCall')
@@ -397,7 +397,7 @@ AddEventHandler('hospital:client:AiCall', function()
         local ped = GetPlayerPed(player)
         table.insert(PlayerPeds, ped)
     end
-    local player = GetPlayerPed(-1)
+    local player = PlayerPedId()
     local coords = GetEntityCoords(player)
     local closestPed, closestDistance = QBCore.Functions.GetClosestPed(coords, PlayerPeds)
     local gender = QBCore.Functions.GetPlayerData().gender
@@ -414,7 +414,7 @@ function MakeCall(ped, male, street1, street2)
     local callAnim = "cellphone_call_listen_base"
     local rand = (math.random(6,9) / 100) + 0.3
     local rand2 = (math.random(6,9) / 100) + 0.3
-    local coords = GetEntityCoords(GetPlayerPed(-1))
+    local coords = GetEntityCoords(PlayerPedId())
     local blipsettings = {
         x = coords.x,
         y = coords.y,
@@ -433,7 +433,7 @@ function MakeCall(ped, male, street1, street2)
         rand2 = 0.0 - rand2
     end
 
-    local moveto = GetOffsetFromEntityInWorldCoords(GetPlayerPed(-1), rand, rand2, 0.0)
+    local moveto = GetOffsetFromEntityInWorldCoords(PlayerPedId(), rand, rand2, 0.0)
 
     TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
     SetPedKeepTask(ped, true) 
@@ -447,8 +447,8 @@ function MakeCall(ped, male, street1, street2)
     end
 
     ClearPedTasksImmediately(ped)
-    TaskLookAtEntity(ped, GetPlayerPed(-1), 5500.0, 2048, 3)
-    TaskTurnPedToFaceEntity(ped, GetPlayerPed(-1), 5500)
+    TaskLookAtEntity(ped, PlayerPedId(), 5500.0, 2048, 3)
+    TaskTurnPedToFaceEntity(ped, PlayerPedId(), 5500)
 
     Citizen.Wait(3000)
 
@@ -468,8 +468,8 @@ end
 
 RegisterNetEvent('hospital:client:RevivePlayer')
 AddEventHandler('hospital:client:RevivePlayer', function()
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "ambulance" then
+    --QBCore.Functions.GetPlayerData(function(PlayerData)
+        --if PlayerJob.name == "ambulance" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
@@ -487,12 +487,12 @@ AddEventHandler('hospital:client:RevivePlayer', function()
                         flags = 16,
                     }, {}, {}, function() -- Done
                         isHealingPerson = false
-                        StopAnimTask(GetPlayerPed(-1), healAnimDict, "exit", 1.0)
+                        StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                         TriggerEvent("DoShortHudText", "You revived the person!")
                         TriggerServerEvent("hospital:server:RevivePlayer", playerId)
                     end, function() -- Cancel
                         isHealingPerson = false
-                        StopAnimTask(GetPlayerPed(-1), healAnimDict, "exit", 1.0)
+                        StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                         TriggerEvent("DoShortHudText", "Failed!", 2)
                     end)
                 else
@@ -500,14 +500,14 @@ AddEventHandler('hospital:client:RevivePlayer', function()
                 end
             end, "medkit")
             end
-        end
-    end)
+        --end
+    --end)
 end)
 
 RegisterNetEvent('hospital:client:CheckStatus')
 AddEventHandler('hospital:client:CheckStatus', function()
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "ambulance" or PlayerJob.name == "police" then
+    --QBCore.Functions.GetPlayerData(function(PlayerData)
+        --if PlayerJob.name == "ambulance" or PlayerJob.name == "police" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
@@ -519,25 +519,27 @@ AddEventHandler('hospital:client:CheckStatus', function()
                                 table.insert(statusChecks, {bone = Config.BoneIndexes[k], label = v.label .." (".. Config.WoundStates[v.severity] ..")"})
                             elseif result["WEAPONWOUNDS"] ~= nil then 
                                 for k, v in pairs(result["WEAPONWOUNDS"]) do
-                                    TriggerEvent("chatMessage", "STATUS CHECK", "error", WeaponDamageList[v])
+                                    QBCore.Functions.Notify('Status Check: '..WeaponDamageList[v].., 'error')
                                 end
                             elseif result["BLEED"] > 0 then
-                                TriggerEvent("chatMessage", "STATUS CHECK", "error", "Is "..Config.BleedingStates[v].label)
+                                QBCore.Functions.Notify('Status Check: Is '..Config.BleedingStates[v].label, 'error')
                             end
                         end
                         isStatusChecking = true
                         statusCheckTime = Config.CheckTime
                     end
                 end, playerId)
+            else
+                QBCore.Functions.Notify('No Player Nearby', 'error')
             end
-        end
-    end)
+        --end
+    --end)
 end)
 
 RegisterNetEvent('hospital:client:TreatWounds')
 AddEventHandler('hospital:client:TreatWounds', function()
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "ambulance" then
+    --QBCore.Functions.GetPlayerData(function(PlayerData)
+        --if PlayerJob.name == "ambulance" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
@@ -553,21 +555,23 @@ AddEventHandler('hospital:client:TreatWounds', function()
                     flags = 16,
                 }, {}, {}, function() -- Done
                     isHealingPerson = false
-                    StopAnimTask(GetPlayerPed(-1), healAnimDict, "exit", 1.0)
+                    StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     TriggerEvent("DoShortHudText", "You helped the person!")
                     TriggerServerEvent("hospital:server:TreatWounds", playerId)
                 end, function() -- Cancel
                     isHealingPerson = false
-                    StopAnimTask(GetPlayerPed(-1), healAnimDict, "exit", 1.0)
+                    StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     TriggerEvent("DoShortHudText", "Failed!", 2)
                 end)
+            else
+                QBCore.Functions.Notify('No Player Nearby', 'error')
             end
-        end
-    end)
+        --end
+    --end)
 end)
 
 function MenuGarage(isDown)
-    ped = GetPlayerPed(-1);
+    ped = PlayerPedId();
     MenuTitle = "Garage"
     ClearMenu()
     Menu.addButton("My vehicles", "VehicleList", isDown)
@@ -575,7 +579,7 @@ function MenuGarage(isDown)
 end
 
 function VehicleList(isDown)
-    ped = GetPlayerPed(-1);
+    ped = PlayerPedId();
     MenuTitle = "Vehicles:"
     ClearMenu()
     for k, v in pairs(Config.Vehicles) do
@@ -592,7 +596,7 @@ function TakeOutVehicle(vehicleInfo)
         SetEntityHeading(veh, coords.h)
         exports['qb-hud']:SetFuel(veh, 100.0)
         closeMenuFull()
-        TaskWarpPedIntoVehicle(GetPlayerPed(-1), veh, -1)
+        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
         SetVehicleEngineOn(veh, true, true)
     end, coords, true)
