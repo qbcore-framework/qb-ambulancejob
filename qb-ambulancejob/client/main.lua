@@ -100,16 +100,8 @@ end)
 
 CreateThread(function()
     while true do
-        pedId = PlayerPedId()
-        plyId = PlayerId()
-        Wait(5000)
-    end
-end)
-
-CreateThread(function()
-    while true do
         if pedId then
-            GLOBAL_COORDS = GetEntityCoords(pedId)
+            GLOBAL_COORDS = GetEntityCoords(PlayerPedId())
         end
         Wait(200)
     end
