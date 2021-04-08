@@ -21,8 +21,8 @@ Citizen.CreateThread(function()
             local ped = PlayerPedId()
             local pos = GetEntityCoords(ped)
             if PlayerJob.name == "doctor" or PlayerJob.name == "ambulance" then
-                local dist = #(pos - vector3(v.x, v.y, v.z))
                 for k, v in pairs(Config.Locations["duty"]) do
+                    local dist = #(pos - vector3(v.x, v.y, v.z))
                     if dist < 5 then
                         if dist < 1.5 then
                             if onDuty then
@@ -42,6 +42,7 @@ Citizen.CreateThread(function()
                 end
 
                 for k, v in pairs(Config.Locations["armory"]) do
+                    local dist = #(pos - vector3(v.x, v.y, v.z))
                     if dist < 4.5 then
                         if onDuty then
                             if dist < 1.5 then
@@ -57,6 +58,7 @@ Citizen.CreateThread(function()
                 end
         
                 for k, v in pairs(Config.Locations["vehicle"]) do
+                    local dist = #(pos - vector3(v.x, v.y, v.z))
                     if dist < 4.5 then
                         DrawMarker(2, v.x, v.y, v.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                         if dist < 1.5 then
@@ -80,6 +82,7 @@ Citizen.CreateThread(function()
                 end
         
                 for k, v in pairs(Config.Locations["helicopter"]) do
+                    local dist = #(pos - vector3(v.x, v.y, v.z))
                     if dist < 7.5 then
                         if onDuty then
                             DrawMarker(2, v.x, v.y, v.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
@@ -114,6 +117,7 @@ Citizen.CreateThread(function()
             local currentHospital = 1
 
             for k, v in pairs(Config.Locations["main"]) do
+                local dist = #(pos - vector3(v.x, v.y, v.z))
                 if dist < 1.5 then
                     DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the roof")
                     if IsControlJustReleased(0, Keys["E"]) then
@@ -136,6 +140,7 @@ Citizen.CreateThread(function()
             end
 
             for k, v in pairs(Config.Locations["roof"]) do
+                local dist = #(pos - vector3(v.x, v.y, v.z))
                 if dist < 1.5 then
                     DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator down")
                     if IsControlJustReleased(0, Keys["E"]) then
@@ -158,6 +163,26 @@ Citizen.CreateThread(function()
             end
         else
             Citizen.Wait(1000)
+        end
+    end
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(1)
+        if isStatusChecking then
+            for k, v in pairs(statusChecks) do
+                local x,y,z = table.unpack(GetPedBoneCoords(statusCheckPed, v.bone))
+                DrawText3D(x, y, z, v.label)
+            end
+        end
+
+        if isHealingPerson then
+            local ped = PlayerPedId()
+            if not IsEntityPlayingAnim(ped, healAnimDict, healAnim, 3) then
+                loadAnimDict(healAnimDict)	
+                TaskPlayAnim(ped, healAnimDict, healAnim, 3.0, 3.0, -1, 49, 0, 0, 0, 0)
+            end
         end
     end
 end)
