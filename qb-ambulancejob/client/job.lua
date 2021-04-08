@@ -187,26 +187,6 @@ Citizen.CreateThread(function()
     end
 end)
 
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(1)
-        if isStatusChecking then
-            for k, v in pairs(statusChecks) do
-                local x,y,z = table.unpack(GetPedBoneCoords(statusCheckPed, v.bone))
-                DrawText3D(x, y, z, v.label)
-            end
-        end
-
-        if isHealingPerson then
-            local ped = PlayerPedId()
-            if not IsEntityPlayingAnim(ped, healAnimDict, healAnim, 3) then
-                loadAnimDict(healAnimDict)	
-                TaskPlayAnim(ped, healAnimDict, healAnim, 3.0, 3.0, -1, 49, 0, 0, 0, 0)
-            end
-        end
-    end
-end)
-
 RegisterNetEvent('hospital:client:SendAlert')
 AddEventHandler('hospital:client:SendAlert', function(msg)
     PlaySound(-1, "Menu_Accept", "Phone_SoundSet_Default", 0, 0, 1)
