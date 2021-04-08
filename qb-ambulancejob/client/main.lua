@@ -541,8 +541,8 @@ function SetClosestBed()
     local current = nil
     local dist = nil
     for k, v in pairs(Config.Locations["beds"]) do
+        local dist2 = #(pos - vector3(Config.Locations["beds"][k].x, Config.Locations["beds"][k].y, Config.Locations["beds"][k].z))
         if current ~= nil then
-            local dist2 = #(pos - vector3(Config.Locations["beds"][k].x, Config.Locations["beds"][k].y, Config.Locations["beds"][k].z))
             if dist2 < dist then
                 current = k
                 dist = dist2
