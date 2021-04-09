@@ -44,12 +44,12 @@ Citizen.CreateThread(function()
             DisableAllControlActions(0)
             EnableControlAction(0, 1, true)
 			EnableControlAction(0, 2, true)
-			EnableControlAction(0, Keys['T'], true)
-            EnableControlAction(0, Keys['E'], true)
-            EnableControlAction(0, Keys['V'], true)
-            EnableControlAction(0, Keys['ESC'], true)
-            EnableControlAction(0, Keys['F1'], true)
-            EnableControlAction(0, Keys['HOME'], true)
+			EnableControlAction(0, 245, true)
+            EnableControlAction(0, 38, true)
+            EnableControlAction(0, 0, true)
+            EnableControlAction(0, 322, true)
+            EnableControlAction(0, 288, true)
+            EnableControlAction(0, 213, true)
             
             if isDead then
                 if not isInHospitalBed then 
@@ -85,12 +85,12 @@ Citizen.CreateThread(function()
                 DisableAllControlActions(0)
                 EnableControlAction(0, 1, true)
                 EnableControlAction(0, 2, true)
-                EnableControlAction(0, Keys['T'], true)
-                EnableControlAction(0, Keys['E'], true)
-                EnableControlAction(0, Keys['V'], true)
-                EnableControlAction(0, Keys['ESC'], true)
-                EnableControlAction(0, Keys['F1'], true)
-                EnableControlAction(0, Keys['HOME'], true)
+                EnableControlAction(0, 245, true)
+                EnableControlAction(0, 38, true)
+                EnableControlAction(0, 0, true)
+                EnableControlAction(0, 322, true)
+                EnableControlAction(0, 288, true)
+                EnableControlAction(0, 213, true)
 
                 if LaststandTime > Laststand.MinimumRevive then
                     DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, "YOU ARE BLEEDING OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS", 255, 255, 255, 255)
@@ -168,12 +168,12 @@ function DeathTimer()
         deathTime = deathTime - 1
 
         if deathTime <= 0 then
-            if IsControlPressed(0, Keys["E"]) and hold <= 0 and not isInHospitalBed then
+            if IsControlPressed(0, 38) and hold <= 0 and not isInHospitalBed then
                 TriggerEvent("hospital:client:RespawnAtHospital")
                 hold = 5
             end
 
-            if IsControlPressed(0, Keys["E"]) then
+            if IsControlPressed(0, 38) then
                 if hold - 1 >= 0 then
                     hold = hold - 1
                 else
@@ -181,7 +181,7 @@ function DeathTimer()
                 end
             end
 
-            if IsControlReleased(0, Keys["E"]) then
+            if IsControlReleased(0, 38) then
                 hold = 5
             end
         end

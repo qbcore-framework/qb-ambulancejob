@@ -30,7 +30,7 @@ Citizen.CreateThread(function()
                             else
                                 DrawText3D(v.x, v.y, v.z, "~r~E~w~ - Go off duty")
                             end
-                            if IsControlJustReleased(0, Keys["E"]) then
+                            if IsControlJustReleased(0, 38) then
                                 onDuty = not onDuty
                                 TriggerServerEvent("QBCore:ToggleDuty")
                                 TriggerServerEvent("police:server:UpdateBlips")
@@ -47,7 +47,7 @@ Citizen.CreateThread(function()
                         if onDuty then
                             if dist < 1.5 then
                                 DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Armory")
-                                if IsControlJustReleased(0, Keys["E"]) then
+                                if IsControlJustReleased(0, 38) then
                                     TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
                                 end
                             elseif dist < 2.5 then
@@ -67,7 +67,7 @@ Citizen.CreateThread(function()
                             else
                                 DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Vehicles")
                             end
-                            if IsControlJustReleased(0, Keys["E"]) then
+                            if IsControlJustReleased(0, 38) then
                                 if IsPedInAnyVehicle(ped, false) then
                                     QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
                                 else
@@ -92,7 +92,7 @@ Citizen.CreateThread(function()
                                 else
                                     DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take a helicopter")
                                 end
-                                if IsControlJustReleased(0, Keys["E"]) then
+                                if IsControlJustReleased(0, 38) then
                                     if IsPedInAnyVehicle(ped, false) then
                                         QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
                                     else
@@ -120,7 +120,7 @@ Citizen.CreateThread(function()
                 local dist = #(pos - vector3(v.x, v.y, v.z))
                 if dist < 1.5 then
                     DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the roof")
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
                             Citizen.Wait(10)
@@ -143,7 +143,7 @@ Citizen.CreateThread(function()
                 local dist = #(pos - vector3(v.x, v.y, v.z))
                 if dist < 1.5 then
                     DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator down")
-                    if IsControlJustReleased(0, Keys["E"]) then
+                    if IsControlJustReleased(0, 38) then
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
                             Citizen.Wait(10)
