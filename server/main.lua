@@ -257,7 +257,6 @@ QBCore.Commands.Add("status", "Check a person his health", {}, false, function(s
 	if Player.PlayerData.job.name == "doctor" or Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:CheckStatus", source)
 	else
-		--TriggerClientEvent('chatMessage', source, "SYSTEM", "error", "This command is for emergency services!")
 		TriggerClientEvent('QBCore:Notify', source, "You Are Not EMS", "error")
 	end
 end)
@@ -267,7 +266,6 @@ QBCore.Commands.Add("heal", "Help a person his injuries", {}, false, function(so
 	if Player.PlayerData.job.name == "doctor" or Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:TreatWounds", source)
 	else
-		--TriggerClientEvent('chatMessage', source, "SYSTEM", "error", "This command is for emergency services!")
 		TriggerClientEvent('QBCore:Notify', source, "You Are Not EMS", "error")
 	end
 end)
@@ -277,7 +275,6 @@ QBCore.Commands.Add("revivep", "Revive a person", {}, false, function(source, ar
 	if Player.PlayerData.job.name == "doctor" then
 		TriggerClientEvent("hospital:client:RevivePlayer", source)
 	else
-		--TriggerClientEvent('chatMessage', source, "SYSTEM", "error", "This command is for emergency services!")
 		TriggerClientEvent('QBCore:Notify', source, "You Are Not EMS", "error")
 	end
 end)
@@ -288,7 +285,6 @@ QBCore.Commands.Add("revive", "Revive a player or yourself", {{name="id", help="
 		if Player ~= nil then
 			TriggerClientEvent('hospital:client:Revive', Player.PlayerData.source)
 		else
-			--TriggerClientEvent('chatMessage', source, "SYSTEM", "error", "Player not online!")
 			TriggerClientEvent('QBCore:Notify', source, "Player Not Online", "error")
 		end
 	else
@@ -302,7 +298,6 @@ QBCore.Commands.Add("setpain", "Set pain to a player or yourself", {{name="id", 
 		if Player ~= nil then
 			TriggerClientEvent('hospital:client:SetPain', Player.PlayerData.source)
 		else
-			--TriggerClientEvent('chatMessage', source, "SYSTEM", "error", "Player not online!")
 			TriggerClientEvent('QBCore:Notify', source, "Player Not Online", "error")
 		end
 	else
@@ -316,7 +311,6 @@ QBCore.Commands.Add("kill", "Kill a player or yourself", {{name="id", help="Play
 		if Player ~= nil then
 			TriggerClientEvent('hospital:client:KillPlayer', Player.PlayerData.source)
 		else
-			--TriggerClientEvent('chatMessage', source, "SYSTEM", "error", "Player not online!")
 			TriggerClientEvent('QBCore:Notify', source, "Player Not Online", "error")
 		end
 	else
