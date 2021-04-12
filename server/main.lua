@@ -318,6 +318,7 @@ QBCore.Commands.Add("kill", "Kill a player or yourself", {{name="id", help="Play
 	end
 end, "superadmin")
 
+--[[ 
 QBCore.Commands.Add("setambulance", "Give the ambulance job to someone ", {{name="id", help="Player ID"}}, true, function(source, args)
     local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
     local Myself = QBCore.Functions.GetPlayer(source)
@@ -326,9 +327,9 @@ QBCore.Commands.Add("setambulance", "Give the ambulance job to someone ", {{name
             Player.Functions.SetJob("ambulance")
         end
     end
-end)
+end) ]]
 
-QBCore.Commands.Add("setdoctor", "Give the doctor job to someone ", {{name="id", help="Player ID"}}, true, function(source, args)
+--[[ QBCore.Commands.Add("setdoctor", "Give the doctor job to someone ", {{name="id", help="Player ID"}}, true, function(source, args)
     local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
     local Myself = QBCore.Functions.GetPlayer(source)
     if Player ~= nil then 
@@ -336,7 +337,7 @@ QBCore.Commands.Add("setdoctor", "Give the doctor job to someone ", {{name="id",
             Player.Functions.SetJob("doctor")
         end
     end
-end)
+end) ]]
 
 QBCore.Functions.CreateUseableItem("bandage", function(source, item)
 	local Player = QBCore.Functions.GetPlayer(source)

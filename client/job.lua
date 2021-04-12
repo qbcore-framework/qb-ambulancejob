@@ -303,7 +303,7 @@ end
 RegisterNetEvent('hospital:client:RevivePlayer')
 AddEventHandler('hospital:client:RevivePlayer', function()
     QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "doctor" then
+        if PlayerJob.name == "ambulance" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
@@ -328,6 +328,8 @@ AddEventHandler('hospital:client:RevivePlayer', function()
                     QBCore.Functions.Notify("Failed!", "error")
                 end)
             end
+        else
+            QBCore.Functions.Notify("No One Nearby", "error")
         end
     end)
 end)
@@ -335,7 +337,7 @@ end)
 RegisterNetEvent('hospital:client:CheckStatus')
 AddEventHandler('hospital:client:CheckStatus', function()
     QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "doctor" or PlayerJob.name == "ambulance" or PlayerJob.name == "police" then
+        if PlayerJob.name == "ambulance" or PlayerJob.name == "police" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
@@ -357,6 +359,8 @@ AddEventHandler('hospital:client:CheckStatus', function()
                         statusCheckTime = Config.CheckTime
                     end
                 end, playerId)
+            else
+                QBCore.Functions.Notify("No One Nearby", "error")
             end
         end
     end)
@@ -365,7 +369,7 @@ end)
 RegisterNetEvent('hospital:client:TreatWounds')
 AddEventHandler('hospital:client:TreatWounds', function()
     QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "doctor" or PlayerJob.name == "ambulance" then
+        if PlayerJob.name == "ambulance" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
@@ -389,6 +393,8 @@ AddEventHandler('hospital:client:TreatWounds', function()
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     QBCore.Functions.Notify("Failed!", "error")
                 end)
+            else
+                QBCore.Functions.Notify("No One Nearby", "error")
             end
         end
     end)
