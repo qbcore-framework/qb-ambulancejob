@@ -26,9 +26,9 @@ Citizen.CreateThread(function()
                     if dist < 5 then
                         if dist < 1.5 then
                             if onDuty then
-                                DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Go on duty")
+                                DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Go Off Duty")
                             else
-                                DrawText3D(v.x, v.y, v.z, "~r~E~w~ - Go off duty")
+                                DrawText3D(v.x, v.y, v.z, "~r~E~w~ - Go On Duty")
                             end
                             if IsControlJustReleased(0, 38) then
                                 onDuty = not onDuty
