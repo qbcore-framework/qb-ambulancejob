@@ -20,7 +20,7 @@ Citizen.CreateThread(function()
         if isLoggedIn and QBCore ~= nil then
             local ped = PlayerPedId()
             local pos = GetEntityCoords(ped)
-            if PlayerJob.name == "doctor" or PlayerJob.name == "ambulance" then
+            if PlayerJob.name =="ambulance" or PlayerJob.name == "ambulance" then
                 for k, v in pairs(Config.Locations["duty"]) do
                     local dist = #(pos - vector3(v.x, v.y, v.z))
                     if dist < 5 then
@@ -195,7 +195,7 @@ end)
 
 RegisterNetEvent('112:client:SendAlert')
 AddEventHandler('112:client:SendAlert', function(msg, blipSettings)
-    if (PlayerJob.name == "police" or PlayerJob.name == "ambulance" or PlayerJob.name == "doctor") and onDuty then
+    if (PlayerJob.name == "police" or PlayerJob.name == "ambulance") and onDuty then
         if blipSettings ~= nil then
             local transG = 250
             local blip = AddBlipForCoord(blipSettings.x, blipSettings.y, blipSettings.z)

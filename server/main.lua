@@ -89,7 +89,7 @@ AddEventHandler('hospital:server:TreatWounds', function(playerId)
 	local Player = QBCore.Functions.GetPlayer(src)
 	local Patient = QBCore.Functions.GetPlayer(playerId)
 	if Patient ~= nil then
-		if Player.PlayerData.job.name == "doctor" then
+		if Player.PlayerData.job.name =="ambulance" then
 			TriggerClientEvent("hospital:client:HealInjuries", Patient.PlayerData.source, "full")
 		elseif Player.PlayerData.job.name == "ambulance" then
 			TriggerClientEvent("hospital:client:HealInjuries", Patient.PlayerData.source, "partial")
@@ -103,7 +103,7 @@ AddEventHandler('hospital:server:SetDoctor', function()
 	for k, v in pairs(QBCore.Functions.GetPlayers()) do
         local Player = QBCore.Functions.GetPlayer(v)
         if Player ~= nil then 
-            if (Player.PlayerData.job.name == "doctor" and Player.PlayerData.job.onduty) then
+            if (Player.PlayerData.job.name =="ambulance" and Player.PlayerData.job.onduty) then
                 amount = amount + 1
             end
         end
@@ -136,7 +136,7 @@ AddEventHandler('hospital:server:SendDoctorAlert', function()
 	for k, v in pairs(QBCore.Functions.GetPlayers()) do
 		local Player = QBCore.Functions.GetPlayer(v)
 		if Player ~= nil then 
-			if (Player.PlayerData.job.name == "doctor" and Player.PlayerData.job.onduty) then
+			if (Player.PlayerData.job.name =="ambulance" and Player.PlayerData.job.onduty) then
 				TriggerClientEvent("hospital:client:SendAlert", v, "A doctor is needed at Pillbox Hospital")
 			end
 		end
@@ -192,7 +192,7 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
 	for k, v in pairs(QBCore.Functions.GetPlayers()) do
 		local Player = QBCore.Functions.GetPlayer(v)
 		if Player ~= nil then 
-			if (Player.PlayerData.job.name == "doctor" and Player.PlayerData.job.onduty) then
+			if (Player.PlayerData.job.name =="ambulance" and Player.PlayerData.job.onduty) then
 				amount = amount + 1
 			end
 		end
@@ -254,7 +254,7 @@ end)
 
 QBCore.Commands.Add("status", "Check a person his health", {}, false, function(source, args)
 	local Player = QBCore.Functions.GetPlayer(source)
-	if Player.PlayerData.job.name == "doctor" or Player.PlayerData.job.name == "ambulance" then
+	if Player.PlayerData.job.name =="ambulance" or Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:CheckStatus", source)
 	else
 		TriggerClientEvent('QBCore:Notify', source, "You Are Not EMS", "error")
@@ -263,7 +263,7 @@ end)
 
 QBCore.Commands.Add("heal", "Help a person his injuries", {}, false, function(source, args)
 	local Player = QBCore.Functions.GetPlayer(source)
-	if Player.PlayerData.job.name == "doctor" or Player.PlayerData.job.name == "ambulance" then
+	if Player.PlayerData.job.name =="ambulance" or Player.PlayerData.job.name == "ambulance" then
 		TriggerClientEvent("hospital:client:TreatWounds", source)
 	else
 		TriggerClientEvent('QBCore:Notify', source, "You Are Not EMS", "error")
@@ -272,7 +272,7 @@ end)
 
 QBCore.Commands.Add("revivep", "Revive a person", {}, false, function(source, args)
 	local Player = QBCore.Functions.GetPlayer(source)
-	if Player.PlayerData.job.name == "doctor" then
+	if Player.PlayerData.job.name =="ambulance" then
 		TriggerClientEvent("hospital:client:RevivePlayer", source)
 	else
 		TriggerClientEvent('QBCore:Notify', source, "You Are Not EMS", "error")
@@ -323,7 +323,7 @@ QBCore.Commands.Add("setambulance", "Give the ambulance job to someone ", {{name
     local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
     local Myself = QBCore.Functions.GetPlayer(source)
     if Player ~= nil then 
-        if ((Myself.PlayerData.job.name == "ambulance" or Myself.PlayerData.job.name == "doctor") and Myself.PlayerData.job.onduty) and IsHighCommand(Myself.PlayerData.citizenid) then
+        if ((Myself.PlayerData.job.name == "ambulance" or Myself.PlayerData.job.name =="ambulance") and Myself.PlayerData.job.onduty) and IsHighCommand(Myself.PlayerData.citizenid) then
             Player.Functions.SetJob("ambulance")
         end
     end
@@ -333,7 +333,7 @@ end) ]]
     local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
     local Myself = QBCore.Functions.GetPlayer(source)
     if Player ~= nil then 
-        if ((Myself.PlayerData.job.name == "ambulance" or Myself.PlayerData.job.name == "doctor") and Myself.PlayerData.job.onduty) and IsHighCommand(Myself.PlayerData.citizenid) then
+        if ((Myself.PlayerData.job.name == "ambulance" or Myself.PlayerData.job.name =="ambulance") and Myself.PlayerData.job.onduty) and IsHighCommand(Myself.PlayerData.citizenid) then
             Player.Functions.SetJob("doctor")
         end
     end
