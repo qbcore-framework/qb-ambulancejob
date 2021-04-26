@@ -300,10 +300,40 @@ function MakeCall(ped, male, street1, street2)
     ClearPedTasks(ped)
 end
 
-RegisterNetEvent('hospital:client:RevivePlayer')
+RegisterNetEvent('hospital:client:CheckStatus')
+AddEventHandler('hospital:client:CheckStatus', function()
+    local player, distance = GetClosestPlayer()
+    if player ~= -1 and distance < 5.0 then
+        local playerId = GetPlayerServerId(player)
+        statusCheckPed = GetPlayerPed(player)
+        QBCore.Functions.TriggerCallback('hospital:GetPlayerStatus', function(result)
+            if result ~= nil then
+                for k, v in pairs(result) do
+                    if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
+                        table.insert(statusChecks, {bone = Config.BoneIndexes[k], label = v.label .." (".. Config.WoundStates[v.severity] ..")"})
+                    elseif result["WEAPONWOUNDS"] ~= nil then
+                        for k, v in pairs(result["WEAPONWOUNDS"]) do
+                            TriggerEvent("chatMessage", "STATUS CHECK", "error", WeaponDamageList[v])
+                        end
+                    elseif result["BLEED"] > 0 then
+                        TriggerEvent("chatMessage", "STATUS CHECK", "error", "Is "..Config.BleedingStates[v].label)
+                    else
+                        QBCore.Functions.Notify('Player Is Healthy', 'success')
+                    end
+                end
+                isStatusChecking = true
+                statusCheckTime = Config.CheckTime
+            end
+        end, playerId)
+    else
+        QBCore.Functions.Notify('No Player Nearby', 'error')
+    end
+end)
+
+RegisterNetEvent('hospital:client:RevivePlayer') 
 AddEventHandler('hospital:client:RevivePlayer', function()
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "ambulance" then
+    QBCore.Functions.TriggerCallback('hospital:server:HasFirstAid', function(hasItem)
+        if hasItem then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
@@ -327,49 +357,19 @@ AddEventHandler('hospital:client:RevivePlayer', function()
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                     QBCore.Functions.Notify("Failed!", "error")
                 end)
+            else
+                QBCore.Functions.Notify("No Player Nearby", "error")
             end
         else
-            QBCore.Functions.Notify("No One Nearby", "error")
+            QBCore.Functions.Notify("You Need A First Aid Kit", "error")
         end
-    end)
-end)
-
-RegisterNetEvent('hospital:client:CheckStatus')
-AddEventHandler('hospital:client:CheckStatus', function()
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "ambulance" or PlayerJob.name == "police" then
-            local player, distance = GetClosestPlayer()
-            if player ~= -1 and distance < 5.0 then
-                local playerId = GetPlayerServerId(player)
-                statusCheckPed = GetPlayerPed(player)
-                QBCore.Functions.TriggerCallback('hospital:GetPlayerStatus', function(result)
-                    if result ~= nil then
-                        for k, v in pairs(result) do
-                            if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
-                                table.insert(statusChecks, {bone = Config.BoneIndexes[k], label = v.label .." (".. Config.WoundStates[v.severity] ..")"})
-                            elseif result["WEAPONWOUNDS"] ~= nil then 
-                                for k, v in pairs(result["WEAPONWOUNDS"]) do
-                                    TriggerEvent("chatMessage", "STATUS CHECK", "error", WeaponDamageList[v])
-                                end
-                            elseif result["BLEED"] > 0 then
-                                TriggerEvent("chatMessage", "STATUS CHECK", "error", "Is "..Config.BleedingStates[v].label)
-                            end
-                        end
-                        isStatusChecking = true
-                        statusCheckTime = Config.CheckTime
-                    end
-                end, playerId)
-            else
-                QBCore.Functions.Notify("No One Nearby", "error")
-            end
-        end
-    end)
+    end, 'firstaid')
 end)
 
 RegisterNetEvent('hospital:client:TreatWounds')
 AddEventHandler('hospital:client:TreatWounds', function()
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-        if PlayerJob.name == "ambulance" then
+    QBCore.Functions.TriggerCallback('hospital:server:HasBandage', function(hasItem)
+        if hasItem then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
@@ -394,10 +394,12 @@ AddEventHandler('hospital:client:TreatWounds', function()
                     QBCore.Functions.Notify("Failed!", "error")
                 end)
             else
-                QBCore.Functions.Notify("No One Nearby", "error")
+                QBCore.Functions.Notify("No Player Nearby", "error")
             end
+        else
+            QBCore.Functions.Notify("You Need A Bandage", "error")
         end
-    end)
+    end, 'bandage')
 end)
 
 function MenuGarage(isDown)
