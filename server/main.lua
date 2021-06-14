@@ -20,7 +20,10 @@ AddEventHandler('hospital:server:RespawnAtHospital', function()
 		TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
 		TriggerClientEvent('hospital:client:SetBed', -1, k, true)
 		Player.Functions.ClearInventory()
-		QBCore.Functions.ExecuteSql(true, "UPDATE `players` SET `inventory` = '"..QBCore.EscapeSqli(json.encode({})).."' WHERE `citizenid` = '"..Player.PlayerData.citizenid.."'")
+		QBCore.Functions.ExecuteSql(true, {
+			['a'] = json.encode({}),
+			['b'] = Player.PlayerData.citizenid
+		}, "UPDATE `players` SET `inventory` = @a WHERE `citizenid` = @b")
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 		TriggerClientEvent('QBCore:Notify', src, 'All your possessions have been taken..', 'error')
 		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
