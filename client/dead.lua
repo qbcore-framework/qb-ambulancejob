@@ -12,10 +12,7 @@ Citizen.CreateThread(function()
 		local player = PlayerId()
 		if NetworkIsPlayerActive(player) then
             local playerPed = PlayerPedId()
-            if IsEntityDead(playerPed) and not InLaststand then
-                SetLaststand(true)
-            elseif IsEntityDead(playerPed) and InLaststand and not isDead then
-                SetLaststand(false)
+            if IsEntityDead(playerPed) and not isDead then
                 local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
                 local killer = GetPedSourceOfDeath(playerPed)
                 
@@ -24,10 +21,10 @@ Citizen.CreateThread(function()
                 end
 
                 local killerId = NetworkGetPlayerIndexFromPed(killer)
-                local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or "Himself or a NPC"
-                local weaponLabel = QBCore.Shared.Weapons[killerWeapon] ~= nil and QBCore.Shared.Weapons[killerWeapon]["label"] or "Unknown"
-                local weaponName = QBCore.Shared.Weapons[killerWeapon] ~= nil and QBCore.Shared.Weapons[killerWeapon]["name"] or "Unknown_Weapon"
-                TriggerServerEvent("qb-log:server:CreateLog", "death", GetPlayerName(player) .. " ("..GetPlayerServerId(player)..") is dead", "red", "**".. killerName .. "** has killed ".. GetPlayerName(player) .." with a **".. weaponLabel .. "** (" .. weaponName .. ")")
+                local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or "NPC"
+                local weaponLabel = PSCore.Shared.Weapons[killerWeapon] ~= nil and PSCore.Shared.Weapons[killerWeapon]["label"] or "Unknown"
+                local weaponName = PSCore.Shared.Weapons[killerWeapon] ~= nil and PSCore.Shared.Weapons[killerWeapon]["name"] or "Unknown_Weapon"
+                TriggerServerEvent("qb-log:server:CreateLog", "death", GetPlayerName(player) .. " ("..GetPlayerServerId(player)..") Died", "red", "**".. killerName .. "** killed ".. GetPlayerName(player) .." with **".. weaponLabel .. "** (" .. weaponName .. ")")
                 deathTime = Config.DeathTime
                 OnDeath()
                 DeathTimer()
@@ -38,34 +35,32 @@ end)
 
 Citizen.CreateThread(function()
 	while true do
-        Citizen.Wait(0)
-		if isDead or InLaststand then
-            local ped = PlayerPedId()
+        Citizen.Wait(7)
+        local ped = PlayerPedId()
+		if isDead then
             DisableAllControlActions(0)
             EnableControlAction(0, 1, true)
-			EnableControlAction(0, 2, true)
-			EnableControlAction(0, 245, true)
+            EnableControlAction(0, 2, true)
+            EnableControlAction(0, 245, true)
             EnableControlAction(0, 38, true)
             EnableControlAction(0, 0, true)
             EnableControlAction(0, 322, true)
             EnableControlAction(0, 288, true)
             EnableControlAction(0, 213, true)
-	    EnableControlAction(0, 249, true)
-            EnableControlAction(0, 46, true)
             
             if isDead then
                 if not isInHospitalBed then 
                     if deathTime > 0 then
-                        DrawTxt(0.93, 1.44, 1.0,1.0,0.6, "RESPAWN IN: ~r~" .. math.ceil(deathTime) .. "~w~ SECONDS", 255, 255, 255, 255)
+                        DrawTxt(0.93, 1.44, 1.0,1.0,0.6, "RESPAWN IN: ~b~" .. math.ceil(deathTime) .. "~w~ SECONDS", 255, 255, 255, 255)
                     else
-                        DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, "~w~ HOLD ~r~[E] ("..hold..")~w~ TO RESPAWN ~r~($"..Config.BillCost..")~w~", 255, 255, 255, 255)
+                        DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, "~w~ HOLD ~w~[~b~E~w~] (~r~"..hold.."~w~)~w~ FOR RESPAWN (~g~€~w~"..Config.BillCost..") OR WAIT FOR EMS", 255, 255, 255, 255)
                     end
                 end
 
                 if IsPedInAnyVehicle(ped, false) then
-                    loadAnimDict("veh@low@front_ps@idle_duck")
-                    if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
-                        TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                    loadAnimDict("veh@low@front_ds@idle_duck")
+                    if not IsEntityPlayingAnim(ped, "veh@low@front_ds@idle_duck", "steer_lean_left", 3) then
+                        TaskPlayAnim(ped, "veh@low@front_ds@idle_duck", "steer_lean_left", 1.0, 8.0, -1, 1, -1, false, false, false)
                     end
                 else
                     if isInHospitalBed then 
@@ -82,57 +77,13 @@ Citizen.CreateThread(function()
                 end
 
                 SetCurrentPedWeapon(ped, GetHashKey("WEAPON_UNARMED"), true)
-            elseif InLaststand then
-                local ped = PlayerPedId()
-                DisableAllControlActions(0)
-                EnableControlAction(0, 1, true)
-                EnableControlAction(0, 2, true)
-                EnableControlAction(0, 245, true)
-                EnableControlAction(0, 38, true)
-                EnableControlAction(0, 0, true)
-                EnableControlAction(0, 322, true)
-                EnableControlAction(0, 288, true)
-                EnableControlAction(0, 213, true)
-		EnableControlAction(0, 249, true)
-                EnableControlAction(0, 46, true)
-
-                if LaststandTime > Laststand.MinimumRevive then
-                    DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, "YOU ARE BLEEDING OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS", 255, 255, 255, 255)
-                else
-                    DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6, "YOU ARE BLEEDING OUT IN: ~r~" .. math.ceil(LaststandTime) .. "~w~ SECONDS, YOU CAN BE HELPED", 255, 255, 255, 255)
-                end
-
-                if not isEscorted then
-                    if IsPedInAnyVehicle(ped, false) then
-                        loadAnimDict("veh@low@front_ps@idle_duck")
-                        if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
-                            TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
-                        end
-                    else
-                        loadAnimDict(lastStandDict)
-                        if not IsEntityPlayingAnim(ped, lastStandDict, lastStandAnim, 3) then
-                            TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
-                        end
-                    end
-                else
-                    if IsPedInAnyVehicle(ped, false) then
-                        loadAnimDict("veh@low@front_ps@idle_duck")
-                        if IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
-                            StopAnimTask(ped, "veh@low@front_ps@idle_duck", "sit", 3)
-                        end
-                    else
-                        loadAnimDict(lastStandDict)
-                        if IsEntityPlayingAnim(ped, lastStandDict, lastStandAnim, 3) then
-                            StopAnimTask(ped, lastStandDict, lastStandAnim, 3)
-                        end
-                    end
-                end
             end
 		else
 			Citizen.Wait(500)
 		end
 	end
 end)
+
 
 function OnDeath(spawn)
     if not isDead then
@@ -141,10 +92,6 @@ function OnDeath(spawn)
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
         local player = PlayerPedId()
 
-        while GetEntitySpeed(player) > 0.5 or IsPedRagdoll(player) do
-            Citizen.Wait(10)
-        end
-
         if isDead then
             local pos = GetEntityCoords(player)
             local heading = GetEntityHeading(player)
@@ -152,10 +99,9 @@ function OnDeath(spawn)
 
             NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
             SetEntityInvincible(player, true)
-            SetEntityHealth(player, GetEntityMaxHealth(player))
             if IsPedInAnyVehicle(player, false) then
-                loadAnimDict("veh@low@front_ps@idle_duck")
-                TaskPlayAnim(player, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                loadAnimDict("veh@low@front_ds@idle_duck")
+                TaskPlayAnim(player, "veh@low@front_ds@idle_duck", "steer_lean_left", 1.0, 8.0, -1, 1, -1, false, false, false)
             else
                 loadAnimDict(deadAnimDict)
                 TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
