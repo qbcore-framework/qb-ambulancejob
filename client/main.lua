@@ -413,7 +413,6 @@ end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
-    exports.spawnmanager:setAutoSpawn(false)
     local ped = PlayerPedId()
     SetEntityMaxHealth(ped, 200)
     SetEntityHealth(ped, 200)
