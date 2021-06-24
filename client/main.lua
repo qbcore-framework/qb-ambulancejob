@@ -646,7 +646,7 @@ function SetBedCam()
     loadAnimDict(inBedDict)
 
     TaskPlayAnim(player, inBedDict , inBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0 )
-    SetEntityHeading(player, bedOccupyingData.h)
+    SetEntityHeading(player, bedOccupyingData.w)
 
     cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
     SetCamActive(cam, true)
@@ -671,7 +671,7 @@ function LeaveBed()
     
     FreezeEntityPosition(player, false)
     SetEntityInvincible(player, false)
-    SetEntityHeading(player, bedOccupyingData.h + 90)
+    SetEntityHeading(player, bedOccupyingData.w + 90)
     TaskPlayAnim(player, getOutDict , getOutAnim, 100.0, 1.0, -1, 8, -1, 0, 0, 0)
     Citizen.Wait(4000)
     ClearPedTasks(player)
