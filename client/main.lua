@@ -224,8 +224,8 @@ Citizen.CreateThread(function()
             end
             
             if closestBed ~= nil and not isInHospitalBed then
-                if #(pos - vector3(Config.Locations["beds"][closestBed].x, Config.Locations["beds"][closestBed].y, Config.Locations["beds"][closestBed].z)) < 1.5 then
-                    QBCore.Functions.DrawText3D(Config.Locations["beds"][closestBed].x, Config.Locations["beds"][closestBed].y, Config.Locations["beds"][closestBed].z + 0.3, "~g~E~w~ - To lie in bed")
+                if #(pos - vector3(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z)) < 1.5 then
+                    QBCore.Functions.DrawText3D(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z + 0.3, "~g~E~w~ - To lie in bed")
                     if IsControlJustReleased(0, 38) then
                         if GetAvailableBed(closestBed) ~= nil then 
                             TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
@@ -528,7 +528,7 @@ function SetClosestBed()
     local current = nil
     local dist = nil
     for k, v in pairs(Config.Locations["beds"]) do
-        local dist2 = #(pos - vector3(Config.Locations["beds"][k].x, Config.Locations["beds"][k].y, Config.Locations["beds"][k].z))
+        local dist2 = #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z))
         if current ~= nil then
             if dist2 < dist then
                 current = k
