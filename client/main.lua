@@ -635,10 +635,10 @@ function SetBedCam()
 		NetworkResurrectLocalPlayer(playerPos, true, true, false)
     end
     
-    bedObject = GetClosestObjectOfType(bedOccupyingData.x, bedOccupyingData.y, bedOccupyingData.z, 1.0, bedOccupyingData.model, false, false, false)
+    bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
     FreezeEntityPosition(bedObject, true)
 
-    SetEntityCoords(player, bedOccupyingData.x, bedOccupyingData.y, bedOccupyingData.z + 0.02)
+    SetEntityCoords(player, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
     --SetEntityInvincible(PlayerPedId(), true)
     Citizen.Wait(500)
     FreezeEntityPosition(player, true)
@@ -646,7 +646,7 @@ function SetBedCam()
     loadAnimDict(inBedDict)
 
     TaskPlayAnim(player, inBedDict , inBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0 )
-    SetEntityHeading(player, bedOccupyingData.w)
+    SetEntityHeading(player, bedOccupyingData.coords.w)
 
     cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
     SetCamActive(cam, true)
@@ -671,7 +671,7 @@ function LeaveBed()
     
     FreezeEntityPosition(player, false)
     SetEntityInvincible(player, false)
-    SetEntityHeading(player, bedOccupyingData.w + 90)
+    SetEntityHeading(player, bedOccupyingData.coords.w + 90)
     TaskPlayAnim(player, getOutDict , getOutAnim, 100.0, 1.0, -1, 8, -1, 0, 0, 0)
     Citizen.Wait(4000)
     ClearPedTasks(player)
