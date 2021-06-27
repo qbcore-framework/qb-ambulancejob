@@ -39,8 +39,7 @@ Config.Locations = {
 }
 
 Config.Vehicles = {
-    ["asprinter"] = "Mercedes-Benz Sprinter",
-    ["aeklasse"] = "Mercedes-Benz E-Klasse",
+    ["ambulance"] = "Ambulance",
 }
 
 Config.Whitelist = {
