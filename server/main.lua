@@ -324,7 +324,7 @@ end, "admin")
 
 QBCore.Functions.CreateUseableItem("bandage", function(source, item)
 	local Player = QBCore.Functions.GetPlayer(source)
-	if Player.Functions.GetItemByName(item.name) ~= nil then
+	if Player.Functions.GetItemByName(item.name) > 0 then
 		TriggerClientEvent("hospital:client:UseBandage", source)
 	end
 end)
@@ -333,7 +333,7 @@ QBCore.Functions.CreateCallback('hospital:server:HasBandage', function(source, c
     local player = QBCore.Functions.GetPlayer(source)
     local bandage = player.Functions.GetItemByName("bandage")
 
-    if bandage ~= nil then
+    if bandage > 0 then
         cb(true)
     else
         cb(false)
@@ -342,14 +342,14 @@ end)
 
 QBCore.Functions.CreateUseableItem("painkillers", function(source, item)
 	local Player = QBCore.Functions.GetPlayer(source)
-	if Player.Functions.GetItemByName(item.name) ~= nil then
+	if Player.Functions.GetItemByName(item.name) > 0 then
 		TriggerClientEvent("hospital:client:UsePainkillers", source)
 	end
 end)
 
 QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
 	local Player = QBCore.Functions.GetPlayer(source)
-	if Player.Functions.GetItemByName(item.name) ~= nil then
+	if Player.Functions.GetItemByName(item.name) > 0 then
 		TriggerClientEvent("hospital:client:UseFirstAid", source)
 	end
 end)
@@ -358,7 +358,7 @@ QBCore.Functions.CreateCallback('hospital:server:HasFirstAid', function(source, 
     local player = QBCore.Functions.GetPlayer(source)
     local firstaid = player.Functions.GetItemByName("firstaid")
 
-    if firstaid ~= nil then
+    if firstaid > 0 then
         cb(true)
     else
         cb(false)
