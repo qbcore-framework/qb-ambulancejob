@@ -46,7 +46,7 @@ Config.Whitelist = {
     "GAA35566",
 }
 
-Config.Helicopter = "alifeliner"
+Config.Helicopter = "polmav"
 
 Config.Items = {
     label = "Hospital safe",
