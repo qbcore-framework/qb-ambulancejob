@@ -1,6 +1,3 @@
-QBCore = nil
-TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-
 local PlayerInjuries = {}
 local PlayerWeaponWounds = {}
 local bedsTaken = {}

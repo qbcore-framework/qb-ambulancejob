@@ -4,8 +4,12 @@ game 'gta5'
 description 'QB-AmbulanceJob'
 version '1.0.0'
 
+shared_scripts { 
+	'@qb-core/import.lua',
+	'config.lua'
+}
+
 client_scripts {
-	'config.lua',
 	'client/main.lua',
 	'client/wounding.lua',
 	'client/laststand.lua',
@@ -14,10 +18,7 @@ client_scripts {
 	'client/gui.lua',
 }
 
-server_scripts {
-	'config.lua',
-	'server/main.lua',
-}
+server_script 'server/main.lua'
 
 data_file 'INTERIOR_PROXY_ORDER_FILE' 'interiorproxies.meta'
 
