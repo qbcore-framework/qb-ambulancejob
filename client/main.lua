@@ -299,7 +299,7 @@ AddEventHandler('hospital:client:Revive', function()
     ClearPedBloodDamage(player)
     SetPlayerSprint(PlayerId(), true)
     ResetAll()
-    TriggerServerEvent('qb-hud:Server:RelieveStress', 100)
+    TriggerServerEvent('hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
     
