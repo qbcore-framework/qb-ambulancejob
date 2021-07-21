@@ -19,9 +19,3 @@ client_scripts {
 }
 
 server_script 'server/main.lua'
-
-data_file 'INTERIOR_PROXY_ORDER_FILE' 'interiorproxies.meta'
-
-files {
-	'interiorproxies.meta'
-}
