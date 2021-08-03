@@ -259,15 +259,20 @@ function ProcessDamage(ped)
 end
 
 function CheckWeaponDamage(ped)
+    local detected = false
 	for k, v in pairs(WeaponDamageList) do
         if HasPedBeenDamagedByWeapon(ped, GetHashKey(k), 0) then
+            detected = true
             if not IsInDamageList(k) then
                 TriggerEvent("chatMessage", "STATUS", "error", v)
                 table.insert(CurrentDamageList, k)
             end
 		end
     end
-    TriggerServerEvent("hospital:server:SetWeaponDamage", CurrentDamageList)
+    ClearEntityLastDamageEntity(ped)
+    if detected then
+        TriggerServerEvent("hospital:server:SetWeaponDamage", CurrentDamageList)
+    end
 end
 
 function IsInDamageList(damage)

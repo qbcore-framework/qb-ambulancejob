@@ -470,7 +470,6 @@ end)
 function GetDamagingWeapon(ped)
     for k, v in pairs(Config.Weapons) do
         if HasPedBeenDamagedByWeapon(ped, k, 0) then
-            ClearEntityLastDamageEntity(ped)
             return v
         end
     end
