@@ -1,6 +1,3 @@
-QBCore = nil
-TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-
 local PlayerInjuries = {}
 local PlayerWeaponWounds = {}
 local bedsTaken = {}
@@ -20,7 +17,7 @@ AddEventHandler('hospital:server:RespawnAtHospital', function()
 		TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
 		TriggerClientEvent('hospital:client:SetBed', -1, k, true)
 		Player.Functions.ClearInventory()
-		QBCore.Functions.ExecuteSql(true, "UPDATE `players` SET `inventory` = '"..QBCore.EscapeSqli(json.encode({})).."' WHERE `citizenid` = '"..Player.PlayerData.citizenid.."'")
+		exports.ghmattimysql:execute('UPDATE players SET inventory=@inventory WHERE citizenid=@citizenid', {['@inventory'] = json.encode({}), ['@citizenid'] = Player.PlayerData.citizenid})
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 		TriggerClientEvent('QBCore:Notify', src, 'All your possessions have been taken..', 'error')
 		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)

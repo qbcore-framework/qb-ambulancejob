@@ -99,7 +99,7 @@ Citizen.CreateThread(function()
                                         local coords = Config.Locations["helicopter"][k]
                                         QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
                                             SetVehicleNumberPlateText(veh, "LIFE"..tostring(math.random(1000, 9999)))
-                                            SetEntityHeading(veh, coords.h)
+                                            SetEntityHeading(veh, coords.w)
                                             exports['LegacyFuel']:SetFuel(veh, 100.0)
                                             closeMenuFull()
                                             TaskWarpPedIntoVehicle(ped, veh, -1)
@@ -130,7 +130,7 @@ Citizen.CreateThread(function()
 
                         local coords = Config.Locations["roof"][currentHospital]
                         SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
-                        SetEntityHeading(ped, coords.h)
+                        SetEntityHeading(ped, coords.w)
 
                         Citizen.Wait(100)
 
@@ -153,7 +153,7 @@ Citizen.CreateThread(function()
 
                         local coords = Config.Locations["main"][currentHospital]
                         SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
-                        SetEntityHeading(ped, coords.h)
+                        SetEntityHeading(ped, coords.w)
 
                         Citizen.Wait(100)
 
@@ -423,7 +423,7 @@ function TakeOutVehicle(vehicleInfo)
     local coords = Config.Locations["vehicle"][currentGarage]
     QBCore.Functions.SpawnVehicle(vehicleInfo[1], function(veh)
         SetVehicleNumberPlateText(veh, "AMBU"..tostring(math.random(1000, 9999)))
-        SetEntityHeading(veh, coords.h)
+        SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         closeMenuFull()
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)

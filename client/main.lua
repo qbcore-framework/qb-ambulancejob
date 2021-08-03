@@ -47,6 +47,8 @@ doctorCount = 0
 PlayerJob = {}
 onDuty = false
 
+injured = {}
+
 BodyParts = {
     ['HEAD'] = { label = 'head', causeLimp = false, isDamaged = false, severity = 0 },
     ['NECK'] = { label = 'neck', causeLimp = false, isDamaged = false, severity = 0 },
@@ -64,16 +66,6 @@ BodyParts = {
     ['RLEG'] = { label = 'right leg', causeLimp = true, isDamaged = false, severity = 0 },
     ['RFOOT'] = { label = 'right foot', causeLimp = true, isDamaged = false, severity = 0 },
 }
-
-injured = {}
-
-QBCore = nil
-Citizen.CreateThread(function() 
-    while QBCore == nil do
-        TriggerEvent("QBCore:GetObject", function(obj) QBCore = obj end)    
-        Citizen.Wait(200)
-    end
-end)
 
 Citizen.CreateThread(function()
     while true do
@@ -168,7 +160,7 @@ Citizen.CreateThread(function()
     SetBlipScale(blip, 0.8)
     SetBlipColour(blip, 25)
     BeginTextCommandSetBlipName("STRING")
-    AddTextComponentString("Doctor's post Paleto")
+    AddTextComponentString("Doctor's Post Paleto")
     EndTextCommandSetBlipName(blip)
 
     local blip = AddBlipForCoord(304.27, -600.33, 43.28)
@@ -224,8 +216,8 @@ Citizen.CreateThread(function()
             end
             
             if closestBed ~= nil and not isInHospitalBed then
-                if #(pos - vector3(Config.Locations["beds"][closestBed].x, Config.Locations["beds"][closestBed].y, Config.Locations["beds"][closestBed].z)) < 1.5 then
-                    QBCore.Functions.DrawText3D(Config.Locations["beds"][closestBed].x, Config.Locations["beds"][closestBed].y, Config.Locations["beds"][closestBed].z + 0.3, "~g~E~w~ - To lie in bed")
+                if #(pos - vector3(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z)) < 1.5 then
+                    QBCore.Functions.DrawText3D(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z + 0.3, "~g~E~w~ - To lie in bed")
                     if IsControlJustReleased(0, 38) then
                         if GetAvailableBed(closestBed) ~= nil then 
                             TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
@@ -307,7 +299,7 @@ AddEventHandler('hospital:client:Revive', function()
     ClearPedBloodDamage(player)
     SetPlayerSprint(PlayerId(), true)
     ResetAll()
-    TriggerServerEvent('qb-hud:Server:RelieveStress', 100)
+    TriggerServerEvent('hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
     
@@ -415,10 +407,16 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     exports.spawnmanager:setAutoSpawn(false)
     local ped = PlayerPedId()
-    SetEntityMaxHealth(ped, 200)
-    SetEntityHealth(ped, 200)
+    local player = PlayerId()
     isLoggedIn = true
     TriggerServerEvent("hospital:server:SetDoctor")
+    Citizen.CreateThread(function()
+        Citizen.Wait(5000)
+        SetEntityMaxHealth(ped, 200)
+        SetEntityHealth(ped, 200)
+        SetPlayerHealthRechargeMultiplier(player, 0.0)
+        SetPlayerHealthRechargeLimit(player, 0.0)
+    end)
     Citizen.CreateThread(function()
         Wait(1000)
         QBCore.Functions.GetPlayerData(function(PlayerData)
@@ -525,7 +523,7 @@ function SetClosestBed()
     local current = nil
     local dist = nil
     for k, v in pairs(Config.Locations["beds"]) do
-        local dist2 = #(pos - vector3(Config.Locations["beds"][k].x, Config.Locations["beds"][k].y, Config.Locations["beds"][k].z))
+        local dist2 = #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z))
         if current ~= nil then
             if dist2 < dist then
                 current = k
@@ -632,10 +630,10 @@ function SetBedCam()
 		NetworkResurrectLocalPlayer(playerPos, true, true, false)
     end
     
-    bedObject = GetClosestObjectOfType(bedOccupyingData.x, bedOccupyingData.y, bedOccupyingData.z, 1.0, bedOccupyingData.model, false, false, false)
+    bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
     FreezeEntityPosition(bedObject, true)
 
-    SetEntityCoords(player, bedOccupyingData.x, bedOccupyingData.y, bedOccupyingData.z + 0.02)
+    SetEntityCoords(player, bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z + 0.02)
     --SetEntityInvincible(PlayerPedId(), true)
     Citizen.Wait(500)
     FreezeEntityPosition(player, true)
@@ -643,7 +641,7 @@ function SetBedCam()
     loadAnimDict(inBedDict)
 
     TaskPlayAnim(player, inBedDict , inBedAnim, 8.0, 1.0, -1, 1, 0, 0, 0, 0 )
-    SetEntityHeading(player, bedOccupyingData.h)
+    SetEntityHeading(player, bedOccupyingData.coords.w)
 
     cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
     SetCamActive(cam, true)
@@ -668,7 +666,7 @@ function LeaveBed()
     
     FreezeEntityPosition(player, false)
     SetEntityInvincible(player, false)
-    SetEntityHeading(player, bedOccupyingData.h + 90)
+    SetEntityHeading(player, bedOccupyingData.coords.w + 90)
     TaskPlayAnim(player, getOutDict , getOutAnim, 100.0, 1.0, -1, 8, -1, 0, 0, 0)
     Citizen.Wait(4000)
     ClearPedTasks(player)
