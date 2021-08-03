@@ -3,8 +3,8 @@ WeaponDamageList = {
 	["WEAPON_ANIMAL"] = "Bite wound of an animal",
 	["WEAPON_COUGAR"] = "Bite wound of an animal",
 	["WEAPON_KNIFE"] = "Stab wound",
-    ["WEAPON_NIGHTSTICK"] = "Bump from a stick or something similar",
-    ["WEAPON_BREAD"] = "Dent in your head from a baguette!",
+	["WEAPON_NIGHTSTICK"] = "Bump from a stick or something similar",
+	["WEAPON_BREAD"] = "Dent in your head from a baguette!",
 	["WEAPON_HAMMER"] = "Bump from a stick or something similar",
 	["WEAPON_BAT"] = "Bump from a stick or something similar",
 	["WEAPON_GOLFCLUB"] = "Bump from a stick or something similar",
@@ -272,6 +272,7 @@ function CheckWeaponDamage(ped)
     if detected then
         TriggerServerEvent("hospital:server:SetWeaponDamage", CurrentDamageList)
     end
+    ClearEntityLastDamageEntity(ped)
 end
 
 function IsInDamageList(damage)
