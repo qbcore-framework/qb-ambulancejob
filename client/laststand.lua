@@ -59,6 +59,7 @@ function SetLaststand(bool, spawn)
                 if LaststandTime - 1 > Laststand.MinimumRevive then
                     LaststandTime = LaststandTime - 1
                     Config.DeathTime = LaststandTime
+                    FreezeEntityPosition(GetPlayerPed(-1),false)
                 elseif LaststandTime - 1 <= Laststand.MinimumRevive and LaststandTime - 1 ~= 0 then
                     LaststandTime = LaststandTime - 1
                     CanBePickuped = true
@@ -66,6 +67,7 @@ function SetLaststand(bool, spawn)
                 elseif LaststandTime - 1 <= 0 then
                     QBCore.Functions.Notify("You have bled out..", "error")
                     SetLaststand(false)
+                    FreezeEntityPosition(GetPlayerPed(-1),false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
                     local killer = GetPedSourceOfDeath(playerPed)
                     
