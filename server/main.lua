@@ -7,6 +7,10 @@ AddEventHandler('hospital:server:SendToBed', function(bedId, isRevive)
 	local src = source
 	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
 	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
+	Player.Functions.RemoveMoney("bank", Config.BillCost, "checkin-at-hospital")
+	--TriggerEvent("qb-bossmenu:server:addAccountMoney", "ambulance", 250)
+    	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+
 end)
 
 RegisterServerEvent('hospital:server:RespawnAtHospital')
