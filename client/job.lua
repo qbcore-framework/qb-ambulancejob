@@ -100,6 +100,7 @@ Citizen.CreateThread(function()
                                         QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
                                             SetVehicleNumberPlateText(veh, "LIFE"..tostring(math.random(1000, 9999)))
                                             SetEntityHeading(veh, coords.w)
+                                            SetVehicleLivery(veh, 1) -- Ambulance Livery
                                             exports['LegacyFuel']:SetFuel(veh, 100.0)
                                             closeMenuFull()
                                             TaskWarpPedIntoVehicle(ped, veh, -1)
