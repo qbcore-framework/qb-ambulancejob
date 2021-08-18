@@ -5,8 +5,11 @@ local bedsTaken = {}
 RegisterServerEvent('hospital:server:SendToBed')
 AddEventHandler('hospital:server:SendToBed', function(bedId, isRevive)
 	local src = source
+	local Player = QBCore.Functions.GetPlayer(source)
 	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
 	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
+	Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
+	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 end)
 
 RegisterServerEvent('hospital:server:RespawnAtHospital')
