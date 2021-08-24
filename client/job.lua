@@ -242,65 +242,6 @@ AddEventHandler('hospital:client:AiCall', function()
     end
 end)
 
-function MakeCall(ped, male, street1, street2)
-    local callAnimDict = "cellphone@"
-    local callAnim = "cellphone_call_listen_base"
-    local rand = (math.random(6,9) / 100) + 0.3
-    local rand2 = (math.random(6,9) / 100) + 0.3
-    local player = PlayerPedId()
-    local coords = GetEntityCoords(player)
-    local pedcoords = GetEntityCoords(ped)
-    local blipsettings = {
-        x = coords.x,
-        y = coords.y,
-        z = coords.z,
-        sprite = 280,
-        color = 4,
-        scale = 0.9,
-        text = "Injured person"
-    }
-
-    if math.random(10) > 5 then
-        rand = 0.0 - rand
-    end
-
-    if math.random(10) > 5 then
-        rand2 = 0.0 - rand2
-    end
-
-    local moveto = GetOffsetFromEntityInWorldCoords(player, rand, rand2, 0.0)
-
-    TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
-    SetPedKeepTask(ped, true) 
-
-    local dist = #(moveto - pedcoords)
-
-    while dist > 3.5 and isDead do
-        TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
-        dist = #(moveto - pedcoords)
-        Citizen.Wait(100)
-    end
-
-    ClearPedTasksImmediately(ped)
-    TaskLookAtEntity(ped, player, 5500.0, 2048, 3)
-    TaskTurnPedToFaceEntity(ped, player, 5500)
-
-    Citizen.Wait(3000)
-
-    --TaskStartScenarioInPlace(ped,"WORLD_HUMAN_STAND_MOBILE", 0, 1)
-    loadAnimDict(callAnimDict)
-    TaskPlayAnim(ped, callAnimDict, callAnim, 1.0, 1.0, -1, 49, 0, 0, 0, 0)
-
-    SetPedKeepTask(ped, true) 
-
-    Citizen.Wait(5000)
-
-    TriggerServerEvent("hospital:server:MakeDeadCall", blipsettings, male, street1, street2)
-
-    SetEntityAsNoLongerNeeded(ped)
-    ClearPedTasks(ped)
-end
-
 RegisterNetEvent('hospital:client:CheckStatus')
 AddEventHandler('hospital:client:CheckStatus', function()
     local player, distance = GetClosestPlayer()
