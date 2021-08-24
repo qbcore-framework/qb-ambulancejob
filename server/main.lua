@@ -144,50 +144,6 @@ AddEventHandler('hospital:server:SendDoctorAlert', function()
 	end
 end)
 
-RegisterServerEvent('hospital:server:MakeDeadCall')
-AddEventHandler('hospital:server:MakeDeadCall', function(blipSettings, gender, street1, street2)
-	local src = source
-	local genderstr = "Man"
-
-	if gender == 1 then genderstr = "Woman" end
-
-	if street2 ~= nil then
-		TriggerClientEvent("112:client:SendAlert", -1, "A ".. genderstr .." is injured at " ..street1 .. " "..street2, blipSettings)
-		TriggerClientEvent('qb-policealerts:client:AddPoliceAlert', -1, {
-            timeOut = 5000,
-            alertTitle = "Injured person",
-            details = {
-                [1] = {
-                    icon = '<i class="fas fa-venus-mars"></i>',
-                    detail = genderstr,
-                },
-                [2] = {
-                    icon = '<i class="fas fa-globe-europe"></i>',
-                    detail = street1.. ' '..street2,
-                },
-            },
-            callSign = nil,
-        }, true)
-	else
-		TriggerClientEvent("112:client:SendAlert", -1, "A ".. genderstr .." is injured at "..street1, blipSettings)
-		TriggerClientEvent('qb-policealerts:client:AddPoliceAlert', -1, {
-            timeOut = 5000,
-            alertTitle = "Injured person",
-            details = {
-                [1] = {
-                    icon = '<i class="fas fa-venus-mars"></i>',
-                    detail = genderstr,
-                },
-                [2] = {
-                    icon = '<i class="fas fa-globe-europe"></i>',
-                    detail = street1,
-                },
-            },
-            callSign = nil,
-        }, true)
-	end
-end)
-
 QBCore.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
 	local amount = 0
 	for k, v in pairs(QBCore.Functions.GetPlayers()) do
