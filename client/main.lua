@@ -68,6 +68,19 @@ BodyParts = {
 }
 
 Citizen.CreateThread(function()
+    for k, station in pairs(Config.Locations["stations"]) do
+        local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
+        SetBlipSprite(blip, 61)
+        SetBlipAsShortRange(blip, true)
+        SetBlipScale(blip, 0.8)
+        SetBlipColour(blip, 25)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(station.label)
+        EndTextCommandSetBlipName(blip)
+    end
+end)
+
+Citizen.CreateThread(function()
     while true do
         local ped = PlayerPedId()
         local health = GetEntityHealth(ped)
@@ -154,24 +167,6 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-    local blip = AddBlipForCoord(-254.88, 6324.5, 32.58)
-    SetBlipSprite(blip, 61)
-    SetBlipAsShortRange(blip, true)
-    SetBlipScale(blip, 0.8)
-    SetBlipColour(blip, 25)
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentString("Doctor's Post Paleto")
-    EndTextCommandSetBlipName(blip)
-
-    local blip = AddBlipForCoord(304.27, -600.33, 43.28)
-    SetBlipSprite(blip, 61)
-    SetBlipAsShortRange(blip, true)
-    SetBlipScale(blip, 0.8)
-    SetBlipColour(blip, 25)
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentString("Pillbox Hospital")
-    EndTextCommandSetBlipName(blip)
-
     while true do
         Citizen.Wait(1)
         if QBCore ~= nil then
