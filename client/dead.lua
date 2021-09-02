@@ -8,7 +8,7 @@ deathTime = 0
 
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(0)
+		Citizen.Wait(10)
 		local player = PlayerId()
 		if NetworkIsPlayerActive(player) then
             local playerPed = PlayerPedId()
@@ -38,8 +38,9 @@ end)
 
 Citizen.CreateThread(function()
 	while true do
-        Citizen.Wait(0)
+        sleep = 1000
 		if isDead or InLaststand then
+            sleep = 10
             local ped = PlayerPedId()
             DisableAllControlActions(0)
             EnableControlAction(0, 1, true)
@@ -93,7 +94,7 @@ Citizen.CreateThread(function()
                 EnableControlAction(0, 322, true)
                 EnableControlAction(0, 288, true)
                 EnableControlAction(0, 213, true)
-		EnableControlAction(0, 249, true)
+		        EnableControlAction(0, 249, true)
                 EnableControlAction(0, 46, true)
 
                 if LaststandTime > Laststand.MinimumRevive then
@@ -128,9 +129,8 @@ Citizen.CreateThread(function()
                     end
                 end
             end
-		else
-			Citizen.Wait(500)
 		end
+        Wait(sleep)
 	end
 end)
 

@@ -168,15 +168,16 @@ end)
 
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(1)
+        sleep = 1000
         if QBCore ~= nil then
             local pos = GetEntityCoords(PlayerPedId())
 
             if #(pos - vector3(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z)) < 1.5 then
+                sleep = 7
                 if doctorCount >= Config.MinimalDoctors then
-                    QBCore.Functions.DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "~g~E~w~ - Call doctor")
+                    DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "~g~E~w~ - Call doctor")
                 else
-                    QBCore.Functions.DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "~g~E~w~ - Check in")
+                    DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "~g~E~w~ - Check in")
                 end
                 if IsControlJustReleased(0, 38) then
                     if doctorCount >= Config.MinimalDoctors then
@@ -203,16 +204,18 @@ Citizen.CreateThread(function()
                     end
                 end
             elseif #(pos - vector3(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z)) < 4.5 then
+                sleep = 7
                 if doctorCount >= Config.MinimalDoctors then
-                    QBCore.Functions.DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "Call")
+                    DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "Call")
                 else
-                    QBCore.Functions.DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "Check in")
+                    DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "Check in")
                 end
             end
             
             if closestBed ~= nil and not isInHospitalBed then
                 if #(pos - vector3(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z)) < 1.5 then
-                    QBCore.Functions.DrawText3D(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z + 0.3, "~g~E~w~ - To lie in bed")
+                    sleep = 7
+                    DrawText3D(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z + 0.3, "~g~E~w~ - To lie in bed")
                     if IsControlJustReleased(0, 38) then
                         if GetAvailableBed(closestBed) ~= nil then 
                             TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
@@ -222,9 +225,8 @@ Citizen.CreateThread(function()
                     end
                 end
             end
-        else
-            Citizen.Wait(1000)
         end
+        Wait(sleep)
     end
 end)
 
@@ -250,7 +252,7 @@ Citizen.CreateThread(function()
         if QBCore ~= nil then
             if isInHospitalBed and canLeaveBed then
                 local pos = GetEntityCoords(PlayerPedId())
-                QBCore.Functions.DrawText3D(pos.x, pos.y, pos.z, "~g~E~w~ - To get out of bed..")
+                DrawText3D(pos.x, pos.y, pos.z, "~g~E~w~ - To get out of bed..")
                 if IsControlJustReleased(0, 38) then
                     LeaveBed()
                 end
