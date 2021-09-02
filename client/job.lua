@@ -268,10 +268,10 @@ function MakeCall(ped, male, street1, street2)
     local moveto = GetOffsetFromEntityInWorldCoords(player, rand, rand2, 0.0)
     TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
     SetPedKeepTask(ped, true) 
-    local dist = #(moveto.xy - pedcoords.xy)
+    local dist = #(moveto - GetEntityCoords(ped))
     while dist > 3.5 and isDead do
         TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
-        dist = #(moveto.xy - pedcoords.xy)
+        dist = #(moveto - GetEntityCoords(ped))
         Citizen.Wait(100)
     end
     ClearPedTasksImmediately(ped)
