@@ -40,7 +40,7 @@ Citizen.CreateThread(function()
 	while true do
         sleep = 1000
 		if isDead or InLaststand then
-            sleep = 10
+            sleep = 7
             local ped = PlayerPedId()
             DisableAllControlActions(0)
             EnableControlAction(0, 1, true)
@@ -84,6 +84,7 @@ Citizen.CreateThread(function()
 
                 SetCurrentPedWeapon(ped, GetHashKey("WEAPON_UNARMED"), true)
             elseif InLaststand then
+                sleep = 7
                 local ped = PlayerPedId()
                 DisableAllControlActions(0)
                 EnableControlAction(0, 1, true)
