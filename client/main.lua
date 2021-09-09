@@ -6,48 +6,36 @@ inBedAnim = "dead_idle"
 getOutDict = 'switch@franklin@bed'
 getOutAnim = 'sleep_getup_rubeyes'
 
-isLoggedIn = false
-
-isInHospitalBed = false
-canLeaveBed = true
-
-bedOccupying = nil
-bedObject = nil
-bedOccupyingData = nil
-currentTp = nil
-usedHiddenRev = false
-
-isBleeding = 0
-bleedTickTimer, advanceBleedTimer = 0, 0
-fadeOutTimer, blackoutTimer = 0, 0
-
-legCount = 0
-armcount = 0
-headCount = 0
-
-playerHealth = nil
-playerArmour = nil
-
-isDead = false
-
-closestBed = nil
-
-isStatusChecking = false
-statusChecks = {}
-statusCheckPed = nil
-statusCheckTime = 0
-
-isHealingPerson = false
-healAnimDict = "mini@cpr@char_a@cpr_str"
-healAnim = "cpr_pumpchest"
-
-doctorsSet = false
-doctorCount = 0
-
-PlayerJob = {}
-onDuty = false
-
-injured = {}
+local isLoggedIn = false
+local isInHospitalBed = false
+local canLeaveBed = true
+local bedOccupying = nil
+local bedObject = nil
+local bedOccupyingData = nil
+local currentTp = nil
+local usedHiddenRev = false
+local isBleeding = 0
+local bleedTickTimer, advanceBleedTimer = 0, 0
+local fadeOutTimer, blackoutTimer = 0, 0
+local legCount = 0
+local armcount = 0
+local headCount = 0
+local playerHealth = nil
+local playerArmour = nil
+local isDead = false
+local closestBed = nil
+local isStatusChecking = false
+local statusChecks = {}
+local statusCheckPed = nil
+local statusCheckTime = 0
+local isHealingPerson = false
+local healAnimDict = "mini@cpr@char_a@cpr_str"
+local healAnim = "cpr_pumpchest"
+local doctorsSet = false
+local doctorCount = 0
+local PlayerJob = {}
+local onDuty = false
+local injured = {}
 
 BodyParts = {
     ['HEAD'] = { label = 'head', causeLimp = false, isDamaged = false, severity = 0 },
