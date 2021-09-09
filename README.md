@@ -68,55 +68,58 @@ Config = {} -- Don't touch
 Config.MinimalDoctors = 2 -- Minimum doctors needed for AI doctor functions to be disabled
 
 Config.Locations = {
-    ["checking"] = {x = 309.08, y = -592.91, z = 43.28, h = 0.0}, -- Check in marker
+    ["checking"] = vector4(308.19, -595.35, 43.29, 0.0), -- Check in marker
     ["duty"] = {
-        [1] = {x = 304.27, y = -600.33, z = 43.28, h = 0.0}, -- On Duty/Off Duty marker
-        [2] = {x = -254.88, y = 6324.5, z = 32.58, h = 0.0},
+        [1] = vector4(311.18, -599.25, 43.29, 0.0), -- On Duty/Off Duty marker
+        [2] = vector4(-254.88, 6324.5, 32.58, 0.0),
     },    
     ["vehicle"] = {
-        [1] = {x = 294.578, y = -574.761, z = 43.179, h = 35.792}, -- Job vehicles marker
-        [2] = {x = -234.28, y = 6329.16, z = 32.15, h = 222.5},
+        [1] = vector4(294.578, -574.761, 43.179, 35.792), -- Job vehicles marker
+        [2] = vector4(-234.28, 6329.16, 32.15, 222.5),
     },
     ["helicopter"] = {
-        [1] = {x = 351.58, y = -587.45, z = 74.16, h = 160.5}, -- Helicopter spawner marker
-        [2] = {x = -475.43, y = 5988.353, z = 31.716, h = 31.34},
+        [1] = vector4(351.58, -587.45, 74.16, 160.5), -- Helicopter spawner marker
+        [2] = vector4(-475.43, 5988.353, 31.716, 31.34),
     },    
     ["armory"] = {
-        [1] = {x = 306.26, y = -601.7, z = 43.28, h = 90.654}, -- Armory location
-        [2] = {x = -245.13, y = 6315.71, z = 32.82, h = 90.654},
+        [1] = vector4(309.93, -602.94, 43.29, 90.654), -- Armory location
+        [2] = vector4(-245.13, 6315.71, 32.82, 90.654),
     },
     ["roof"] = {
-        [1] = {x = 338.5, y = -583.85, z = 74.16, h = 245.5}, -- Roof coordinates
+        [1] = vector4(338.5, -583.85, 74.16, 245.5), -- Roof coordinates
     },
     ["main"] = {
-        [1] = {x = 332.51, y = -595.74, z = 43.28, h = 76.0}, -- Elevator coordinates
+        [1] = vector4(298.44, -599.7, 43.29, 76.0), -- Elevator coordinates
     },        
     ["beds"] = { -- Beds for wounded players
-        [1] = {x = 311.13, y = -582.89, z = 43.53, h = 335.65, taken = false, model = 1631638868},
-        [2] = {x = 313.96, y = -579.05, z = 43.53, h = 164.5, taken = false, model = 1631638868},
-        [3] = {x = 314.58, y = -584.09, z = 43.53, h = 335.65, taken = false, model = 1631638868},
-        [4] = {x = 317.74, y = -585.29, z = 43.53, h = 335.65, taken = false, model = 1631638868},
-        [5] = {x = 319.47, y = -581.04, z = 43.53, h = 164.5, taken = false, model = 1631638868}, 
-        [6] = {x = 366.43, y = -581.54, z = 43.28, h = 66.5, taken = false, model = 1631638868}, 
-        [7] = {x = 364.93, y = -585.86, z = 43.28, h = 67.5, taken = false, model = 1631638868}, 
-        [8] = {x = 363.82, y = -589.09, z = 43.28, h = 68.5, taken = false, model = 1631638868},
+        [1] = {coords = vector4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868},
+        [2] = {coords = vector4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868},
+        [3] = {coords = vector4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672},
+        [4] = {coords = vector4(350.79, -591.8, 43.1, 336.32), taken = false, model = 2117668672},
+        [5] = {coords = vector4(346.99, -590.48, 43.1, 336.32), taken = false, model = 2117668672}, 
+        [6] = {coords = vector4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327},
+        [7] = {coords = vector4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327}, 
+        [8] = {coords = vector4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327},
+    }, 
+    ["stations"] = { -- Blips
+        [1] = {label = "Doctor's Post Paleto", coords = vector4(-254.88, 6324.5, 32.58, 3.5)},
+        [2] = {label = "Pillbox Hospital", coords = vector4(304.27, -600.33, 43.28, 272.249)}
     }
 }
 
 Config.Vehicles = { -- Allowed vehicles for EMS
-    ["asprinter"] = "Mercedes-Benz Sprinter",
-    ["aeklasse"] = "Mercedes-Benz E-Klasse",
+    ["ambulance"] = "Ambulance",
 }
 
 Config.Whitelist = { -- Armory whitelist
     "GAA35566",
 }
 
-Config.Helicopter = "alifeliner" -- Allowed helicopters
+Config.Helicopter = "polmav" -- Allowed helicopters
 
 Config.Items = { -- Armory items
     label = "Hospital safe", -- Armory label
-    slots = 30, 
+    slots = 30,
     items = {
         [1] = {
             name = "radio", -- Item name
@@ -143,7 +146,7 @@ Config.Items = { -- Armory items
             slot = 3,
         },
         [4] = {
-            name = "weapon_flashlight",
+            name = "firstaid",
             price = 0,
             amount = 50,
             info = {},
@@ -151,12 +154,20 @@ Config.Items = { -- Armory items
             slot = 4,
         },
         [5] = {
-            name = "weapon_fireextinguisher",
+            name = "weapon_flashlight",
             price = 0,
             amount = 50,
             info = {},
             type = "item",
             slot = 5,
+        },
+        [6] = {
+            name = "weapon_fireextinguisher",
+            price = 0,
+            amount = 50,
+            info = {},
+            type = "item",
+            slot = 6,
         },
     }
 }
