@@ -20,8 +20,10 @@ AddEventHandler('hospital:server:RespawnAtHospital', function()
 	for k, v in pairs(Config.Locations["beds"]) do
 		TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
 		TriggerClientEvent('hospital:client:SetBed', -1, k, true)
-		Player.Functions.ClearInventory()
-		exports.oxmysql:execute('UPDATE players SET inventory=@inventory WHERE citizenid=@citizenid', {['@inventory'] = json.encode({}), ['@citizenid'] = Player.PlayerData.citizenid})
+		if Config.WipeInventoryOnRespawn then
+			Player.Functions.ClearInventory()
+			exports.oxmysql:execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
+		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 		TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
 		TriggerClientEvent('QBCore:Notify', src, 'All your possessions have been taken..', 'error')
