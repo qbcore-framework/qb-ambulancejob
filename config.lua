@@ -1,6 +1,7 @@
 Config = {}
 
 Config.MinimalDoctors = 2
+Config.WipeInventoryOnRespawn = true
 
 Config.Locations = {
     ["checking"] = vector4(308.19, -595.35, 43.29, 0.0),
