@@ -264,7 +264,7 @@ function CheckWeaponDamage(ped)
         if HasPedBeenDamagedByWeapon(ped, GetHashKey(k), 0) then
             detected = true
             if not IsInDamageList(k) then
-                TriggerEvent("chatMessage", "STATUS", "error", v)
+		QBCore.Functions.Notify(v, "error")
                 table.insert(CurrentDamageList, k)
             end
 	end
