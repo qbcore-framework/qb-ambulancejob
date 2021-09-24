@@ -3,6 +3,14 @@ local PlayerWeaponWounds = {}
 local QBCore = exports['qb-core']:GetCoreObject()
 -- Events
 
+-- Compatibility with txAdmin Menu's heal options.
+-- This is a admin only server side event that will pass the target player id.
+-- (This can also contain -1)
+AddEventHandler('txAdmin:healedPlayer', function(targetId)
+	TriggerClientEvent('hospital:client:Revive', targetId)
+	TriggerClientEvent("hospital:client:HealInjuries", targetId, "full")
+end)
+
 RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
