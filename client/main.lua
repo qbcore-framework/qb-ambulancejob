@@ -10,7 +10,6 @@ local CurrentDamageList = {}
 inBedDict = "misslamar1dead_body"
 inBedAnim = "dead_idle"
 QBCore = exports['qb-core']:GetCoreObject()
-isLoggedIn = LocalPlayer.state['isLoggedIn']
 isInHospitalBed = false
 isBleeding = 0
 bleedTickTimer, advanceBleedTimer = 0, 0
@@ -849,7 +848,7 @@ end)
 CreateThread(function()
     while true do
         sleep = 1000
-        if isLoggedIn then
+        if LocalPlayer.state['isLoggedIn'] then
             local pos = GetEntityCoords(PlayerPedId())
 
             if #(pos - Config.Locations["checking"]) < 1.5 then
