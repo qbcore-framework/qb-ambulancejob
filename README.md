@@ -129,10 +129,6 @@ Config.Vehicles = { -- Allowed vehicles for EMS
     ["ambulance"] = "Ambulance",
 }
 
-Config.Whitelist = { -- Armory whitelist
-    "GAA35566",
-}
-
 Config.Helicopter = "polmav" -- Allowed helicopters
 
 Config.Items = { -- Armory items

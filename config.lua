@@ -4,11 +4,11 @@ Config.MinimalDoctors = 2
 Config.WipeInventoryOnRespawn = true
 
 Config.Locations = {
-    ["checking"] = vector4(308.19, -595.35, 43.29, 0.0),
+    ["checking"] = vector3(308.19, -595.35, 43.29),
     ["duty"] = {
-        [1] = vector4(311.18, -599.25, 43.29, 0.0),
-        [2] = vector4(-254.88, 6324.5, 32.58, 0.0),
-    },    
+        [1] = vector3(311.18, -599.25, 43.29),
+        [2] = vector3(-254.88, 6324.5, 32.58),
+    },
     ["vehicle"] = {
         [1] = vector4(294.578, -574.761, 43.179, 35.792),
         [2] = vector4(-234.28, 6329.16, 32.15, 222.5),
@@ -16,17 +16,17 @@ Config.Locations = {
     ["helicopter"] = {
         [1] = vector4(351.58, -587.45, 74.16, 160.5),
         [2] = vector4(-475.43, 5988.353, 31.716, 31.34),
-    },    
+    },
     ["armory"] = {
-        [1] = vector4(309.93, -602.94, 43.29, 90.654),
-        [2] = vector4(-245.13, 6315.71, 32.82, 90.654),
+        [1] = vector3(309.93, -602.94, 43.29),
+        [2] = vector3(-245.13, 6315.71, 32.82),
     },
     ["roof"] = {
         [1] = vector4(338.5, -583.85, 74.16, 245.5),
     },
     ["main"] = {
-        [1] = vector4(298.44, -599.7, 43.29, 76.0),
-    },        
+        [1] = vector3(298.44, -599.7, 43.29),
+    },
     ["beds"] = {
         [1] = {coords = vector4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868},
         [2] = {coords = vector4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868},
@@ -36,19 +36,14 @@ Config.Locations = {
         [6] = {coords = vector4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327},
         [7] = {coords = vector4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327}, 
         [8] = {coords = vector4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327},
-    }, 
+    },
     ["stations"] = {
-        [1] = {label = "Doctor's Post Paleto", coords = vector4(-254.88, 6324.5, 32.58, 3.5)},
-        [2] = {label = "Pillbox Hospital", coords = vector4(304.27, -600.33, 43.28, 272.249)}
+        [1] = {label = "Pillbox Hospital", coords = vector4(304.27, -600.33, 43.28, 272.249)}
     }
 }
 
 Config.Vehicles = {
     ["ambulance"] = "Ambulance",
-}
-
-Config.Whitelist = {
-    "GAA35566",
 }
 
 Config.Helicopter = "polmav"
@@ -365,7 +360,7 @@ Config.BoneIndexes = {
     ['NONE'] = 0,
     ['HEAD'] = 31085,
     ['HEAD'] = 31086,
-    ['NECK'] = 39317, 
+    ['NECK'] = 39317,
     ['SPINE'] = 57597,
     ['SPINE'] = 23553,
     ['SPINE'] = 24816,
@@ -483,7 +478,7 @@ Config.Weapons = {
     [`WEAPON_ANIMAL`] = Config.WeaponClasses['WILDLIFE'], -- Animal
     [`WEAPON_COUGAR`] = Config.WeaponClasses['WILDLIFE'], -- Cougar
     [`WEAPON_BARBED_WIRE`] = Config.WeaponClasses['WILDLIFE'], -- Barbed Wire
-    
+
     --[[ Cutting Weapons ]]--
     [`WEAPON_BATTLEAXE`] = Config.WeaponClasses['CUTTING'],
     [`WEAPON_BOTTLE`] = Config.WeaponClasses['CUTTING'],
@@ -495,7 +490,7 @@ Config.Weapons = {
 
     --[[ Light Impact ]]--
     [`WEAPON_KNUCKLE`] = Config.WeaponClasses['LIGHT_IMPACT'],
-    
+
     --[[ Heavy Impact ]]--
     [`WEAPON_BAT`] = Config.WeaponClasses['HEAVY_IMPACT'],
     [`WEAPON_CROWBAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
@@ -508,7 +503,7 @@ Config.Weapons = {
     [`WEAPON_WRENCH`] = Config.WeaponClasses['HEAVY_IMPACT'],
     [`WEAPON_RAMMED_BY_CAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
     [`WEAPON_RUN_OVER_BY_CAR`] = Config.WeaponClasses['HEAVY_IMPACT'],
-    
+
     --[[ Explosives ]]--
     [`WEAPON_EXPLOSION`] = Config.WeaponClasses['EXPLOSIVE'],
     [`WEAPON_GRENADE`] = Config.WeaponClasses['EXPLOSIVE'],
@@ -519,11 +514,11 @@ Config.Weapons = {
     [`WEAPON_RPG`] = Config.WeaponClasses['EXPLOSIVE'],
     [`WEAPON_STICKYBOMB`] = Config.WeaponClasses['EXPLOSIVE'],
     [`WEAPON_HELI_CRASH`] = Config.WeaponClasses['EXPLOSIVE'],
-    
+
     --[[ Other ]]--
     [`WEAPON_FALL`] = Config.WeaponClasses['OTHER'], -- Fall
     [`WEAPON_HIT_BY_WATER_CANNON`] = Config.WeaponClasses['OTHER'], -- Water Cannon
-    
+
     --[[ Fire ]]--
     [`WEAPON_ELECTRIC_FENCE`] = Config.WeaponClasses['FIRE'],
     [`WEAPON_FIRE`] = Config.WeaponClasses['FIRE'],

@@ -1,30 +1,43 @@
--- Config
-
 Laststand = Laststand or {}
 Laststand.ReviveInterval = 360
 Laststand.MinimumRevive = 300
-
--- Code
-
 InLaststand = false
-CanBePickuped = false
 LaststandTime = 0
-
 lastStandDict = "combat@damage@writhe"
 lastStandAnim = "writhe_loop"
-
 isEscorted = false
-isEscorting = false
+local isEscorting = false
+local CanBePickuped = false
 
-RegisterNetEvent('hospital:client:SetEscortingState')
-AddEventHandler('hospital:client:SetEscortingState', function(bool)
-    isEscorting = bool
-end)
+-- Functions
 
-RegisterNetEvent('hospital:client:isEscorted')
-AddEventHandler('hospital:client:isEscorted', function(bool)
-    isEscorted = bool
-end)
+local function GetClosestPlayer()
+    local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
+    local closestDistance = -1
+    local closestPlayer = -1
+    local coords = GetEntityCoords(PlayerPedId())
+
+    for i=1, #closestPlayers, 1 do
+        if closestPlayers[i] ~= PlayerId() then
+            local pos = GetEntityCoords(GetPlayerPed(closestPlayers[i]))
+            local distance = #(pos - coords)
+
+            if closestDistance == -1 or closestDistance > distance then
+                closestPlayer = closestPlayers[i]
+                closestDistance = distance
+            end
+        end
+	end
+
+	return closestPlayer, closestDistance
+end
+
+local function LoadAnimation(dict)
+    while not HasAnimDictLoaded(dict) do
+        RequestAnimDict(dict)
+        Wait(100)
+    end
+end
 
 function SetLaststand(bool, spawn)
     local ped = PlayerPedId()
@@ -34,7 +47,7 @@ function SetLaststand(bool, spawn)
         local heading = GetEntityHeading(ped)
 
         while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do
-            Citizen.Wait(10)
+            Wait(10)
         end
 
         TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
@@ -54,7 +67,7 @@ function SetLaststand(bool, spawn)
 
         InLaststand = true
 
-        Citizen.CreateThread(function()
+        CreateThread(function()
             while InLaststand do
                 if LaststandTime - 1 > Laststand.MinimumRevive then
                     LaststandTime = LaststandTime - 1
@@ -68,21 +81,21 @@ function SetLaststand(bool, spawn)
                     SetLaststand(false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
                     local killer = GetPedSourceOfDeath(playerPed)
-                    
+
                     if killer_2 ~= 0 and killer_2 ~= -1 then
                         killer = killer_2
                     end
-    
+
                     local killerId = NetworkGetPlayerIndexFromPed(killer)
                     local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or "Himself or a NPC"
-                    local weaponLabel = QBCore.Shared.Weapons[killerWeapon] ~= nil and QBCore.Shared.Weapons[killerWeapon]["label"] or "Unknown"
-                    local weaponName = QBCore.Shared.Weapons[killerWeapon] ~= nil and QBCore.Shared.Weapons[killerWeapon]["name"] or "Unknown_Weapon"
+                    local weaponLabel = QBCore.Shared.Weapons?[killerWeapon]?["label"] or "Unknown"
+                    local weaponName = QBCore.Shared.Weapons?[killerWeapon]?["name"] or "Unknown_Weapon"
                     TriggerServerEvent("qb-log:server:CreateLog", "death", GetPlayerName(player) .. " ("..GetPlayerServerId(player)..") is dead", "red", "**".. killerName .. "** has killed  ".. GetPlayerName(player) .." with a **".. weaponLabel .. "** (" .. weaponName .. ")")
                     deathTime = 0
                     OnDeath()
                     DeathTimer()
                 end
-                Citizen.Wait(1000)
+                Wait(1000)
             end
         end)
     else
@@ -94,15 +107,17 @@ function SetLaststand(bool, spawn)
     TriggerServerEvent("hospital:server:SetLaststandStatus", bool)
 end
 
-function LoadAnimation(dict)
-    while not HasAnimDictLoaded(dict) do
-        RequestAnimDict(dict)
-        Citizen.Wait(100)
-    end
-end
+-- Events
 
-RegisterNetEvent('hospital:client:UseFirstAid')
-AddEventHandler('hospital:client:UseFirstAid', function()
+RegisterNetEvent('hospital:client:SetEscortingState', function(bool)
+    isEscorting = bool
+end)
+
+RegisterNetEvent('hospital:client:isEscorted', function(bool)
+    isEscorted = bool
+end)
+
+RegisterNetEvent('hospital:client:UseFirstAid', function()
     if not isEscorting then
         local player, distance = GetClosestPlayer()
         if player ~= -1 and distance < 1.5 then
@@ -114,8 +129,7 @@ AddEventHandler('hospital:client:UseFirstAid', function()
     end
 end)
 
-RegisterNetEvent('hospital:client:CanHelp')
-AddEventHandler('hospital:client:CanHelp', function(helperId)
+RegisterNetEvent('hospital:client:CanHelp', function(helperId)
     if InLaststand then
         if LaststandTime <= 300 then
             TriggerServerEvent('hospital:server:CanHelp', helperId, true)
@@ -127,8 +141,7 @@ AddEventHandler('hospital:client:CanHelp', function(helperId)
     end
 end)
 
-RegisterNetEvent('hospital:client:HelpPerson')
-AddEventHandler('hospital:client:HelpPerson', function(targetId)
+RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = PlayerPedId()
     isHealingPerson = true
     QBCore.Functions.Progressbar("hospital_revive", "Reviving person..", math.random(30000, 60000), false, true, {
