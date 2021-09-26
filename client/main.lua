@@ -849,7 +849,7 @@ end)
 CreateThread(function()
     while true do
         sleep = 1000
-        if isLoggedIn then
+        if LocalPlayer.state['isLoggedIn'] then
             local pos = GetEntityCoords(PlayerPedId())
 
             if #(pos - Config.Locations["checking"]) < 1.5 then
