@@ -10,7 +10,6 @@ local CurrentDamageList = {}
 inBedDict = "misslamar1dead_body"
 inBedAnim = "dead_idle"
 QBCore = exports['qb-core']:GetCoreObject()
-isLoggedIn = LocalPlayer.state['isLoggedIn']
 isInHospitalBed = false
 isBleeding = 0
 bleedTickTimer, advanceBleedTimer = 0, 0
