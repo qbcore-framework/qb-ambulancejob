@@ -12,7 +12,7 @@ local function loadAnimDict(dict)
     end
 end
 
-local function OnDeath(spawn)
+function OnDeath(spawn)
     if not isDead then
         isDead = true
         TriggerServerEvent("hospital:server:SetDeathStatus", true)
@@ -43,7 +43,7 @@ local function OnDeath(spawn)
     end
 end
 
-local function DeathTimer()
+function DeathTimer()
     hold = 5
     while isDead do
         Wait(1000)
