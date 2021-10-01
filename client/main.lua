@@ -851,7 +851,7 @@ CreateThread(function()
         if LocalPlayer.state['isLoggedIn'] then
             local pos = GetEntityCoords(PlayerPedId())
 
-            if #(pos - Config.Locations["checking"]) < 1.5 then
+            if #(pos - vector3(Config.Locations["checking"])) < 1.5 then
                 sleep = 7
                 if doctorCount >= Config.MinimalDoctors then
                     DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "~g~E~w~ - Call doctor")
@@ -882,7 +882,7 @@ CreateThread(function()
                         end)
                     end
                 end
-            elseif #(pos - Config.Locations["checking"]) < 4.5 then
+            elseif #(pos - vector3(Config.Locations["checking"])) < 4.5 then
                 sleep = 7
                 if doctorCount >= Config.MinimalDoctors then
                     DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "Call")
