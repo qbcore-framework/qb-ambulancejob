@@ -22,10 +22,10 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 		if Config.WipeInventoryOnRespawn then
 			Player.Functions.ClearInventory()
 			exports.oxmysql:execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
+			TriggerClientEvent('QBCore:Notify', src, 'All your possessions have been taken..', 'error')
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
 		TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
-		TriggerClientEvent('QBCore:Notify', src, 'All your possessions have been taken..', 'error')
 		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 		return
 	end
