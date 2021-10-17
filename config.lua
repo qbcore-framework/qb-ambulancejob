@@ -42,8 +42,28 @@ Config.Locations = {
     }
 }
 
-Config.Vehicles = {
-    ["ambulance"] = "Ambulance",
+Config.AuthorizedVehicles = {
+	-- Grade 0
+	[0] = {
+		["ambulance"] = "Ambulance",
+	},
+	-- Grade 1
+	[1] = {
+		["ambulance"] = "Ambulance",
+
+	},
+	-- Grade 2
+	[2] = {
+		["ambulance"] = "Ambulance",
+	},
+	-- Grade 3
+	[3] = {
+		["ambulance"] = "Ambulance",
+	},
+	-- Grade 4
+	[4] = {
+		["ambulance"] = "Ambulance",
+	}
 }
 
 Config.Helicopter = "polmav"
