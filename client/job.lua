@@ -122,7 +122,7 @@ function closeMenuFull()
     ClearMenu()
 end
 
-local function MenuGarage(isDown)
+function MenuGarage(isDown)
     MenuTitle = "Garage"
     ClearMenu()
     Menu.addButton("My vehicles", "VehicleList", isDown)
