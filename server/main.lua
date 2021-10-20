@@ -31,6 +31,18 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 	end
 end)
 
+RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
+    local src = source
+    local ped = GetPlayerPed(src)
+    local coords = GetEntityCoords(ped)
+    local players = QBCore.Functions.GetQBPlayers()
+    for k,v in pairs(players) do
+        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+            TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
+        end
+    end
+end)
+
 RegisterNetEvent('hospital:server:LeaveBed', function(id)
     TriggerClientEvent('hospital:client:SetBed', -1, id, false)
 end)
@@ -334,6 +346,20 @@ QBCore.Commands.Add("kill", "Kill A Player or Yourself (Admin Only)", {{name="id
 		TriggerClientEvent('hospital:client:KillPlayer', src)
 	end
 end, "admin")
+
+QBCore.Commands.Add('aheal', 'Heal A Player or Yourself (Admin Only)', {{name='id', help='Player ID (may be empty)'}}, false, function(source, args)
+	local src = source
+	if args[1] then
+		local Player = QBCore.Functions.GetPlayer(tonumber(args[1]))
+		if Player then
+			TriggerClientEvent('hospital:client:adminHeal', Player.PlayerData.source)
+		else
+			TriggerClientEvent('QBCore:Notify', src, "Player Not Online", "error")
+		end
+	else
+		TriggerClientEvent('hospital:client:adminHeal', src)
+	end
+end, 'admin')
 
 -- Items
 
