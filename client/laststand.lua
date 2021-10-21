@@ -104,6 +104,7 @@ function SetLaststand(bool, spawn)
         CanBePickuped = false
         LaststandTime = 0
     end
+    TriggerServerEvent('hospital:server:ambulanceAlert', 'Civilian Down')
     TriggerServerEvent("hospital:server:SetLaststandStatus", bool)
 end
 

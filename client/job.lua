@@ -47,51 +47,6 @@ local function DrawText3D(x, y, z, text)
     ClearDrawOrigin()
 end
 
-local function MakeCall(ped, male, street1, street2)
-    local callAnimDict = "cellphone@"
-    local callAnim = "cellphone_call_listen_base"
-    local rand = (math.random(6,9) / 100) + 0.3
-    local rand2 = (math.random(6,9) / 100) + 0.3
-    local player = PlayerPedId()
-    local coords = GetEntityCoords(player)
-    local pedcoords = GetEntityCoords(ped)
-    local blipsettings = {
-        x = coords.x,
-        y = coords.y,
-        z = coords.z,
-        sprite = 280,
-        color = 4,
-        scale = 0.9,
-        text = "Injured Person"
-    }
-    if math.random(10) > 5 then
-        rand = 0.0 - rand
-    end
-    if math.random(10) > 5 then
-        rand2 = 0.0 - rand2
-    end
-    local moveto = GetOffsetFromEntityInWorldCoords(player, rand, rand2, 0.0)
-    TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
-    SetPedKeepTask(ped, true) 
-    local dist = #(moveto - GetEntityCoords(ped))
-    while dist > 3.5 and isDead do
-        TaskGoStraightToCoord(ped, moveto, 2.5, -1, 0.0, 0.0)
-        dist = #(moveto - GetEntityCoords(ped))
-        Wait(100)
-    end
-    ClearPedTasksImmediately(ped)
-    TaskLookAtEntity(ped, player, 5500.0, 2048, 3)
-    TaskTurnPedToFaceEntity(ped, player, 5500)
-    Wait(3000)
-    loadAnimDict(callAnimDict)
-    TaskPlayAnim(ped, callAnimDict, callAnim, 1.0, 1.0, -1, 49, 0, 0, 0, 0)
-    SetPedKeepTask(ped, true) 
-    Wait(5000)
-    TriggerServerEvent("hospital:server:MakeDeadCall", blipsettings, male, street1, street2)
-    SetEntityAsNoLongerNeeded(ped)
-    ClearPedTasks(ped)
-end
-
 function TakeOutVehicle(vehicleInfo)
     local coords = Config.Locations["vehicle"][currentGarage]
     QBCore.Functions.SpawnVehicle(vehicleInfo[1], function(veh)
@@ -171,61 +126,6 @@ end)
 RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
     onDuty = duty
     TriggerServerEvent("hospital:server:SetDoctor")
-end)
-
-RegisterNetEvent('hospital:client:SendAlert', function(msg)
-    PlaySound(-1, "Menu_Accept", "Phone_SoundSet_Default", 0, 0, 1)
-    TriggerEvent('chat:addMessage', {
-        color = { 255, 0, 0},
-        multiline = false,
-        args = {"Pager", msg}
-    })
-end)
-
-RegisterNetEvent('112:client:SendAlert', function(msg, blipSettings)
-    if (PlayerJob.name == "police" or PlayerJob.name == "ambulance") and onDuty then
-        if blipSettings then
-            local transG = 250
-            local blip = AddBlipForCoord(blipSettings.x, blipSettings.y, blipSettings.z)
-            SetBlipSprite(blip, blipSettings.sprite)
-            SetBlipColour(blip, blipSettings.color)
-            SetBlipDisplay(blip, 4)
-            SetBlipAlpha(blip, transG)
-            SetBlipScale(blip, blipSettings.scale)
-            SetBlipAsShortRange(blip, false)
-            BeginTextCommandSetBlipName('STRING')
-            AddTextComponentString(blipSettings.text)
-            EndTextCommandSetBlipName(blip)
-            while transG ~= 0 do
-                Wait(180 * 4)
-                transG = transG - 1
-                SetBlipAlpha(blip, transG)
-                if transG == 0 then
-                    SetBlipSprite(blip, 2)
-                    RemoveBlip(blip)
-                    return
-                end
-            end
-        end
-    end
-end)
-
-RegisterNetEvent('hospital:client:AiCall', function()
-    local PlayerPeds = {}
-    for _, player in ipairs(GetActivePlayers()) do
-        local ped = GetPlayerPed(player)
-        PlayerPeds[#PlayerPeds+1] = ped
-    end
-    local player = PlayerPedId()
-    local coords = GetEntityCoords(player)
-    local closestPed, closestDistance = QBCore.Functions.GetClosestPed(coords, PlayerPeds)
-    local gender = QBCore.Functions.GetPlayerData().gender
-    local s1, s2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
-    local street1 = GetStreetNameFromHashKey(s1)
-    local street2 = GetStreetNameFromHashKey(s2)
-    if closestDistance < 50.0 and closestPed ~= 0 then
-        MakeCall(closestPed, gender, street1, street2)
-    end
 end)
 
 RegisterNetEvent('hospital:client:CheckStatus', function()

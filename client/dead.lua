@@ -38,7 +38,7 @@ function OnDeath(spawn)
                 loadAnimDict(deadAnimDict)
                 TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
             end
-            TriggerEvent("hospital:client:AiCall")
+            TriggerServerEvent('hospital:server:ambulanceAlert', 'Civilian Died')
         end
     end
 end

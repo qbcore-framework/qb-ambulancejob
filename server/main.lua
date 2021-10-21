@@ -106,12 +106,10 @@ end)
 
 RegisterNetEvent('hospital:server:SetDoctor', function()
 	local amount = 0
-	for k, v in pairs(QBCore.Functions.GetPlayers()) do
-        local Player = QBCore.Functions.GetPlayer(v)
-        if Player then
-            if (Player.PlayerData.job.name =="ambulance" and Player.PlayerData.job.onduty) then
-                amount = amount + 1
-            end
+    local players = QBCore.Functions.GetQBPlayers()
+    for k,v in pairs(players) do
+        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+            amount = amount + 1
         end
 	end
 	TriggerClientEvent("hospital:client:SetDoctorCount", -1, amount)
@@ -140,57 +138,11 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function()
-	local src = source
-	for k, v in pairs(QBCore.Functions.GetPlayers()) do
-		local Player = QBCore.Functions.GetPlayer(v)
-		if Player then
-			if (Player.PlayerData.job.name =="ambulance" and Player.PlayerData.job.onduty) then
-				TriggerClientEvent("hospital:client:SendAlert", v, "A doctor is needed at Pillbox Hospital")
-			end
+    local players = QBCore.Functions.GetQBPlayers()
+    for k,v in pairs(players) do
+        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+			TriggerClientEvent('QBCore:Notify', v.PlayerData.source, 'A doctor is needed at Pillbox Hospital', 'ambulance')
 		end
-	end
-end)
-
-RegisterNetEvent('hospital:server:MakeDeadCall', function(blipSettings, gender, street1, street2)
-	local src = source
-	local genderstr = "Man"
-
-	if gender == 1 then genderstr = "Woman" end
-
-	if street2 then
-		TriggerClientEvent("112:client:SendAlert", -1, "A ".. genderstr .." is injured at " ..street1 .. " "..street2, blipSettings)
-		TriggerClientEvent('qb-policealerts:client:AddPoliceAlert', -1, {
-            timeOut = 5000,
-            alertTitle = "Injured person",
-            details = {
-                [1] = {
-                    icon = '<i class="fas fa-venus-mars"></i>',
-                    detail = genderstr,
-                },
-                [2] = {
-                    icon = '<i class="fas fa-globe-europe"></i>',
-                    detail = street1.. ' '..street2,
-                },
-            },
-            callSign = nil,
-        }, true)
-	else
-		TriggerClientEvent("112:client:SendAlert", -1, "A ".. genderstr .." is injured at "..street1, blipSettings)
-		TriggerClientEvent('qb-policealerts:client:AddPoliceAlert', -1, {
-            timeOut = 5000,
-            alertTitle = "Injured person",
-            details = {
-                [1] = {
-                    icon = '<i class="fas fa-venus-mars"></i>',
-                    detail = genderstr,
-                },
-                [2] = {
-                    icon = '<i class="fas fa-globe-europe"></i>',
-                    detail = street1,
-                },
-            },
-            callSign = nil,
-        }, true)
 	end
 end)
 
@@ -215,12 +167,10 @@ end)
 
 QBCore.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
 	local amount = 0
-	for k, v in pairs(QBCore.Functions.GetPlayers()) do
-		local Player = QBCore.Functions.GetPlayer(v)
-		if Player then
-			if (Player.PlayerData.job.name =="ambulance" and Player.PlayerData.job.onduty) then
-				amount = amount + 1
-			end
+    local players = QBCore.Functions.GetQBPlayers()
+    for k,v in pairs(players) do
+        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+			amount = amount + 1
 		end
 	end
 	cb(amount)
@@ -274,6 +224,19 @@ QBCore.Functions.CreateCallback('hospital:server:HasFirstAid', function(source, 
 end)
 
 -- Commands
+
+QBCore.Commands.Add('911e', 'EMS Report', {{name='message', help='Message to be sent'}}, false, function(source, args)
+	local src = source
+	if args[1] then message = table.concat(args, " ") else message = 'Civilian Call' end
+    local ped = GetPlayerPed(src)
+    local coords = GetEntityCoords(ped)
+    local players = QBCore.Functions.GetQBPlayers()
+    for k,v in pairs(players) do
+        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+            TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
+        end
+    end
+end)
 
 QBCore.Commands.Add("status", "Check A Players Health", {}, false, function(source, args)
 	local src = source
