@@ -162,7 +162,7 @@ CreateThread(function()
                     end
                 end
 
-                SetCurrentPedWeapon(ped, GetHashKey("WEAPON_UNARMED"), true)
+                SetCurrentPedWeapon(ped, `weapon_unarmed`, true)
             elseif InLaststand then
                 sleep = 7
                 local ped = PlayerPedId()
