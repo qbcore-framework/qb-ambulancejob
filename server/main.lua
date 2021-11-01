@@ -118,8 +118,10 @@ RegisterNetEvent('hospital:server:SetDoctor', function()
     for k,v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
             amount = amount + 1
+	elseif (v.PlayerData.job.name == 'ambulance' and not v.PlayerData.job.onduty) then
+	    amount = amount - 1
         end
-	end
+     end
 	TriggerClientEvent("hospital:client:SetDoctorCount", -1, amount)
 end)
 
