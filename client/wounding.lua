@@ -1,5 +1,6 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local prevPos = nil
-local onPainKillers = false
+onPainKillers = false
 local painkillerAmount = 0
 
 -- Functions
@@ -174,7 +175,7 @@ CreateThread(function()
                         playerHealth = playerHealth - bleedDamage
                         local randX = math.random() + math.random(-1, 1)
                         local randY = math.random() + math.random(-1, 1)
-                        local coords = GetOffsetFromEntityInWorldCoords(GetPlayerPed(GetPlayerFromServerId(playerId)), randX, randY, 0)
+                        local coords = GetOffsetFromEntityInWorldCoords(player, randX, randY, 0)
                         TriggerServerEvent("evidence:server:CreateBloodDrop", QBCore.Functions.GetPlayerData().citizenid, QBCore.Functions.GetPlayerData().metadata["bloodtype"], coords)
 
                         if advanceBleedTimer >= Config.AdvanceBleedTimer then

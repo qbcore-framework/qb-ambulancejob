@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local deadAnimDict = "dead"
 local deadAnim = "dead_a"
 local hold = 5
@@ -12,7 +14,7 @@ local function loadAnimDict(dict)
     end
 end
 
-function OnDeath(spawn)
+function OnDeath()
     if not isDead then
         isDead = true
         TriggerServerEvent("hospital:server:SetDeathStatus", true)
@@ -26,7 +28,6 @@ function OnDeath(spawn)
         if isDead then
             local pos = GetEntityCoords(player)
             local heading = GetEntityHeading(player)
-
 
             NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
             SetEntityInvincible(player, true)
@@ -48,13 +49,11 @@ function DeathTimer()
     while isDead do
         Wait(1000)
         deathTime = deathTime - 1
-
         if deathTime <= 0 then
             if IsControlPressed(0, 38) and hold <= 0 and not isInHospitalBed then
                 TriggerEvent("hospital:client:RespawnAtHospital")
                 hold = 5
             end
-
             if IsControlPressed(0, 38) then
                 if hold - 1 >= 0 then
                     hold = hold - 1
@@ -62,7 +61,6 @@ function DeathTimer()
                     hold = 0
                 end
             end
-
             if IsControlReleased(0, 38) then
                 hold = 5
             end
@@ -105,9 +103,9 @@ CreateThread(function()
 
                 local killerId = NetworkGetPlayerIndexFromPed(killer)
                 local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or "Himself or a NPC"
-                local weaponLabel = QBCore.Shared.Weapons?[killerWeapon]?["label"] or "Unknown"
-                local weaponName = QBCore.Shared.Weapons?[killerWeapon]?["name"] or "Unknown_Weapon"
-                TriggerServerEvent("qb-log:server:CreateLog", "death", GetPlayerName(player) .. " ("..GetPlayerServerId(player)..") is dead", "red", "**".. killerName .. "** has killed ".. GetPlayerName(player) .." with a **".. weaponLabel .. "** (" .. weaponName .. ")")
+                local weaponLabel = QBCore.Shared.Weapons?[killerWeapon]?.label or "Unknown"
+                local weaponName = QBCore.Shared.Weapons?[killerWeapon]?.name or "Unknown_Weapon"
+                TriggerServerEvent("qb-log:server:CreateLog", "death", GetPlayerName(-1) .. " ("..GetPlayerServerId(player)..") is dead", "red", "**".. killerName .. "** has killed ".. GetPlayerName(player) .." with a **".. weaponLabel .. "** (" .. weaponName .. ")")
                 deathTime = Config.DeathTime
                 OnDeath()
                 DeathTimer()
@@ -135,7 +133,7 @@ CreateThread(function()
             EnableControlAction(0, 46, true)
 
             if isDead then
-                if not isInHospitalBed then 
+                if not isInHospitalBed then
                     if deathTime > 0 then
                         DrawTxt(0.93, 1.44, 1.0,1.0,0.6, "RESPAWN IN: ~r~" .. math.ceil(deathTime) .. "~w~ SECONDS", 255, 255, 255, 255)
                     else
@@ -149,7 +147,7 @@ CreateThread(function()
                         TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
                     end
                 else
-                    if isInHospitalBed then 
+                    if isInHospitalBed then
                         if not IsEntityPlayingAnim(ped, inBedDict, inBedAnim, 3) then
                             loadAnimDict(inBedDict)
                             TaskPlayAnim(ped, inBedDict, inBedAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
@@ -162,10 +160,9 @@ CreateThread(function()
                     end
                 end
 
-                SetCurrentPedWeapon(ped, GetHashKey("WEAPON_UNARMED"), true)
+                SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
             elseif InLaststand then
                 sleep = 7
-                local ped = PlayerPedId()
                 DisableAllControlActions(0)
                 EnableControlAction(0, 1, true)
                 EnableControlAction(0, 2, true)
