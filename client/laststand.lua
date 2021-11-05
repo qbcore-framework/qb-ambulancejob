@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 Laststand = Laststand or {}
 Laststand.ReviveInterval = 360
 Laststand.MinimumRevive = 300
@@ -7,7 +9,6 @@ lastStandDict = "combat@damage@writhe"
 lastStandAnim = "writhe_loop"
 isEscorted = false
 local isEscorting = false
-local CanBePickuped = false
 
 -- Functions
 
@@ -66,23 +67,24 @@ function SetLaststand(bool, spawn)
         end
 
         InLaststand = true
-		
+
 	TriggerServerEvent('hospital:server:ambulanceAlert', 'Civilian Down')
 
         CreateThread(function()
             while InLaststand do
+                ped = PlayerPedId()
+                player = PlayerId()
                 if LaststandTime - 1 > Laststand.MinimumRevive then
                     LaststandTime = LaststandTime - 1
                     Config.DeathTime = LaststandTime
                 elseif LaststandTime - 1 <= Laststand.MinimumRevive and LaststandTime - 1 ~= 0 then
                     LaststandTime = LaststandTime - 1
-                    CanBePickuped = true
                     Config.DeathTime = LaststandTime
                 elseif LaststandTime - 1 <= 0 then
                     QBCore.Functions.Notify("You have bled out..", "error")
                     SetLaststand(false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
-                    local killer = GetPedSourceOfDeath(playerPed)
+                    local killer = GetPedSourceOfDeath(ped)
 
                     if killer_2 ~= 0 and killer_2 ~= -1 then
                         killer = killer_2
@@ -90,8 +92,8 @@ function SetLaststand(bool, spawn)
 
                     local killerId = NetworkGetPlayerIndexFromPed(killer)
                     local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or "Himself or a NPC"
-                    local weaponLabel = QBCore.Shared.Weapons?[killerWeapon]?["label"] or "Unknown"
-                    local weaponName = QBCore.Shared.Weapons?[killerWeapon]?["name"] or "Unknown_Weapon"
+                    local weaponLabel = QBCore.Shared.Weapons?[killerWeapon]?.label or "Unknown"
+                    local weaponName = QBCore.Shared.Weapons?[killerWeapon]?.name or "Unknown_Weapon"
                     TriggerServerEvent("qb-log:server:CreateLog", "death", GetPlayerName(player) .. " ("..GetPlayerServerId(player)..") is dead", "red", "**".. killerName .. "** has killed  ".. GetPlayerName(player) .." with a **".. weaponLabel .. "** (" .. weaponName .. ")")
                     deathTime = 0
                     OnDeath()
@@ -103,7 +105,6 @@ function SetLaststand(bool, spawn)
     else
         TaskPlayAnim(ped, lastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
         InLaststand = false
-        CanBePickuped = false
         LaststandTime = 0
     end
     TriggerServerEvent("hospital:server:SetLaststandStatus", bool)

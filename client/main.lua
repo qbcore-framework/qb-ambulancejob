@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local getOutDict = 'switch@franklin@bed'
 local getOutAnim = 'sleep_getup_rubeyes'
 local canLeaveBed = true
@@ -9,7 +11,6 @@ local doctorCount = 0
 local CurrentDamageList = {}
 inBedDict = "misslamar1dead_body"
 inBedAnim = "dead_idle"
-QBCore = exports['qb-core']:GetCoreObject()
 isInHospitalBed = false
 isBleeding = 0
 bleedTickTimer, advanceBleedTimer = 0, 0
@@ -108,7 +109,7 @@ WeaponDamageList = {
 
 local function GetAvailableBed(bedId)
     local retval = nil
-    if bedId == nil then 
+    if bedId == nil then
         for k, v in pairs(Config.Locations["beds"]) do
             if not Config.Locations["beds"][k].taken then
                 retval = k
@@ -217,7 +218,7 @@ local function ProcessRunStuff(ped)
     end
 end
 
-local function ResetPartial()
+function ResetPartial()
     for k, v in pairs(BodyParts) do
         if v.isDamaged and v.severity <= 2 then
             v.isDamaged = false
@@ -311,8 +312,8 @@ local function SetBedCam()
     end
 
 	if IsPedDeadOrDying(player) then
-		local playerPos = GetEntityCoords(player, true)
-		NetworkResurrectLocalPlayer(playerPos, true, true, false)
+		local pos = GetEntityCoords(player, true)
+		NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
     end
 
     bedObject = GetClosestObjectOfType(bedOccupyingData.coords.x, bedOccupyingData.coords.y, bedOccupyingData.coords.z, 1.0, bedOccupyingData.model, false, false, false)
@@ -333,7 +334,9 @@ local function SetBedCam()
     RenderScriptCams(true, false, 1, true, true)
     AttachCamToPedBone(cam, player, 31085, 0, 1.0, 1.0 , true)
     SetCamFov(cam, 90.0)
-    SetCamRot(cam, -45.0, 0.0, GetEntityHeading(player) + 180, true)
+    local heading = GetEntityHeading(player)
+    heading = (heading > 180) and heading - 180 or heading + 180
+    SetCamRot(cam, -45.0, 0.0, heading, 2)
 
     DoScreenFadeIn(1000)
 
@@ -629,15 +632,9 @@ end)
 RegisterNetEvent('hospital:client:Revive', function()
     local player = PlayerPedId()
 
-    if isDead then
-        SetLaststand(false)
-		local playerPos = GetEntityCoords(player, true)
-        NetworkResurrectLocalPlayer(playerPos, true, true, false)
-        isDead = false
-        SetEntityInvincible(player, false)
-    elseif InLaststand then
-        local playerPos = GetEntityCoords(player, true)
-        NetworkResurrectLocalPlayer(playerPos, true, true, false)
+    if isDead or InLaststand then
+        local pos = GetEntityCoords(player, true)
+        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z, GetEntityHeading(player), true, false)
         isDead = false
         SetEntityInvincible(player, false)
         SetLaststand(false)
@@ -729,6 +726,9 @@ end)
 
 RegisterNetEvent('hospital:client:RespawnAtHospital', function()
     TriggerServerEvent("hospital:server:RespawnAtHospital")
+    if exports["qb-policejob"]:IsHandcuffed() then
+        TriggerEvent("police:client:GetCuffed", -1)
+    end
     TriggerEvent("police:client:DeEscort")
 end)
 

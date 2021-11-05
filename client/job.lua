@@ -1,3 +1,4 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local statusCheckPed = nil
 local PlayerJob = {}
 local onDuty = false
@@ -111,7 +112,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
             SetPedArmour(ped, PlayerData.metadata["armor"])
             if (not PlayerData.metadata["inlaststand"] and PlayerData.metadata["isdead"]) then
                 deathTime = Laststand.ReviveInterval
-                OnDeath(true)
+                OnDeath()
                 DeathTimer()
             elseif (PlayerData.metadata["inlaststand"] and not PlayerData.metadata["isdead"]) then
                 SetLaststand(true, true)
@@ -249,7 +250,7 @@ CreateThread(function()
         if isHealingPerson then
             local ped = PlayerPedId()
             if not IsEntityPlayingAnim(ped, healAnimDict, healAnim, 3) then
-                loadAnimDict(healAnimDict)	
+                loadAnimDict(healAnimDict)
                 TaskPlayAnim(ped, healAnimDict, healAnim, 3.0, 3.0, -1, 49, 0, 0, 0, 0)
             end
         end
@@ -296,7 +297,7 @@ CreateThread(function()
                                 end
                             elseif dist < 2.5 then
                                 DrawText3D(v.x, v.y, v.z, "Armory")
-                            end  
+                            end
                         end
                     end
                 end
@@ -355,7 +356,7 @@ CreateThread(function()
                                         end, coords, true)
                                     end
                                 end
-                            end  
+                            end
                         end
                     end
                 end

@@ -25,18 +25,31 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	for k, v in pairs(Config.Locations["beds"]) do
-		TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
-		TriggerClientEvent('hospital:client:SetBed', -1, k, true)
-		if Config.WipeInventoryOnRespawn then
-			Player.Functions.ClearInventory()
-			exports.oxmysql:execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
-			TriggerClientEvent('QBCore:Notify', src, 'All your possessions have been taken..', 'error')
+		if not v.taken then
+			TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
+			TriggerClientEvent('hospital:client:SetBed', -1, k, true)
+			if Config.WipeInventoryOnRespawn then
+				Player.Functions.ClearInventory()
+				exports.oxmysql:execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
+				TriggerClientEvent('QBCore:Notify', src, 'All your possessions have been taken..', 'error')
+			end
+			Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
+			TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
+			TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+			return
 		end
-		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-		TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
-		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
-		return
 	end
+	print("All beds were full, placing in first bed as fallback")
+	TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations["beds"][1], true)
+	TriggerClientEvent('hospital:client:SetBed', -1, 1, true)
+	if Config.WipeInventoryOnRespawn then
+		Player.Functions.ClearInventory()
+		exports.oxmysql:execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
+		TriggerClientEvent('QBCore:Notify', src, 'All your possessions have been taken..', 'error')
+	end
+	Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
+	TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
+	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 end)
 
 RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
