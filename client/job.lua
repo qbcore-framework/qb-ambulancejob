@@ -50,42 +50,54 @@ end
 
 function TakeOutVehicle(vehicleInfo)
     local coords = Config.Locations["vehicle"][currentGarage]
-    QBCore.Functions.SpawnVehicle(vehicleInfo[1], function(veh)
+    QBCore.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, "AMBU"..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
-        closeMenuFull()
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
         SetVehicleEngineOn(veh, true, true)
     end, coords, true)
 end
 
-function VehicleList(isDown)
-    MenuTitle = "Vehicles:"
-    ClearMenu()
+function MenuGarage()
+    local vehicleMenu = {
+        {
+            header = "Ambulance Vehicles",
+            isMenuHeader = true
+        }
+    }
+
     local authorizedVehicles = Config.AuthorizedVehicles[QBCore.Functions.GetPlayerData().job.grade.level]
-    for k, v in pairs(authorizedVehicles) do
-        Menu.addButton(authorizedVehicles[k], "TakeOutVehicle", {k, isDown}, "Garage", " Engine: 100%", " Body: 100%", " Fuel: 100%")
+    for veh, label in pairs(authorizedVehicles) do
+        vehicleMenu[#vehicleMenu+1] = {
+            header = label,
+            txt = "",
+            params = {
+                event = "ambulance:client:TakeOutVehicle",
+                args = {
+                    vehicle = veh
+                }
+            }
+        }
     end
+    vehicleMenu[#vehicleMenu+1] = {
+        header = "⬅ Close Menu",
+        txt = "",
+        params = {
+            event = "qb-menu:client:closeMenu"
+        }
 
-    Menu.addButton("Back", "MenuGarage",nil)
-end
-
-function closeMenuFull()
-    Menu.hidden = true
-    currentGarage = nil
-    ClearMenu()
-end
-
-function MenuGarage(isDown)
-    MenuTitle = "Garage"
-    ClearMenu()
-    Menu.addButton("My vehicles", "VehicleList", isDown)
-    Menu.addButton("Close Menu", "closeMenuFull", nil)
+    }
+    exports['qb-menu']:openMenu(vehicleMenu)
 end
 
 -- Events
+
+RegisterNetEvent('ambulance:client:TakeOutVehicle', function(data)
+    local vehicle = data.vehicle
+    TakeOutVehicle(vehicle)
+end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
@@ -319,10 +331,8 @@ CreateThread(function()
                                 else
                                     MenuGarage()
                                     currentGarage = k
-                                    Menu.hidden = not Menu.hidden
                                 end
                             end
-                            Menu.renderGUI()
                         end
                     end
                 end
