@@ -4,11 +4,18 @@ local QBCore = exports['qb-core']:GetCoreObject()
 -- Events
 
 -- Compatibility with txAdmin Menu's heal options.
--- This is a admin only server side event that will pass the target player id.
--- (This can also contain -1)
-AddEventHandler('txAdmin:healedPlayer', function(targetId)
-	TriggerClientEvent('hospital:client:Revive', targetId)
-	TriggerClientEvent("hospital:client:HealInjuries", targetId, "full")
+-- This is an admin only server side event that will pass the target player id or -1.
+AddEventHandler('txAdmin:events:healedPlayer', function(eventData)
+	if
+		GetInvokingResource() ~= "monitor" or 
+		type(eventData) ~= "table" or
+		type(eventData.id) ~= "number" 
+	then
+		return
+	end
+
+	TriggerClientEvent('hospital:client:Revive', eventData.id)
+	TriggerClientEvent("hospital:client:HealInjuries", eventData.id, "full")
 end)
 
 RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
