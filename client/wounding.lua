@@ -1,4 +1,3 @@
-local QBCore = exports['qb-core']:GetCoreObject()
 local prevPos = nil
 onPainKillers = false
 local painkillerAmount = 0

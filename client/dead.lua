@@ -1,5 +1,3 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-
 local deadAnimDict = "dead"
 local deadAnim = "dead_a"
 local hold = 5

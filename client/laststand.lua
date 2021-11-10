@@ -1,5 +1,3 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-
 Laststand = Laststand or {}
 Laststand.ReviveInterval = 360
 Laststand.MinimumRevive = 300

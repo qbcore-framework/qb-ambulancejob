@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+QBCore = exports['qb-core']:GetCoreObject()
 
 local getOutDict = 'switch@franklin@bed'
 local getOutAnim = 'sleep_getup_rubeyes'
@@ -134,7 +134,6 @@ local function GetDamagingWeapon(ped)
 end
 
 local function IsDamagingEvent(damageDone, weapon)
-    math.randomseed(GetGameTimer())
     local luck = math.random(100)
     local multi = damageDone / Config.HealthDamage
 

@@ -1,4 +1,3 @@
-local QBCore = exports['qb-core']:GetCoreObject()
 local statusCheckPed = nil
 local PlayerJob = {}
 local onDuty = false
