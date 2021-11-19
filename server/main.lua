@@ -237,20 +237,6 @@ QBCore.Functions.CreateCallback('hospital:GetPlayerBleeding', function(source, c
 	end
 end)
 
-QBCore.Functions.CreateCallback('hospital:server:HasBandage', function(source, cb)
-	local src = source
-    local player = QBCore.Functions.GetPlayer(src)
-    local bandage = player.Functions.GetItemByName("bandage")
-    if bandage ~= nil then cb(true) else cb(false) end
-end)
-
-QBCore.Functions.CreateCallback('hospital:server:HasFirstAid', function(source, cb)
-	local src = source
-    local player = QBCore.Functions.GetPlayer(src)
-    local firstaid = player.Functions.GetItemByName("firstaid")
-    if firstaid ~= nil then cb(true) else cb(false) end
-end)
-
 -- Commands
 
 QBCore.Commands.Add('911e', 'EMS Report', {{name='message', help='Message to be sent'}}, false, function(source, args)
