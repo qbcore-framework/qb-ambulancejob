@@ -591,7 +591,7 @@ end
 -- Events
 
 RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
-    local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z, Citizen.ResultAsInteger(), Citizen.ResultAsInteger())
+    local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
     QBCore.Functions.Notify({text = text, caption = street1name.. ' ' ..street2name}, 'ambulance')
