@@ -9,8 +9,8 @@ local bedOccupyingData = nil
 local closestBed = nil
 local doctorCount = 0
 local CurrentDamageList = {}
-inBedDict = "anim@gangops@morgue@table@"
-inBedAnim = "body_search"
+inBedDict = "misslamar1dead_body"
+inBedAnim = "dead_idle"
 isInHospitalBed = false
 isBleeding = 0
 bleedTickTimer, advanceBleedTimer = 0, 0
@@ -108,16 +108,21 @@ WeaponDamageList = {
 -- Functions
 
 local function GetAvailableBed(bedId)
+    local pos = GetEntityCoords(PlayerPedId())
     local retval = nil
     if bedId == nil then
         for k, v in pairs(Config.Locations["beds"]) do
             if not Config.Locations["beds"][k].taken then
-                retval = k
+		if #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z)) < 500 then
+                	retval = k
+		end
             end
         end
     else
         if not Config.Locations["beds"][bedId].taken then
-            retval = bedId
+		if #(pos - vector3(Config.Locations["beds"][bedId].coords.x, Config.Locations["beds"][bedId].coords.y, Config.Locations["beds"][bedId].coords.z))  < 500 then
+            		retval = bedId
+		    end
         end
     end
     return retval
@@ -591,7 +596,7 @@ end
 -- Events
 
 RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
-    local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
+    local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z, Citizen.ResultAsInteger(), Citizen.ResultAsInteger())
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
     QBCore.Functions.Notify({text = text, caption = street1name.. ' ' ..street2name}, 'ambulance')
@@ -653,7 +658,7 @@ RegisterNetEvent('hospital:client:Revive', function()
     SetPlayerSprint(PlayerId(), true)
     ResetAll()
     ResetPedMovementClipset(player, 0.0)
-    TriggerServerEvent('hud:server:RelieveStress', 100)
+    TriggerServerEvent('qb-hud:server:RelieveStress', 100)
     TriggerServerEvent("hospital:server:SetDeathStatus", false)
     TriggerServerEvent("hospital:server:SetLaststandStatus", false)
 
@@ -894,49 +899,50 @@ CreateThread(function()
         sleep = 1000
         if LocalPlayer.state['isLoggedIn'] then
             local pos = GetEntityCoords(PlayerPedId())
-
-            if #(pos - Config.Locations["checking"]) < 1.5 then
-                sleep = 7
-                if doctorCount >= Config.MinimalDoctors then
-                    DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "~g~E~w~ - Call doctor")
-                else
-                    DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "~g~E~w~ - Check in")
-                end
-                if IsControlJustReleased(0, 38) then
+            for k, checkins in pairs(Config.Locations["checking"]) do
+                if #(pos - checkins) < 1.5 then
+                    sleep = 7
                     if doctorCount >= Config.MinimalDoctors then
-                        TriggerServerEvent("hospital:server:SendDoctorAlert")
+                        DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Call doctor")
                     else
-                        TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
-                        QBCore.Functions.Progressbar("hospital_checkin", "Checking in..", 2000, false, true, {
-                            disableMovement = true,
-                            disableCarMovement = true,
-                            disableMouse = false,
-                            disableCombat = true,
-                        }, {}, {}, {}, function() -- Done
-                            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                            local bedId = GetAvailableBed()
-                            if bedId then
-                                TriggerServerEvent("hospital:server:SendToBed", bedId, true)
-                            else
-                                QBCore.Functions.Notify("Beds are occupied..", "error")
-                            end
-                        end, function() -- Cancel
-                            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                            QBCore.Functions.Notify("Checking in failed!", "error")
-                        end)
+                        DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Check in")
                     end
-                end
-            elseif #(pos - Config.Locations["checking"]) < 4.5 then
-                sleep = 7
-                if doctorCount >= Config.MinimalDoctors then
-                    DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "Call")
-                else
-                    DrawText3D(Config.Locations["checking"].x, Config.Locations["checking"].y, Config.Locations["checking"].z, "Check in")
+                    if IsControlJustReleased(0, 38) then
+                        if doctorCount >= Config.MinimalDoctors then
+                            TriggerServerEvent("hospital:server:SendDoctorAlert")
+                        else
+                            TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
+                            QBCore.Functions.Progressbar("hospital_checkin", "Checking in..", 2000, false, true, {
+                                disableMovement = true,
+                                disableCarMovement = true,
+                                disableMouse = false,
+                                disableCombat = true,
+                            }, {}, {}, {}, function() -- Done
+                                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+                                local bedId = GetAvailableBed()
+                                if bedId then
+                                    TriggerServerEvent("hospital:server:SendToBed", bedId, true)
+                                else
+                                    QBCore.Functions.Notify("Beds are occupied..", "error")
+                                end
+                            end, function() -- Cancel
+                                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+                                QBCore.Functions.Notify("Checking in failed!", "error")
+                            end)
+                        end
+                    end
+                elseif #(pos - checkins) < 4.5 then
+                    sleep = 7
+                    if doctorCount >= Config.MinimalDoctors then
+                        DrawText3D(checkins.x, checkins.y, checkins.z, "Call")
+                    else
+                        DrawText3D(checkins.x, checkins.y, checkins.z, "Check in")
+                    end
                 end
             end
 
             if closestBed and not isInHospitalBed then
-                if #(pos - vector3(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z)) < 1.5 then
+                if #(pos - vector3(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z)) < 2 then
                     sleep = 7
                     DrawText3D(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z + 0.3, "~g~E~w~ - To lie in bed")
                     if IsControlJustReleased(0, 38) then
