@@ -358,7 +358,6 @@ CreateThread(function()
                                             SetEntityHeading(veh, coords.w)
                                             SetVehicleLivery(veh, 1) -- Ambulance Livery
                                             exports['LegacyFuel']:SetFuel(veh, 100.0)
-                                            closeMenuFull()
                                             TaskWarpPedIntoVehicle(ped, veh, -1)
                                             TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
                                             SetVehicleEngineOn(veh, true, true)
