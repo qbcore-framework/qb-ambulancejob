@@ -121,7 +121,7 @@ CreateThread(function()
 	while true do
         sleep = 1000
 		if isDead or InLaststand then
-            sleep = 7
+            sleep = 5
             local ped = PlayerPedId()
             DisableAllControlActions(0)
             EnableControlAction(0, 1, true)
@@ -165,7 +165,7 @@ CreateThread(function()
 
                 SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
             elseif InLaststand then
-                sleep = 7
+                sleep = 5
                 DisableAllControlActions(0)
                 EnableControlAction(0, 1, true)
                 EnableControlAction(0, 2, true)

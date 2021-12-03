@@ -901,7 +901,7 @@ CreateThread(function()
             local pos = GetEntityCoords(PlayerPedId())
             for k, checkins in pairs(Config.Locations["checking"]) do
                 if #(pos - checkins) < 1.5 then
-                    sleep = 7
+                    sleep = 5
                     if doctorCount >= Config.MinimalDoctors then
                         DrawText3D(checkins.x, checkins.y, checkins.z, "~g~E~w~ - Call doctor")
                     else
@@ -932,7 +932,7 @@ CreateThread(function()
                         end
                     end
                 elseif #(pos - checkins) < 4.5 then
-                    sleep = 7
+                    sleep = 5
                     if doctorCount >= Config.MinimalDoctors then
                         DrawText3D(checkins.x, checkins.y, checkins.z, "Call")
                     else
@@ -943,7 +943,7 @@ CreateThread(function()
 
             if closestBed and not isInHospitalBed then
                 if #(pos - vector3(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z)) < 2 then
-                    sleep = 7
+                    sleep = 5
                     DrawText3D(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z + 0.3, "~g~E~w~ - To lie in bed")
                     if IsControlJustReleased(0, 38) then
                         if GetAvailableBed(closestBed) then

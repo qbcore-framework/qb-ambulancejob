@@ -340,7 +340,7 @@ CreateThread(function()
                     local dist = #(pos - vector3(v.x, v.y, v.z))
                     if dist < 7.5 then
                         if onDuty then
-                            sleep = 7
+                            sleep = 5
                             DrawMarker(2, v.x, v.y, v.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.2, 0.15, 200, 0, 0, 222, false, false, false, true, false, false, false)
                             if dist < 1.5 then
                                 if IsPedInAnyVehicle(ped, false) then
@@ -375,7 +375,7 @@ CreateThread(function()
             for k, v in pairs(Config.Locations["main"]) do
                 local dist = #(pos - v)
                 if dist < 1.5 then
-                    sleep = 7
+                    sleep = 5
                     DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the roof")
                     if IsControlJustReleased(0, 38) then
                         DoScreenFadeOut(500)
@@ -399,7 +399,7 @@ CreateThread(function()
             for k, v in pairs(Config.Locations["roof"]) do
                 local dist = #(pos - vector3(v.x, v.y, v.z))
                 if dist < 1.5 then
-                    sleep = 7
+                    sleep = 5
                     DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator down")
                     if IsControlJustReleased(0, 38) then
                         DoScreenFadeOut(500)
