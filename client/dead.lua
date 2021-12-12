@@ -124,17 +124,25 @@ CreateThread(function()
             sleep = 5
             local ped = PlayerPedId()
             DisableAllControlActions(0)
-            EnableControlAction(0, 1, true)
-			EnableControlAction(0, 2, true)
-			EnableControlAction(0, 245, true)
-            EnableControlAction(0, 38, true)
-            EnableControlAction(0, 0, true)
-            EnableControlAction(0, 322, true)
-            EnableControlAction(0, 288, true)
-            EnableControlAction(0, 213, true)
-	        EnableControlAction(0, 249, true)
-            EnableControlAction(0, 46, true)
-
+            DisableControlAction(0, 59, true) -- Disable steering in vehicle
+            DisableControlAction(0,21,true) -- disable sprint
+            DisableControlAction(0,24,true) -- disable attack
+            DisableControlAction(0,25,true) -- disable aim
+            DisableControlAction(0,47,true) -- disable weapon
+            DisableControlAction(0,58,true) -- disable weapon
+            DisableControlAction(0,71,true) -- veh forward
+            DisableControlAction(0,72,true) -- veh backwards
+            DisableControlAction(0,63,true) -- veh turn left
+            DisableControlAction(0,64,true) -- veh turn right
+            DisableControlAction(0,263,true) -- disable melee
+            DisableControlAction(0,264,true) -- disable melee
+            DisableControlAction(0,257,true) -- disable melee
+            DisableControlAction(0,140,true) -- disable melee
+            DisableControlAction(0,141,true) -- disable melee
+            DisableControlAction(0,142,true) -- disable melee
+            DisableControlAction(0,143,true) -- disable melee
+            DisableControlAction(0,75,true) -- disable exit vehicle
+            DisableControlAction(27,75,true) -- disable exit vehicle
             if isDead then
                 if not isInHospitalBed then
                     if deathTime > 0 then
