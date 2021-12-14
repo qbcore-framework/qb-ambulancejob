@@ -271,7 +271,7 @@ end)
 CreateThread(function()
     while true do
         sleep = 1000
-        if LocalPlayer.state['isLoggedIn'] then
+        if LocalPlayer.state.isLoggedIn then
             local ped = PlayerPedId()
             local pos = GetEntityCoords(ped)
             if PlayerJob.name =="ambulance" then
