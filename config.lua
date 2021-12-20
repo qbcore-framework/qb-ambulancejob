@@ -563,3 +563,38 @@ Config.Weapons = {
     [`WEAPON_BZGAS`] = Config.WeaponClasses['SUFFOCATING'],
     [`WEAPON_SMOKEGRENADE`] = Config.WeaponClasses['SUFFOCATING'],
 }
+
+Config.VehicleSettings = {
+    ["car1"] = { -- Model name
+        ["extras"] = {
+            ["1"] = false, -- on/off
+            ["2"] = true,
+            ["3"] = true,
+            ["4"] = true,
+            ["5"] = true,
+            ["6"] = true,
+            ["7"] = true,
+            ["8"] = true,
+            ["9"] = true,
+            ["10"] = true,
+            ["11"] = true,
+            ["12"] = true,
+        }
+    },
+    ["car2"] = {
+        ["extras"] = {
+            ["1"] = false,
+            ["2"] = true,
+            ["3"] = true,
+            ["4"] = true,
+            ["5"] = true,
+            ["6"] = true,
+            ["7"] = true,
+            ["8"] = true,
+            ["9"] = true,
+            ["10"] = true,
+            ["11"] = true,
+            ["12"] = true,
+        }
+    }
+}
