@@ -54,6 +54,9 @@ function TakeOutVehicle(vehicleInfo)
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+        if Config.VehicleSettings[vehicleInfo] ~= nil then
+            QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
+        end
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
     end, coords, true)
