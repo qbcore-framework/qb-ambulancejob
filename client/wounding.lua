@@ -34,6 +34,36 @@ end
 
 -- Events
 
+RegisterNetEvent('hospital:client:UseIfaks', function()
+    local ped = PlayerPedId()
+    QBCore.Functions.Progressbar("use_bandage", "Taking ifaks", 3000, false, true, {
+        disableMovement = false,
+        disableCarMovement = false,
+		disableMouse = false,
+		disableCombat = true,
+    }, {
+		animDict = "mp_suicide",
+		anim = "pill",
+		flags = 49,
+    }, {}, {}, function() -- Done
+        StopAnimTask(ped, "mp_suicide", "pill", 1.0)
+        TriggerServerEvent("QBCore:Server:RemoveItem", "ifaks", 1)
+        TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["ifaks"], "remove")
+        TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
+        SetEntityHealth(ped, GetEntityHealth(ped) + 10)
+        onPainKillers = true
+        if painkillerAmount < 3 then
+            painkillerAmount = painkillerAmount + 1
+        end
+        if math.random(1, 100) < 50 then
+            RemoveBleed(1)
+        end
+    end, function() -- Cancel
+        StopAnimTask(ped, "mp_suicide", "pill", 1.0)
+        QBCore.Functions.Notify("Failed", "error")
+    end)
+end)
+
 RegisterNetEvent('hospital:client:UseBandage', function()
     local ped = PlayerPedId()
     QBCore.Functions.Progressbar("use_bandage", "Using bandage..", 4000, false, true, {
