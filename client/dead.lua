@@ -27,7 +27,23 @@ function OnDeath()
             local pos = GetEntityCoords(player)
             local heading = GetEntityHeading(player)
 
-            NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
+            local ped = PlayerPedId()
+            if IsPedInAnyVehicle(ped) then
+                local veh = GetVehiclePedIsIn(ped)
+                local vehseats = GetVehicleModelNumberOfSeats(GetHashKey(GetEntityModel(veh)))
+                print(ped, veh, vehseats)
+                for i = -1, vehseats do
+                    local occupant = GetPedInVehicleSeat(veh, i)
+                    if occupant == ped then
+                        seat = i
+                        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
+                        SetPedIntoVehicle(ped, veh, seat)
+                    end
+                end
+            else
+                NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
+            end
+			
             SetEntityInvincible(player, true)
             SetEntityHealth(player, GetEntityMaxHealth(player))
             if IsPedInAnyVehicle(player, false) then
