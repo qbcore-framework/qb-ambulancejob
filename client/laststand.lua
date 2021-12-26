@@ -53,7 +53,23 @@ function SetLaststand(bool, spawn)
 
         LaststandTime = Laststand.ReviveInterval
 
-        NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
+        local ped = PlayerPedId()
+        if IsPedInAnyVehicle(ped) then
+
+            local veh = GetVehiclePedIsIn(ped)
+            local vehseats = GetVehicleModelNumberOfSeats(GetHashKey(GetEntityModel(veh)))
+            for i = -1, vehseats do
+                local occupant = GetPedInVehicleSeat(veh, i)
+                if occupant == ped then
+                    seat = i
+                    NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
+                    SetPedIntoVehicle(ped, veh, seat)
+                end
+            end
+        else
+            NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
+        end		
+		
         SetEntityHealth(ped, 150)
 
         if IsPedInAnyVehicle(ped, false) then
