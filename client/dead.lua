@@ -34,9 +34,8 @@ function OnDeath()
                 for i = -1, vehseats do
                     local occupant = GetPedInVehicleSeat(veh, i)
                     if occupant == ped then
-                        seat = i
                         NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
-                        SetPedIntoVehicle(ped, veh, seat)
+                        SetPedIntoVehicle(ped, veh, i)
                     end
                 end
             else
