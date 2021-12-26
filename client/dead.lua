@@ -31,7 +31,6 @@ function OnDeath()
             if IsPedInAnyVehicle(ped) then
                 local veh = GetVehiclePedIsIn(ped)
                 local vehseats = GetVehicleModelNumberOfSeats(GetHashKey(GetEntityModel(veh)))
-                print(ped, veh, vehseats)
                 for i = -1, vehseats do
                     local occupant = GetPedInVehicleSeat(veh, i)
                     if occupant == ped then
