@@ -80,7 +80,7 @@ function SetLaststand(bool, spawn)
 
         InLaststand = true
 
-	TriggerServerEvent('hospital:server:ambulanceAlert', 'Civilian Down')
+        TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
 
         CreateThread(function()
             while InLaststand do
@@ -93,7 +93,7 @@ function SetLaststand(bool, spawn)
                     LaststandTime = LaststandTime - 1
                     Config.DeathTime = LaststandTime
                 elseif LaststandTime - 1 <= 0 then
-                    QBCore.Functions.Notify("You have bled out..", "error")
+                    QBCore.Functions.Notify(Lang:t('error.bled_out'), "error")
                     SetLaststand(false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
                     local killer = GetPedSourceOfDeath(ped)
@@ -103,15 +103,15 @@ function SetLaststand(bool, spawn)
                     end
 
                     local killerId = NetworkGetPlayerIndexFromPed(killer)
-                    local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or "Himself or a NPC"
-                    local weaponLabel = "Unknown"
-                    local weaponName = "Unknown_Weapon"
+                    local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or Lang:t('info.self_death')
+                    local weaponLabel = Lang:t('info.wep_unknown')
+                    local weaponName = Lang:t('info.wep_unknown')
                     local weaponItem = QBCore.Shared.Weapons[killerWeapon]
                     if weaponItem then
                         weaponLabel = weaponItem.label
                         weaponName = weaponItem.name
                     end
-                    TriggerServerEvent("qb-log:server:CreateLog", "death", GetPlayerName(player) .. " ("..GetPlayerServerId(player)..") is dead", "red", "**".. killerName .. "** has killed  ".. GetPlayerName(player) .." with a **".. weaponLabel .. "** (" .. weaponName .. ")")
+                    TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = GetPlayerName(-1), playerid = GetPlayerServerId(player)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName}))
                     deathTime = 0
                     OnDeath()
                     DeathTimer()
@@ -145,7 +145,7 @@ RegisterNetEvent('hospital:client:UseFirstAid', function()
             TriggerServerEvent('hospital:server:UseFirstAid', playerId)
         end
     else
-        QBCore.Functions.Notify('Action impossible!', 'error')
+        QBCore.Functions.Notify(Lang:t('error.impossible'), 'error')
     end
 end)
 
@@ -164,7 +164,7 @@ end)
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = PlayerPedId()
     isHealingPerson = true
-    QBCore.Functions.Progressbar("hospital_revive", "Reviving person..", math.random(30000, 60000), false, true, {
+    QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -176,11 +176,11 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     }, {}, {}, function() -- Done
         isHealingPerson = false
         ClearPedTasks(ped)
-        QBCore.Functions.Notify("You revived a person.")
+        QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
         TriggerServerEvent("hospital:server:RevivePlayer", targetId)
     end, function() -- Cancel
         isHealingPerson = false
         ClearPedTasks(ped)
-        QBCore.Functions.Notify("Canceled!", "error")
+        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
 end)
