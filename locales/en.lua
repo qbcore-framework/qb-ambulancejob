@@ -45,7 +45,6 @@ local Translations = {
         ems_alert = 'EMS Alert - %{text}',
         mr = 'Mr.',
         mrs = 'Mrs.',
-        status = 'Status',
         dr_needed = 'A doctor is needed at Pillbox Hospital',
         ems_report = 'EMS Report',
         message_sent = 'Message to be sent',
