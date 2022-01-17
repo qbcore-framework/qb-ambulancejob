@@ -844,7 +844,7 @@ CreateThread(function()
                     if doctorCount >= Config.MinimalDoctors then
                         DrawText3D(checkins.x, checkins.y, checkins.z, Lang:t('text.call_doc'))
                     else
-                        DrawText3D(checkins.x, checkins.y, checkins.z, Lang:t('text_check_in'))
+                        DrawText3D(checkins.x, checkins.y, checkins.z, Lang:t('text.check_in'))
                     end
                     if IsControlJustReleased(0, 38) then
                         if doctorCount >= Config.MinimalDoctors then
