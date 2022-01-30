@@ -111,7 +111,12 @@ RegisterNetEvent('hospital:server:SetArmor', function(amount)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player then
-		Player.Functions.SetMetaData("armor", amount)
+		local newArmor = Player.Functions.SetMetaData("armor", amount)
+		if newArmor <= 0 then
+            newArmor = 0
+        end
+		Player.Functions.SetMetaData('armor', newArmor)
+		Player.Functions.Save()
 	end
 end)
 
