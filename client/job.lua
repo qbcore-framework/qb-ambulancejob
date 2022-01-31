@@ -401,13 +401,13 @@ CreateThread(function()
                 end
             end
 
-            local currentHospital = 1
+           local currentHospital = 1
 
             for k, v in pairs(Config.Locations["main"]) do
                 local dist = #(pos - v)
                 if dist < 1.5 then
-                    sleep = 5
-                    DrawText3D(v.x, v.y, v.z, Lang:t('text.elevator_roof'))
+                    sleep = 7
+                    DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the roof")
                     if IsControlJustReleased(0, 38) then
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
@@ -427,11 +427,59 @@ CreateThread(function()
                 end
             end
 
+            for k, v in pairs(Config.Locations["main2"]) do
+                local dist = #(pos - v)
+                if dist < 1.5 then
+                    sleep = 7
+                    DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the basement")
+                    if IsControlJustReleased(0, 38) then
+                        DoScreenFadeOut(500)
+                        while not IsScreenFadedOut() do
+                            Wait(10)
+                        end
+
+                        currentHospital = k
+
+                        local coords = Config.Locations["basement"][currentHospital]
+                        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+                        SetEntityHeading(ped, coords.w)
+
+                        Wait(100)
+
+                        DoScreenFadeIn(1000)
+                    end
+                end
+            end
+
+        for k, v in pairs(Config.Locations["main3"]) do
+                local dist = #(pos - v)
+                if dist < 1.5 then
+                    sleep = 7
+                    DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the basement")
+                    if IsControlJustReleased(0, 38) then
+                        DoScreenFadeOut(500)
+                        while not IsScreenFadedOut() do
+                            Wait(10)
+                        end
+
+                        currentHospital = k
+
+                        local coords = Config.Locations["basement3"][currentHospital]
+                        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+                        SetEntityHeading(ped, coords.w)
+
+                        Wait(100)
+
+                        DoScreenFadeIn(1000)
+                    end
+                end
+            end
+
             for k, v in pairs(Config.Locations["roof"]) do
                 local dist = #(pos - vector3(v.x, v.y, v.z))
                 if dist < 1.5 then
-                    sleep = 5
-                    DrawText3D(v.x, v.y, v.z, Lang:t('text.elevator_main'))
+                    sleep = 7
+                    DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator down")
                     if IsControlJustReleased(0, 38) then
                         DoScreenFadeOut(500)
                         while not IsScreenFadedOut() do
@@ -450,7 +498,104 @@ CreateThread(function()
                     end
                 end
             end
+
+            for k, v in pairs(Config.Locations["basement"]) do
+                local dist = #(pos - vector3(v.x, v.y, v.z))
+                if dist < 1.5 then
+                    sleep = 7
+                    DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the main floor")
+                    if IsControlJustReleased(0, 38) then
+                        DoScreenFadeOut(500)
+                        while not IsScreenFadedOut() do
+                            Wait(10)
+                        end
+
+                        currentHospital = k
+
+                        local coords = Config.Locations["main2"][currentHospital]
+                        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+                        SetEntityHeading(ped, coords.w)
+
+                        Wait(100)
+
+                        DoScreenFadeIn(1000)
+                    end
+                end
+            end
+             for k, v in pairs(Config.Locations["basement2"]) do
+                local dist = #(pos - vector3(v.x, v.y, v.z))
+                if dist < 1.5 then
+                    sleep = 7
+                    DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the main floor")
+                    if IsControlJustReleased(0, 38) then
+                        DoScreenFadeOut(500)
+                        while not IsScreenFadedOut() do
+                            Wait(10)
+                        end
+
+                        currentHospital = k
+
+                        local coords = Config.Locations["main3"][currentHospital]
+                        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+                        SetEntityHeading(ped, coords.w)
+
+                        Wait(100)
+
+                        DoScreenFadeIn(1000)
+                    end
+                end
+            end
+            for k, v in pairs(Config.Locations["basement3"]) do
+                local dist = #(pos - vector3(v.x, v.y, v.z))
+                if dist < 1.5 then
+                    sleep = 7
+                    DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the main floor")
+                    if IsControlJustReleased(0, 38) then
+                        DoScreenFadeOut(500)
+                        while not IsScreenFadedOut() do
+                            Wait(10)
+                        end
+
+                        currentHospital = k
+
+                        local coords = Config.Locations["main2"][currentHospital]
+                        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+                        SetEntityHeading(ped, coords.w)
+
+                        Wait(100)
+
+                        DoScreenFadeIn(1000)
+                    end
+                end
+            end
+             for k, v in pairs(Config.Locations["basement4"]) do
+                local dist = #(pos - vector3(v.x, v.y, v.z))
+                if dist < 1.5 then
+                    sleep = 7
+                    DrawText3D(v.x, v.y, v.z, "~g~E~w~ - Take the elevator to the main floor")
+                    if IsControlJustReleased(0, 38) then
+                        DoScreenFadeOut(500)
+                        while not IsScreenFadedOut() do
+                            Wait(10)
+                        end
+
+                        currentHospital = k
+
+                        local coords = Config.Locations["main3"][currentHospital]
+                        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+                        SetEntityHeading(ped, coords.w)
+
+                        Wait(100)
+
+                        DoScreenFadeIn(1000)
+                    end
+                end
+            end
         end
         Wait(sleep)
     end
+    
 end)
+-- function closeMenuFull()
+-- exports['zldrp-menu']:closeMenu()
+-- end
