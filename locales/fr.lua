@@ -93,7 +93,7 @@ local Translations = {
         bed_out = '~g~E~w~ - Pour sortir du lit..',
         call_doc = '~g~E~w~ - Appeler un docteur',
         call = 'Appeler',
-        check_in = '~g~E~w~ - S\'enregistrer',
+        check_in = '~g~E~w~ - S\'hospitaliser',
         check = 'Enregistrement',
         lie_bed = '~g~E~w~ - Pour s\'allonger dans un lit'
     },
