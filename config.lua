@@ -1,5 +1,7 @@
 Config = {}
 
+Config.UseTarget = false
+
 Config.MinimalDoctors = 2
 Config.WipeInventoryOnRespawn = true
 
