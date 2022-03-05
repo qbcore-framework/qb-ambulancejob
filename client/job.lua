@@ -41,18 +41,18 @@ local function GetClosestPlayer()
 end
 
 function TakeOutVehicle(vehicleInfo)
-    local coords = Config.Locations["vehicle"][1]
+    local coords = Config.Locations["vehicle"][currentGarage]
     QBCore.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, Lang:t('info.amb_plate')..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
-        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         if Config.VehicleSettings[vehicleInfo] ~= nil then
             QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
         end
+        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
-    end, coords, true)
+    end)
 end
 
 function MenuGarage()
@@ -653,8 +653,8 @@ else
                 name="vehicle" .. k,
                 debugPoly = false,
                 heading = 70,
-                minZ = 41,
-                maxZ = 44.50,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             })
         end
 
@@ -663,7 +663,7 @@ else
         vehicleCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 inVehicle = true
-                if onDuty and IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
+                if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.storeveh_button'), 'left')
                 else
                     exports['qb-core']:DrawText(Lang:t('text.veh_button'), 'left')
@@ -703,8 +703,8 @@ else
                 name="helicopter" .. k,
                 debugPoly = false,
                 heading = 70,
-                minZ = 72,
-                maxZ = 75,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             })
         end
 
@@ -840,7 +840,7 @@ else
         while true do
             local sleep = 1000
             local ped = PlayerPedId()
-                if onRoof then
+                if inMain then
                     for k, v in pairs(Config.Locations["main"]) do
                         sleep = 5
                         if PlayerJob.name =="ambulance" and  IsControlJustReleased(0, 38) then
