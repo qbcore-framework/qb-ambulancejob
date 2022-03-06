@@ -41,18 +41,18 @@ local function GetClosestPlayer()
 end
 
 function TakeOutVehicle(vehicleInfo)
-    local coords = Config.Locations["vehicle"][currentGarage]
+    local coords = Config.Locations["vehicle"][1]
     QBCore.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, Lang:t('info.amb_plate')..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
+        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         if Config.VehicleSettings[vehicleInfo] ~= nil then
             QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
         end
-        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
-    end)
+    end, coords, true)
 end
 
 function MenuGarage()
@@ -271,8 +271,8 @@ if Config.UseTarget then
                 name = "duty"..k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 41,
-                maxZ = 45,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             }, {
                 options = {
                     {
@@ -298,8 +298,8 @@ if Config.UseTarget then
                 name = "stash"..k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 41,
-                maxZ = 45,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             }, {
                 options = {
                     {
@@ -326,8 +326,8 @@ if Config.UseTarget then
                 name = "armory"..k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 41,
-                maxZ = 45,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             }, {
                 options = {
                     {
@@ -353,8 +353,8 @@ if Config.UseTarget then
                 name = "vehicle"..k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 41,
-                maxZ = 45,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             }, {
                 options = {
                     {
@@ -397,8 +397,8 @@ if Config.UseTarget then
                 name = "helicopter"..k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 72,
-                maxZ = 75,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             }, {
                 options = {
                     {
@@ -432,7 +432,7 @@ if Config.UseTarget then
             TaskWarpPedIntoVehicle(ped, veh, -1)
             TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
             SetVehicleEngineOn(veh, true, true)
-        end, coords, true)
+        end)
     end)
     RegisterNetEvent('qb-ambulancejob:storeheli', function()
         local ped = PlayerPedId()
@@ -446,8 +446,8 @@ if Config.UseTarget then
                 name = "roof"..k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 72,
-                maxZ = 75,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             }, {
                 options = {
                     {
@@ -483,12 +483,12 @@ if Config.UseTarget then
     end)
     CreateThread(function()
         for k, v in pairs(Config.Locations["main"]) do
-            exports['qb-target']:AddBoxZone("main"..k, vector3(v.x, v.y, v.z), 2, 2, {
+            exports['qb-target']:AddBoxZone("main"..k, vector3(v.x, v.y, v.z), 1.2, 1, {
                 name = "main"..k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 42,
-                maxZ = 44.50,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             }, {
                 options = {
                     {
@@ -526,13 +526,12 @@ else
     CreateThread(function()
         local signPoly = {}
         for k, v in pairs(Config.Locations["duty"]) do
-            signPoly[#signPoly+1] = BoxZone:Create(
-                vector3(vector3(v.x, v.y, v.z)), 1, 1, {
+            signPoly[#signPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
                 name="sign" .. k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 41,
-                maxZ = 45,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             })
         end
 
@@ -569,13 +568,12 @@ else
     CreateThread(function()
         local stashPoly = {}
         for k, v in pairs(Config.Locations["stash"]) do
-            stashPoly[#stashPoly+1] = BoxZone:Create(
-                vector3(vector3(v.x, v.y, v.z)), 1, 1, {
+            stashPoly[#stashPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
                 name="stash" .. k,
                 debugPoly = false,
                 heading = -20,
-                minZ = 41,
-                maxZ = 44.50,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             })
         end
 
@@ -609,13 +607,12 @@ else
     CreateThread(function()
         local armoryPoly = {}
         for k, v in pairs(Config.Locations["armory"]) do
-            armoryPoly[#armoryPoly+1] = BoxZone:Create(
-                vector3(vector3(v.x, v.y, v.z)), 1, 1, {
+            armoryPoly[#armoryPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
                 name="armory" .. k,
                 debugPoly = false,
                 heading = 70,
-                minZ = 41,
-                maxZ = 44.50,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             })
         end
 
@@ -648,8 +645,7 @@ else
     CreateThread(function()
         local vehiclePoly = {}
         for k, v in pairs(Config.Locations["vehicle"]) do
-            vehiclePoly[#vehiclePoly+1] = BoxZone:Create(
-                vector3(vector3(v.x, v.y, v.z)), 5, 5, {
+            vehiclePoly[#vehiclePoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
                 name="vehicle" .. k,
                 debugPoly = false,
                 heading = 70,
@@ -663,7 +659,7 @@ else
         vehicleCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 inVehicle = true
-                if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
+                if onDuty and IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.storeveh_button'), 'left')
                 else
                     exports['qb-core']:DrawText(Lang:t('text.veh_button'), 'left')
@@ -683,8 +679,9 @@ else
                         sleep = 5
                         if IsControlJustReleased(0, 38) then
                             exports['qb-core']:KeyPressed(38)
-                            if IsPedInAnyVehicle(ped, false) then
+                            if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
                                 QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+                                Wait(1)
                             else
                                 MenuGarage()
                                 currentGarage = k
@@ -698,8 +695,7 @@ else
     CreateThread(function()
         local helicopterPoly = {}
         for k, v in pairs(Config.Locations["helicopter"]) do
-            helicopterPoly[#helicopterPoly+1] = BoxZone:Create(
-                vector3(vector3(v.x, v.y, v.z)), 5, 5, {
+            helicopterPoly[#helicopterPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
                 name="helicopter" .. k,
                 debugPoly = false,
                 heading = 70,
@@ -744,7 +740,7 @@ else
                                 TaskWarpPedIntoVehicle(ped, veh, -1)
                                 TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
                                 SetVehicleEngineOn(veh, true, true)
-                            end, coords, true)
+                            end)
                         end
                     end
                 end
@@ -754,13 +750,12 @@ else
     CreateThread(function()
         local roofPoly = {}
         for k, v in pairs(Config.Locations["roof"]) do
-            roofPoly[#roofPoly+1] = BoxZone:Create(
-                vector3(vector3(v.x, v.y, v.z)), 2, 2, {
+            roofPoly[#roofPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 2, 2, {
                 name="roof" .. k,
                 debugPoly = false,
                 heading = 70,
-                minZ = 71,
-                maxZ = 75.50,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             })
         end
 
@@ -811,13 +806,12 @@ else
     CreateThread(function()
         local mainPoly = {}
         for k, v in pairs(Config.Locations["main"]) do
-            mainPoly[#mainPoly+1] = BoxZone:Create(
-                vector3(vector3(v.x, v.y, v.z)), 2, 2, {
+            mainPoly[#mainPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 2, 2, {
                 name="main" .. k,
                 debugPoly = false,
                 heading = 70,
-                minZ = 41,
-                maxZ = 44.50,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             })
         end
 

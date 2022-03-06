@@ -829,8 +829,8 @@ if Config.UseTarget then
                 name = "checking_"..k,
                 heading = -72,
                 debugPoly = false,
-                minZ = 29.2,
-                maxZ = 45,
+                minZ = v.z - 2,
+                maxZ = v.z + 2,
             }, {
                 options = {
                     {
@@ -871,12 +871,12 @@ if Config.UseTarget then
     end)
     CreateThread(function()
         for k, v in pairs(Config.Locations["beds"]) do
-            exports['qb-target']:AddBoxZone("beds"..k, v.coords, 2.5, 2.3, {
+            exports['qb-target']:AddBoxZone("beds"..k,  v.coords, 2.5, 2.3, {
                 name = "beds"..k,
                 heading = -20,
                 debugPoly = false,
-                minZ = 29.2,
-                maxZ = 45,
+                minZ = v.coords.z - 1,
+                maxZ = v.coords.z + 1,
             }, {
                 options = {
                     {
@@ -904,9 +904,9 @@ else
             checkingPoly[#checkingPoly+1] = BoxZone:Create(vector3(v.x, v.y, v.z), 3.5, 2, {
                 heading = -72,
                 name="checkin_zone",
-                debugPoly=false,
+                debugPoly = false,
                 minZ = 41,
-                maxZ = 45,
+                maxZ = 44,
             })
         end
 
@@ -966,9 +966,9 @@ else
             bedPoly[#bedPoly+1] = BoxZone:Create(v.coords, 2.5, 2.3, {
                 name="bed_zone",
                 heading = -20,
-                debugPoly=false,
-                minZ = 41,
-                maxZ = 45,
+                debugPoly = false,
+                minZ = v.coords.z - 1,
+                maxZ = v.coords.z + 1,
             })
         end
 
