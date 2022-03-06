@@ -41,7 +41,7 @@ local function GetClosestPlayer()
 end
 
 function TakeOutVehicle(vehicleInfo)
-    local coords = Config.Locations["vehicle"][1]
+    local coords = Config.Locations["vehicle"][currentGarage]
     QBCore.Functions.SpawnVehicle(vehicleInfo, function(veh)
         SetVehicleNumberPlateText(veh, Lang:t('info.amb_plate')..tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
@@ -52,7 +52,7 @@ function TakeOutVehicle(vehicleInfo)
         end
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
-    end, coords, true)
+    end)
 end
 
 function MenuGarage()
