@@ -388,7 +388,6 @@ if Config.UseTarget then
                 end
                 MenuGarage(currentVehicle)
                 currentGarage = currentVehicle
-                print(currentGarage)
             end
         end
     end)
@@ -434,12 +433,9 @@ if Config.UseTarget then
             if #(pos - vector3(v.x, v.y, v.z)) < 3 then
                 currentHelictoper = k
                 local coords = Config.Locations["helicopter"][currentHelictoper]
-                print(currentHelictoper)
-                print(coords)
                 QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
                     SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
                     SetEntityHeading(veh, coords.w)
-                    print(coords.w)
                     SetVehicleLivery(veh, 1) -- Ambulance Livery
                     exports['LegacyFuel']:SetFuel(veh, 100.0)
                     TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
@@ -706,7 +702,6 @@ else
                                 end
                                 MenuGarage(currentSelection)
                                 currentGarage = currentSelection
-                                print(currentGarage)
                             end
                         end
                     end
@@ -759,12 +754,9 @@ else
                                     if #(pos - vector3(v.x, v.y, v.z)) < 3 then
                                         currentHelictoper = k
                                         local coords = Config.Locations["helicopter"][currentHelictoper]
-                                        print(currentHelictoper)
-                                        print(coords)
                                         QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
                                             SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
                                             SetEntityHeading(veh, coords.w)
-                                            print(coords.w)
                                             SetVehicleLivery(veh, 1) -- Ambulance Livery
                                             exports['LegacyFuel']:SetFuel(veh, 100.0)
                                             TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
