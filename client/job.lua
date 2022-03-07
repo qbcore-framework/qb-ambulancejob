@@ -483,7 +483,7 @@ if Config.UseTarget then
     end)
     CreateThread(function()
         for k, v in pairs(Config.Locations["main"]) do
-            exports['qb-target']:AddBoxZone("main"..k, vector3(v.x, v.y, v.z), 1.2, 1, {
+            exports['qb-target']:AddBoxZone("main"..k, vector3(v.x, v.y, v.z), 1.5, 1.5, {
                 name = "main"..k,
                 debugPoly = false,
                 heading = -20,
