@@ -1,7 +1,7 @@
 local statusCheckPed = nil
 local PlayerJob = {}
 local onDuty = false
-local currentGarage = 1
+local currentGarage = 0
 local inDuty = false
 local inStash = false
 local inArmory = false
@@ -52,7 +52,7 @@ function TakeOutVehicle(vehicleInfo)
         end
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
-    end)
+    end, coords, true)
 end
 
 function MenuGarage()
@@ -267,7 +267,7 @@ end)
 if Config.UseTarget then
     CreateThread(function()
         for k, v in pairs(Config.Locations["duty"]) do
-            exports['qb-target']:AddBoxZone("duty"..k, vector3(v.x, v.y, v.z), 1, 1, {
+            exports['qb-target']:AddBoxZone("duty"..k, vector3(v.x, v.y, v.z), 1.5, 1, {
                 name = "duty"..k,
                 debugPoly = false,
                 heading = -20,
@@ -379,9 +379,16 @@ if Config.UseTarget then
     end)
     RegisterNetEvent('qb-ambulancejob:viewvehicle', function()
         for k, v in pairs(Config.Locations["vehicle"]) do
-            if PlayerJob.name =="ambulance" and onDuty then
-                MenuGarage()
-                currentGarage = k
+            if onDuty then
+                local pos = GetEntityCoords(PlayerPedId())
+                for k, v in pairs(Config.Locations["vehicle"]) do
+                    if #(pos - vector3(v.x, v.y, v.z)) < 3 then
+                        currentVehicle = k
+                    end
+                end
+                MenuGarage(currentVehicle)
+                currentGarage = currentVehicle
+                print(currentGarage)
             end
         end
     end)
@@ -422,17 +429,25 @@ if Config.UseTarget then
         end
     end)
     RegisterNetEvent('qb-ambulancejob:pullheli', function()
-        local coords = Config.Locations["helicopter"][currentGarage]
-        local ped = PlayerPedId()
-        QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
-            SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
-            SetEntityHeading(veh, coords.w)
-            SetVehicleLivery(veh, 1) -- Ambulance Livery
-            exports['LegacyFuel']:SetFuel(veh, 100.0)
-            TaskWarpPedIntoVehicle(ped, veh, -1)
-            TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-            SetVehicleEngineOn(veh, true, true)
-        end)
+        local pos = GetEntityCoords(PlayerPedId())
+        for k, v in pairs(Config.Locations["helicopter"]) do
+            if #(pos - vector3(v.x, v.y, v.z)) < 3 then
+                currentHelictoper = k
+                local coords = Config.Locations["helicopter"][currentHelictoper]
+                print(currentHelictoper)
+                print(coords)
+                QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
+                    SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
+                    SetEntityHeading(veh, coords.w)
+                    print(coords.w)
+                    SetVehicleLivery(veh, 1) -- Ambulance Livery
+                    exports['LegacyFuel']:SetFuel(veh, 100.0)
+                    TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+                    TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+                    SetVehicleEngineOn(veh, true, true)
+                end, coords, true)
+            end
+        end
     end)
     RegisterNetEvent('qb-ambulancejob:storeheli', function()
         local ped = PlayerPedId()
@@ -526,7 +541,7 @@ else
     CreateThread(function()
         local signPoly = {}
         for k, v in pairs(Config.Locations["duty"]) do
-            signPoly[#signPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
+            signPoly[#signPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1, {
                 name="sign" .. k,
                 debugPoly = false,
                 heading = -20,
@@ -659,7 +674,7 @@ else
         vehicleCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 inVehicle = true
-                if onDuty and IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
+                if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.storeveh_button'), 'left')
                 else
                     exports['qb-core']:DrawText(Lang:t('text.veh_button'), 'left')
@@ -683,8 +698,15 @@ else
                                 QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
                                 Wait(1)
                             else
-                                MenuGarage()
-                                currentGarage = k
+                                local pos = GetEntityCoords(PlayerPedId())
+                                for k, v in pairs(Config.Locations["vehicle"]) do
+                                    if #(pos - vector3(v.x, v.y, v.z)) < 3 then
+                                        currentSelection = k
+                                    end
+                                end
+                                MenuGarage(currentSelection)
+                                currentGarage = currentSelection
+                                print(currentGarage)
                             end
                         end
                     end
@@ -709,7 +731,7 @@ else
         helicopterCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 inHeli = true
-                if onDuty and IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
+                if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.storeheli_button'), 'left')
                 else
                     exports['qb-core']:DrawText(Lang:t('text.heli_button'), 'left')
@@ -722,29 +744,40 @@ else
     end)
     CreateThread(function()
         while true do
-            local sleep = 1000
-            local ped = PlayerPedId()
-                if inHeli then
-                    sleep = 5
-                    if IsControlJustReleased(0, 38) then
-                        exports['qb-core']:KeyPressed(38)
-                        if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
-                            QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
-                        else
-                            local coords = Config.Locations["helicopter"][currentGarage]
-                            QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
-                                SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
-                                SetEntityHeading(veh, coords.w)
-                                SetVehicleLivery(veh, 1) -- Ambulance Livery
-                                exports['LegacyFuel']:SetFuel(veh, 100.0)
-                                TaskWarpPedIntoVehicle(ped, veh, -1)
-                                TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-                                SetVehicleEngineOn(veh, true, true)
-                            end)
+            for k, v in pairs(Config.Locations["helicopter"]) do
+                local sleep = 1000
+                local ped = PlayerPedId()
+                    if inHeli then
+                        sleep = 5
+                        if IsControlJustReleased(0, 38) then
+                            exports['qb-core']:KeyPressed(38)
+                            if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
+                                QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+                            else
+                                local pos = GetEntityCoords(PlayerPedId())
+                                for k, v in pairs(Config.Locations["helicopter"]) do
+                                    if #(pos - vector3(v.x, v.y, v.z)) < 3 then
+                                        currentHelictoper = k
+                                        local coords = Config.Locations["helicopter"][currentHelictoper]
+                                        print(currentHelictoper)
+                                        print(coords)
+                                        QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
+                                            SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
+                                            SetEntityHeading(veh, coords.w)
+                                            print(coords.w)
+                                            SetVehicleLivery(veh, 1) -- Ambulance Livery
+                                            exports['LegacyFuel']:SetFuel(veh, 100.0)
+                                            TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+                                            TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+                                            SetVehicleEngineOn(veh, true, true)
+                                        end, coords, true)
+                                    end
+                                end
+                            end
                         end
                     end
-                end
-            Wait(sleep)
+                Wait(sleep)
+            end
         end
     end)
     CreateThread(function()
@@ -806,7 +839,7 @@ else
     CreateThread(function()
         local mainPoly = {}
         for k, v in pairs(Config.Locations["main"]) do
-            mainPoly[#mainPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 2, 2, {
+            mainPoly[#mainPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1.5, {
                 name="main" .. k,
                 debugPoly = false,
                 heading = 70,
