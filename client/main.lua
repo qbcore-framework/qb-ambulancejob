@@ -906,8 +906,8 @@ else
                 heading = -72,
                 name="checkin_zone",
                 debugPoly = false,
-                minZ = 41,
-                maxZ = 44,
+                minZ = v.coords.z - 1,
+                maxZ = v.coords.z + 1,
             })
         end
 
