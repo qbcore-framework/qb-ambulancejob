@@ -19,11 +19,14 @@ RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
 	local Player = QBCore.Functions.GetPlayer(src)
 	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
 	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
-	Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
-	TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
-	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 end)
-
+RegisterNetEvent('hospital:server:PayBill', function()
+	local src = source
+	local Player = AIVPCore.Functions.GetPlayer(src)
+	Player.Functions.RemoveMoney("bank", Config.Cost , "respawned-at-hospital")
+	TriggerEvent('aivp-bossmenu:server:addAccountMoney', "ambulance", Config.Cost)
+	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.Cost)
+end)
 RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
