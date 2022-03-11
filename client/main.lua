@@ -861,6 +861,7 @@ CreateThread(function()
                                 local bedId = GetAvailableBed()
                                 if bedId then
                                     TriggerServerEvent("hospital:server:SendToBed", bedId, true)
+				    TriggerServerEvent("hospital:server:PayBill")							
                                 else
                                     QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
                                 end
