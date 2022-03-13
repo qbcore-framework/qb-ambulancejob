@@ -822,12 +822,63 @@ CreateThread(function()
     end
 end)
 
+local listen = false
+ local function CheckInControls(variable)
+    CreateThread(function()
+        listen = true
+        while listen do
+            if IsControlJustPressed(0, 38) then
+                exports['qb-core']:KeyPressed(38)
+                if variable == "checkin" then
+                   TriggerEvent('qb-ambulancejob:checkin')
+                elseif variable == "beds" then
+                    TriggerEvent('qb-ambulancejob:beds')
+                end
+            end
+            Wait(1)
+        end
+    end)
+end 
+
+RegisterNetEvent('qb-ambulancejob:checkin', function()
+    if doctorCount >= Config.MinimalDoctors then
+        TriggerServerEvent("hospital:server:SendDoctorAlert")
+    else
+        TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
+        QBCore.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
+            disableMovement = true,
+            disableCarMovement = true,
+            disableMouse = false,
+            disableCombat = true,
+        }, {}, {}, {}, function() -- Done
+            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+            local bedId = GetAvailableBed()
+            if bedId then
+                TriggerServerEvent("hospital:server:SendToBed", bedId, true)
+            else
+                QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
+            end
+        end, function() -- Cancel
+            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+            QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
+        end)
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:beds', function()
+    if GetAvailableBed(closestBed) then
+        TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
+    else
+        QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
+    end
+end)
+
 -- Convar Turns into strings
 if Config.UseTarget == 'true' then
     CreateThread(function()
         for k, v in pairs(Config.Locations["checking"]) do
             exports['qb-target']:AddBoxZone("checking"..k, vector3(v.x, v.y, v.z), 3.5, 2, {
-                name = "checking_"..k,
+                name = "checkin"..k,
                 heading = -72,
                 debugPoly = false,
                 minZ = v.z - 2,
@@ -836,41 +887,15 @@ if Config.UseTarget == 'true' then
                 options = {
                     {
                         type = "client",
-                        event = "qb-ambulancejob:checkin",
                         icon = "fa fa-clipboard",
+                        event = "qb-ambulancejob:checkin",
                         label = "Check In",
                     }
                 },
                 distance = 1.5
             })
+        end
 
-        end
-    end)
-    RegisterNetEvent('qb-ambulancejob:checkin', function()
-        if doctorCount >= Config.MinimalDoctors then
-            TriggerServerEvent("hospital:server:SendDoctorAlert")
-        else
-            TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
-            QBCore.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
-                disableMovement = true,
-                disableCarMovement = true,
-                disableMouse = false,
-                disableCombat = true,
-            }, {}, {}, {}, function() -- Done
-                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                local bedId = GetAvailableBed()
-                if bedId then
-                    TriggerServerEvent("hospital:server:SendToBed", bedId, true)
-                else
-                    QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
-                end
-            end, function() -- Cancel
-                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
-            end)
-        end
-    end)
-    CreateThread(function()
         for k, v in pairs(Config.Locations["beds"]) do
             exports['qb-target']:AddBoxZone("beds"..k,  v.coords, 2.5, 2.3, {
                 name = "beds"..k,
@@ -891,114 +916,56 @@ if Config.UseTarget == 'true' then
             })
         end
     end)
-    RegisterNetEvent('qb-ambulancejob:beds', function()
-        if GetAvailableBed(closestBed) then
-            TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
-        else
-            QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
-        end
-    end)
 else
     CreateThread(function()
         local checkingPoly = {}
         for k, v in pairs(Config.Locations["checking"]) do
             checkingPoly[#checkingPoly+1] = BoxZone:Create(vector3(v.x, v.y, v.z), 3.5, 2, {
                 heading = -72,
-                name="checkin_zone",
+                name="checkin"..k,
                 debugPoly = false,
                 minZ = v.z - 2,
                 maxZ = v.z + 2,
             })
-        end
-
-        local checkingCombo = ComboZone:Create(checkingPoly, {name = "checkingCombo", debugPoly = false})
-        checkingCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside then
-                inCheckin = true
-                if doctorCount >= Config.MinimalDoctors then
-                    exports['qb-core']:DrawText(Lang:t('text.call_doc'),'left')
-                else
-                    exports['qb-core']:DrawText(Lang:t('text.check_in'), 'left')
-                end
-            else
-                inCheckin = false
-                exports['qb-core']:HideText()
-            end
-        end)
-    end)
-    CreateThread(function()
-        Wait(1000)
-        while true do
-            local sleep = 1000
-            if inCheckin then
-                sleep = 5
-                if IsControlJustPressed(0,38) then
-                    exports['qb-core']:KeyPressed(38)
+            local checkingCombo = ComboZone:Create(checkingPoly, {name = "checkingCombo", debugPoly = false})
+            checkingCombo:onPlayerInOut(function(isPointInside)
+                if isPointInside then
+                    inCheckin = true
                     if doctorCount >= Config.MinimalDoctors then
-                        TriggerServerEvent("hospital:server:SendDoctorAlert")
+                        exports['qb-core']:DrawText(Lang:t('text.call_doc'),'left')
+                        CheckInControls("checkin")
                     else
-                        TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
-                        QBCore.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
-                            disableMovement = true,
-                            disableCarMovement = true,
-                            disableMouse = false,
-                            disableCombat = true,
-                        }, {}, {}, {}, function() -- Done
-                            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                            local bedId = GetAvailableBed()
-                            if bedId then
-                                TriggerServerEvent("hospital:server:SendToBed", bedId, true)
-                            else
-                                QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
-                            end
-                        end, function() -- Cancel
-                            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-                            QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
-                        end)
+                        exports['qb-core']:DrawText(Lang:t('text.check_in'), 'left')
+                        CheckInControls("checkin")
                     end
+                else
+                    inCheckin = false
+                    listen = false
+                    exports['qb-core']:HideText()
                 end
-            end
-            Wait(sleep)
+            end)
         end
-    end)
-    CreateThread(function()
         local bedPoly = {}
         for k, v in pairs(Config.Locations["beds"]) do
             bedPoly[#bedPoly+1] = BoxZone:Create(v.coords, 2.5, 2.3, {
-                name="bed_zone",
+                name="beds"..k,
                 heading = -20,
                 debugPoly = false,
                 minZ = v.coords.z - 1,
                 maxZ = v.coords.z + 1,
             })
-        end
-
-        local bedCombo = ComboZone:Create(bedPoly, {name = "bedCombo", debugPoly = false})
-        bedCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside then
-                inBed = true
+            local bedCombo = ComboZone:Create(bedPoly, {name = "bedCombo", debugPoly = false})
+            bedCombo:onPlayerInOut(function(isPointInside)
+                if isPointInside then
+                    inBed = true
                     exports['qb-core']:DrawText(Lang:t('text.lie_bed'), 'left')
-            else
-                inBed = false
+                    CheckInControls("beds")
+                else
+                    inBed = false
+                    listen = false
                     exports['qb-core']:HideText()
-            end
-        end)
-    end)
-    CreateThread(function()
-        while true do
-            local sleep = 1000
-            if inBed then
-                sleep = 5
-                if IsControlJustPressed(0,38) then
-                    exports['qb-core']:KeyPressed(38)
-                    if GetAvailableBed(closestBed) then
-                        TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
-                    else
-                        QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
-                    end
                 end
-            end
-            Wait(sleep)
+            end)
         end
     end)
 end

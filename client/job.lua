@@ -243,6 +243,144 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
     end, 'bandage')
 end)
 
+local check = false
+ local function EMSControls(variable)
+    CreateThread(function()
+        check = true
+        while check do
+            if IsControlJustPressed(0, 38) then
+                exports['qb-core']:KeyPressed(38)
+                if variable == "sign" then
+                   TriggerEvent('EMSToggle:Duty')
+                elseif variable == "stash" then
+                    TriggerEvent('qb-ambulancejob:stash')
+                elseif variable == "armory" then
+                    TriggerEvent('qb-ambulancejob:armory')
+                elseif variable == "storevehicle" then
+                    TriggerEvent('qb-ambulancejob:storevehicle')
+                elseif variable == "vehicle" then
+                    TriggerEvent('qb-ambulancejob:viewvehicle')
+                elseif variable == "storeheli" then
+                    TriggerEvent('qb-ambulancejob:storeheli')
+                elseif variable == "takeheli" then
+                    TriggerEvent('qb-ambulancejob:pullheli')
+                elseif variable == "roof" then
+                    TriggerEvent('qb-ambulancejob:elevator_main')
+                elseif variable == "main" then
+                    TriggerEvent('qb-ambulancejob:elevator_roof')
+                end
+            end
+            Wait(1)
+        end
+    end)
+end
+
+RegisterNetEvent('qb-ambulancejob:stash', function()
+    if onDuty then
+        TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_"..QBCore.Functions.GetPlayerData().citizenid)
+        TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_"..QBCore.Functions.GetPlayerData().citizenid)
+    end
+end)
+
+
+RegisterNetEvent('qb-ambulancejob:armory', function()
+    if onDuty then
+        TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:viewvehicle', function()
+    if onDuty then
+        local pos = GetEntityCoords(PlayerPedId())
+        for k, v in pairs(Config.Locations["vehicle"]) do
+            if #(pos - vector3(v.x, v.y, v.z)) < 3 then
+                currentVehicle = k
+            end
+        end
+        MenuGarage(currentVehicle)
+        currentGarage = currentVehicle
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:storevehicle', function()
+    local ped = PlayerPedId()
+    if IsPedInAnyVehicle(ped, false) then
+        QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:pullheli', function()
+    local pos = GetEntityCoords(PlayerPedId())
+    for k, v in pairs(Config.Locations["helicopter"]) do
+        if #(pos - vector3(v.x, v.y, v.z)) < 3 then
+            currentHelictoper = k
+            local coords = Config.Locations["helicopter"][currentHelictoper]
+            QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
+                SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
+                SetEntityHeading(veh, coords.w)
+                SetVehicleLivery(veh, 1) -- Ambulance Livery
+                exports['LegacyFuel']:SetFuel(veh, 100.0)
+                TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+                TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+                SetVehicleEngineOn(veh, true, true)
+            end, coords, true)
+        end
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:storeheli', function()
+    local ped = PlayerPedId()
+    if IsPedInAnyVehicle(ped, false) then
+        QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
+    local ped = PlayerPedId()
+    for k, v in pairs(Config.Locations["roof"])do
+        DoScreenFadeOut(500)
+        while not IsScreenFadedOut() do
+            Wait(10)
+        end
+
+        currentHospital = k
+
+        local coords = Config.Locations["main"][currentHospital]
+        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+        SetEntityHeading(ped, coords.w)
+
+        Wait(100)
+
+        DoScreenFadeIn(1000)
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:elevator_main', function()
+    local ped = PlayerPedId()
+    for k, v in pairs(Config.Locations["main"])do
+        DoScreenFadeOut(500)
+        while not IsScreenFadedOut() do
+            Wait(10)
+        end
+
+        currentHospital = k
+
+        local coords = Config.Locations["roof"][currentHospital]
+        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+        SetEntityHeading(ped, coords.w)
+
+        Wait(100)
+
+        DoScreenFadeIn(1000)
+    end
+end)
+
+RegisterNetEvent('EMSToggle:Duty', function()
+    onDuty = not onDuty
+    TriggerServerEvent("QBCore:ToggleDuty")
+    TriggerServerEvent("police:server:UpdateBlips")
+end)
+
 -- Threads
 
 CreateThread(function()
@@ -287,13 +425,6 @@ if Config.UseTarget == 'true' then
                 distance = 1.5
             })
         end
-    end)
-    RegisterNetEvent('EMSToggle:Duty', function()
-        onDuty = not onDuty
-        TriggerServerEvent("QBCore:ToggleDuty")
-        TriggerServerEvent("police:server:UpdateBlips")
-    end)
-    CreateThread(function()
         for k, v in pairs(Config.Locations["stash"]) do
             exports['qb-target']:AddBoxZone("stash"..k, vector3(v.x, v.y, v.z), 1, 1, {
                 name = "stash"..k,
@@ -314,14 +445,6 @@ if Config.UseTarget == 'true' then
                 distance = 1.5
             })
         end
-    end)
-    RegisterNetEvent('qb-ambulancejob:stash', function()
-        if onDuty then
-            TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_"..QBCore.Functions.GetPlayerData().citizenid)
-            TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_"..QBCore.Functions.GetPlayerData().citizenid)
-        end
-    end)
-    CreateThread(function()
         for k, v in pairs(Config.Locations["armory"]) do
             exports['qb-target']:AddBoxZone("armory"..k, vector3(v.x, v.y, v.z), 1, 1, {
                 name = "armory"..k,
@@ -342,13 +465,6 @@ if Config.UseTarget == 'true' then
                 distance = 1.5
             })
         end
-    end)
-    RegisterNetEvent('qb-ambulancejob:armory', function()
-        if onDuty then
-            TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
-        end
-    end)
-    CreateThread(function()
         for k, v in pairs(Config.Locations["vehicle"]) do
             exports['qb-target']:AddBoxZone("vehicle"..k, vector3(v.x, v.y, v.z), 5, 5, {
                 name = "vehicle"..k,
@@ -371,34 +487,11 @@ if Config.UseTarget == 'true' then
                         icon = "fas fa-ambulance",
                         label = "Store vehicle",
                         job = "ambulance"
-                        
                     }
                 },
                 distance = 8
             })
         end
-    end)
-    RegisterNetEvent('qb-ambulancejob:viewvehicle', function()
-        for k, v in pairs(Config.Locations["vehicle"]) do
-            if onDuty then
-                local pos = GetEntityCoords(PlayerPedId())
-                for k, v in pairs(Config.Locations["vehicle"]) do
-                    if #(pos - vector3(v.x, v.y, v.z)) < 3 then
-                        currentVehicle = k
-                    end
-                end
-                MenuGarage(currentVehicle)
-                currentGarage = currentVehicle
-            end
-        end
-    end)
-    RegisterNetEvent('qb-ambulancejob:storevehicle', function()
-        local ped = PlayerPedId()
-        if IsPedInAnyVehicle(ped, false) then
-            QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
-        end
-    end)
-    CreateThread(function()
         for k, v in pairs(Config.Locations["helicopter"]) do
             exports['qb-target']:AddBoxZone("helicopter"..k, vector3(v.x, v.y, v.z), 5, 5, {
                 name = "helicopter"..k,
@@ -421,38 +514,11 @@ if Config.UseTarget == 'true' then
                         icon = "fa fa-hand",
                         label = "Store Helicopter",
                         job = "ambulance"
-                        
                     }
                 },
                 distance = 8
             })
         end
-    end)
-    RegisterNetEvent('qb-ambulancejob:pullheli', function()
-        local pos = GetEntityCoords(PlayerPedId())
-        for k, v in pairs(Config.Locations["helicopter"]) do
-            if #(pos - vector3(v.x, v.y, v.z)) < 3 then
-                currentHelictoper = k
-                local coords = Config.Locations["helicopter"][currentHelictoper]
-                QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
-                    SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
-                    SetEntityHeading(veh, coords.w)
-                    SetVehicleLivery(veh, 1) -- Ambulance Livery
-                    exports['LegacyFuel']:SetFuel(veh, 100.0)
-                    TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                    TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-                    SetVehicleEngineOn(veh, true, true)
-                end, coords, true)
-            end
-        end
-    end)
-    RegisterNetEvent('qb-ambulancejob:storeheli', function()
-        local ped = PlayerPedId()
-        if IsPedInAnyVehicle(ped, false) then
-            QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
-        end
-    end)
-    CreateThread(function()
         for k, v in pairs(Config.Locations["roof"]) do
             exports['qb-target']:AddBoxZone("roof"..k, vector3(v.x, v.y, v.z), 2, 2, {
                 name = "roof"..k,
@@ -473,27 +539,6 @@ if Config.UseTarget == 'true' then
                 distance = 8
             })
         end
-    end)
-    RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
-        local ped = PlayerPedId()
-        for k, v in pairs(Config.Locations["roof"])do
-            DoScreenFadeOut(500)
-            while not IsScreenFadedOut() do
-                Wait(10)
-            end
-
-            currentHospital = k
-
-            local coords = Config.Locations["main"][currentHospital]
-            SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
-            SetEntityHeading(ped, coords.w)
-
-            Wait(100)
-
-            DoScreenFadeIn(1000)
-        end
-    end)
-    CreateThread(function()
         for k, v in pairs(Config.Locations["main"]) do
             exports['qb-target']:AddBoxZone("main"..k, vector3(v.x, v.y, v.z), 1.5, 1.5, {
                 name = "main"..k,
@@ -515,31 +560,12 @@ if Config.UseTarget == 'true' then
             })
         end
     end)
-    RegisterNetEvent('qb-ambulancejob:elevator_main', function()
-        local ped = PlayerPedId()
-        for k, v in pairs(Config.Locations["main"])do
-            DoScreenFadeOut(500)
-            while not IsScreenFadedOut() do
-                Wait(10)
-            end
-
-            currentHospital = k
-
-            local coords = Config.Locations["roof"][currentHospital]
-            SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
-            SetEntityHeading(ped, coords.w)
-
-            Wait(100)
-
-            DoScreenFadeIn(1000)
-        end
-    end)
 else
     CreateThread(function()
         local signPoly = {}
         for k, v in pairs(Config.Locations["duty"]) do
             signPoly[#signPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1, {
-                name="sign" .. k,
+                name="sign"..k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -547,41 +573,27 @@ else
             })
         end
 
-        local signCombo = ComboZone:Create(signPoly, {name = "signCombo", debugPoly = false})
+        local signCombo = ComboZone:Create(signPoly, {name = "signcombo", debugPoly = false})
         signCombo:onPlayerInOut(function(isPointInside)
             if isPointInside then
                 inDuty = true
                 if not onDuty and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.onduty_button'),'left')
+                    EMSControls("sign")
                 else
                     exports['qb-core']:DrawText(Lang:t('text.offduty_button'),'left')
+                    EMSControls("sign")
                 end
             else
                 inDuty = false
+                check = false
                 exports['qb-core']:HideText()
             end
         end)
-    end)
-    CreateThread(function()
-        while true do
-            local sleep = 1000
-                if inDuty then
-                    sleep = 5
-                    if IsControlJustReleased(0, 38) then
-                        exports['qb-core']:KeyPressed(38)
-                        onDuty = not onDuty
-                        TriggerServerEvent("QBCore:ToggleDuty")
-                        TriggerServerEvent("police:server:UpdateBlips")
-                    end
-                end
-            Wait(sleep)
-        end
-    end)
-    CreateThread(function()
         local stashPoly = {}
         for k, v in pairs(Config.Locations["stash"]) do
             stashPoly[#stashPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
-                name="stash" .. k,
+                name="stash"..k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -595,32 +607,18 @@ else
                 inStash = true
                 if onDuty and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.pstash_button'),'left')
+                    EMSControls("stash")
                 end
             else
                 inStash = false
+                check = false
                 exports['qb-core']:HideText()
             end
         end)
-    end)
-    CreateThread(function()
-        while true do
-            local sleep = 1000
-                if inStash then
-                    sleep = 5
-                    if IsControlJustReleased(0, 38) then
-                        exports['qb-core']:KeyPressed(38)
-                        TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_"..QBCore.Functions.GetPlayerData().citizenid)
-                        TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_"..QBCore.Functions.GetPlayerData().citizenid)
-                    end
-                end
-            Wait(sleep)
-        end
-    end)
-    CreateThread(function()
         local armoryPoly = {}
         for k, v in pairs(Config.Locations["armory"]) do
             armoryPoly[#armoryPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
-                name="armory" .. k,
+                name="armory"..k,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -634,31 +632,19 @@ else
                 inArmory = true
                 if onDuty and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.armory_button'),'left')
+                    EMSControls("armory")
                 end
             else
                 inArmory = false
+                check = false
                 exports['qb-core']:HideText()
             end
         end)
-    end)
-    CreateThread(function()
-        while true do
-            local sleep = 1000
-                if inArmory then
-                    sleep = 5
-                    if IsControlJustReleased(0, 38) then
-                        exports['qb-core']:KeyPressed(38)
-                        TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
-                    end
-                end
-            Wait(sleep)
-        end
-    end)
-    CreateThread(function()
         local vehiclePoly = {}
         for k, v in pairs(Config.Locations["vehicle"]) do
+            local currentVehicle = k
             vehiclePoly[#vehiclePoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
-                name="vehicle" .. k,
+                name="vehicle"..k,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -673,48 +659,21 @@ else
                 inVehicle = true
                 if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.storeveh_button'), 'left')
+                    EMSControls("storevehicle")
                 else
                     exports['qb-core']:DrawText(Lang:t('text.veh_button'), 'left')
+                    EMSControls("vehicle")
                 end
             else
                 inVehicle = false
+                check = false
                 exports['qb-core']:HideText()
             end
         end)
-    end)
-    CreateThread(function()
-        while true do
-            local sleep = 1000
-            local ped = PlayerPedId()
-                if inVehicle then
-                    for k, v in pairs(Config.Locations["vehicle"]) do
-                        sleep = 5
-                        if IsControlJustReleased(0, 38) then
-                            exports['qb-core']:KeyPressed(38)
-                            if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
-                                QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
-                                Wait(1)
-                            else
-                                local pos = GetEntityCoords(PlayerPedId())
-                                for k, v in pairs(Config.Locations["vehicle"]) do
-                                    if #(pos - vector3(v.x, v.y, v.z)) < 3 then
-                                        currentSelection = k
-                                    end
-                                end
-                                MenuGarage(currentSelection)
-                                currentGarage = currentSelection
-                            end
-                        end
-                    end
-                end
-            Wait(sleep)
-        end
-    end)
-    CreateThread(function()
         local helicopterPoly = {}
         for k, v in pairs(Config.Locations["helicopter"]) do
             helicopterPoly[#helicopterPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
-                name="helicopter" .. k,
+                name="helicopter"..k,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -729,55 +688,21 @@ else
                 inHeli = true
                 if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
                     exports['qb-core']:DrawText(Lang:t('text.storeheli_button'), 'left')
+                    EMSControls("storeheli")
                 else
                     exports['qb-core']:DrawText(Lang:t('text.heli_button'), 'left')
+                    EMSControls("takeheli")
                 end
             else
                 inHeli = false
+                check = false
                 exports['qb-core']:HideText()
             end
         end)
-    end)
-    CreateThread(function()
-        while true do
-            for k, v in pairs(Config.Locations["helicopter"]) do
-                local sleep = 1000
-                local ped = PlayerPedId()
-                    if inHeli then
-                        sleep = 5
-                        if IsControlJustReleased(0, 38) then
-                            exports['qb-core']:KeyPressed(38)
-                            if IsPedInAnyVehicle(ped, false) and PlayerJob.name =="ambulance" then
-                                QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
-                            else
-                                local pos = GetEntityCoords(PlayerPedId())
-                                for k, v in pairs(Config.Locations["helicopter"]) do
-                                    if #(pos - vector3(v.x, v.y, v.z)) < 3 then
-                                        currentHelictoper = k
-                                        local coords = Config.Locations["helicopter"][currentHelictoper]
-                                        QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
-                                            SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
-                                            SetEntityHeading(veh, coords.w)
-                                            SetVehicleLivery(veh, 1) -- Ambulance Livery
-                                            exports['LegacyFuel']:SetFuel(veh, 100.0)
-                                            TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                                            TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-                                            SetVehicleEngineOn(veh, true, true)
-                                        end, coords, true)
-                                    end
-                                end
-                            end
-                        end
-                    end
-                Wait(sleep)
-            end
-        end
-    end)
-    CreateThread(function()
         local roofPoly = {}
         for k, v in pairs(Config.Locations["roof"]) do
             roofPoly[#roofPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 2, 2, {
-                name="roof" .. k,
+                name="roof"..k,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -791,49 +716,20 @@ else
                 onRoof = true
                 if onDuty then
                     exports['qb-core']:DrawText(Lang:t('text.elevator_main'),'left')
+                    EMSControls("main")
                 else
                     exports['qb-core']:DrawText(Lang:t('error.not_ems'),'left')
                 end
             else
                 onRoof = false
+                check = false
                 exports['qb-core']:HideText()
             end
         end)
-    end)
-    CreateThread(function()
-        while true do
-            local sleep = 1000
-            local ped = PlayerPedId()
-                if onRoof then
-                    for k, v in pairs(Config.Locations["roof"]) do
-                        sleep = 5
-                        if PlayerJob.name =="ambulance" and IsControlJustReleased(0, 38) then
-                            exports['qb-core']:KeyPressed(38)
-                            DoScreenFadeOut(500)
-                            while not IsScreenFadedOut() do
-                                Wait(10)
-                            end
-
-                            currentHospital = k
-
-                            local coords = Config.Locations["main"][currentHospital]
-                            SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
-                            SetEntityHeading(ped, coords.w)
-
-                            Wait(100)
-
-                            DoScreenFadeIn(1000)
-                        end
-                    end
-                end
-            Wait(sleep)
-        end
-    end)
-    CreateThread(function()
         local mainPoly = {}
         for k, v in pairs(Config.Locations["main"]) do
             mainPoly[#mainPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1.5, {
-                name="main" .. k,
+                name="main"..k,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -847,42 +743,15 @@ else
                 inMain = true
                 if onDuty then
                     exports['qb-core']:DrawText(Lang:t('text.elevator_roof'),'left')
+                    EMSControls("roof")
                 else
                     exports['qb-core']:DrawText(Lang:t('error.not_ems'),'left')
                 end
             else
                 inMain = false
+                check = false
                 exports['qb-core']:HideText()
             end
         end)
-    end)
-    CreateThread(function()
-        while true do
-            local sleep = 1000
-            local ped = PlayerPedId()
-                if inMain then
-                    for k, v in pairs(Config.Locations["main"]) do
-                        sleep = 5
-                        if PlayerJob.name =="ambulance" and  IsControlJustReleased(0, 38) then
-                            exports['qb-core']:KeyPressed(38)
-                            DoScreenFadeOut(500)
-                            while not IsScreenFadedOut() do
-                                Wait(10)
-                            end
-
-                            currentHospital = k
-
-                            local coords = Config.Locations["roof"][currentHospital]
-                            SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
-                            SetEntityHeading(ped, coords.w)
-
-                            Wait(100)
-
-                            DoScreenFadeIn(1000)
-                        end
-                    end
-                end
-            Wait(sleep)
-        end
     end)
 end
