@@ -10,12 +10,12 @@ EMS Job and Death/Wound Logic for QB-Core Framework :ambulance:
 # Server.cfg Convar Update
 - Global DrawTextUi Option
 ```
-setr UseTarget = false
+setr UseTarget false
 ``` 
 
 - Global Target Option
 ```
-setr UseTarget = true
+setr UseTarget true
 ```
 
 
