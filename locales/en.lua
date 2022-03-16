@@ -74,6 +74,7 @@ local Translations = {
     },
     menu = {
         amb_vehicles = 'Ambulance Vehicles',
+        status = 'Heath Status',
         close = '⬅ Close Menu',
     },
     text = {
@@ -84,10 +85,8 @@ local Translations = {
         duty = 'On/Off Duty',
         armory_button = '[E] - Armory',
         armory = 'Armory',
-        storeveh_button = '[E] - Store vehicle',
-        veh_button = '[E] - Vehicles',
-        storeheli_button = '[E] - Store helicopter',
-        heli_button = '[E] - Take a helicopter',
+        veh_button = '[E] - Grab / Store Vehicle',
+        heli_button = '[E] - Grab / Take Helicopter',
         elevator_roof = '[E] - Take the elevator to the roof',
         elevator_main = '[E] - Take the elevator down',
         bed_out = '[E] - To get out of bed..',
