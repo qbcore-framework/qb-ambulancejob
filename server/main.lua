@@ -1,6 +1,7 @@
 local PlayerInjuries = {}
 local PlayerWeaponWounds = {}
 local QBCore = exports['qb-core']:GetCoreObject()
+local doctorCount = 0
 -- Events
 
 -- Compatibility with txAdmin Menu's heal options.
@@ -128,15 +129,18 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	end
 end)
 
-RegisterNetEvent('hospital:server:SetDoctor', function()
-	local amount = 0
-    local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
-        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-            amount = amount + 1
-        end
+RegisterNetEvent('hospital:server:AddDoctor', function(job)
+	if job == 'ambulance' then
+		doctorCount = doctorCount + 1
+		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
 	end
-	TriggerClientEvent("hospital:client:SetDoctorCount", -1, amount)
+end)
+
+RegisterNetEvent('hospital:server:RemoveDoctor', function(job)
+	if job == 'ambulance' then
+		doctorCount = doctorCount - 1
+		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
+	end
 end)
 
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
@@ -367,3 +371,5 @@ QBCore.Functions.CreateUseableItem("firstaid", function(source, item)
 		TriggerClientEvent("hospital:client:UseFirstAid", src)
 	end
 end)
+
+exports('GetDoctorCount', function() return doctorCount end)
