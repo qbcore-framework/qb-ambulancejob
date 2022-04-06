@@ -49,9 +49,12 @@ Config.Locations = {
         [10] = {coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672},
         [11] = {coords = vector4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672},
     },
-    ["stations"] = {
-        [1] = {label = Lang:t('info.pb_hospital'), coords = vector4(304.27, -600.33, 43.28, 272.249)}
-    }
+    ["firestations"] = {
+        [1] = {label = Lang:t('info.firestations'), coords = vector4(213.53, -1641.84, 29.74, 322.63)}
+    },
+    ["hospitals"] = {
+        [1] = {label = Lang:t('info.hospitals'), coords = vector4(308.37, -587.28, 43.28, 62.77)},
+    },
 }
 
 Config.AuthorizedVehicles = {

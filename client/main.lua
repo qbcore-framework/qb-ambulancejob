@@ -708,12 +708,25 @@ end)
 -- Threads
 
 CreateThread(function()
-    for k, station in pairs(Config.Locations["stations"]) do
+    for k, station in pairs(Config.Locations["firestations"]) do
+        local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
+        SetBlipSprite(blip, 436)
+        SetBlipAsShortRange(blip, true)
+        SetBlipScale(blip, 0.8)
+        SetBlipColour(blip, 1)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(station.label)
+        EndTextCommandSetBlipName(blip)
+    end
+end)
+
+CreateThread(function()
+    for k, station in pairs(Config.Locations["hospitals"]) do
         local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
         SetBlipSprite(blip, 61)
         SetBlipAsShortRange(blip, true)
         SetBlipScale(blip, 0.8)
-        SetBlipColour(blip, 25)
+        SetBlipColour(blip, 26)
         BeginTextCommandSetBlipName("STRING")
         AddTextComponentString(station.label)
         EndTextCommandSetBlipName(blip)
