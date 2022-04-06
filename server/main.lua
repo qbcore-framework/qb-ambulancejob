@@ -20,7 +20,7 @@ RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
 	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
 	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
 	Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
-	TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
+		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 end)
 
@@ -37,7 +37,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 				TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
 			end
 			Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-			TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
+				exports['qb-management']:AddMoney("ambulance", Config.BillCost)
 			TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 			return
 		end
@@ -52,7 +52,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 		TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
 	end
 	Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-	TriggerEvent('qb-bossmenu:server:addAccountMoney', "ambulance", Config.BillCost)
+		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
 	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 end)
 
