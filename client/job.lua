@@ -149,7 +149,7 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
 end)
 
 RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
-    if PlayerJob.name == 'ambulance' and duty != onDuty then
+    if PlayerJob.name == 'ambulance' and duty ~= onDuty then
         if duty then
             TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
         else
