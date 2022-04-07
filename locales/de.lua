@@ -116,7 +116,7 @@ local Translations = {
     },
     progress = {
         ifaks = 'Benutze Erste-Hilfe-Kasten...',
-        bandage = 'Verband benutzen...',
+        bandage = 'Benutze Verband...',
         painkillers = 'Nehme Schmerzmittel...',
         revive = 'Wiederbelebe Person...',
         healing = 'Wunden heilen...',
