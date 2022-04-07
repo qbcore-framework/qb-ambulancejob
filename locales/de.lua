@@ -115,7 +115,7 @@ local Translations = {
         right_foot = 'Rechter Fuß',
     },
     progress = {
-        ifaks = 'ifaks nehmen...',
+        ifaks = 'Benutze Erste-Hilfe-Kasten...',
         bandage = 'Verband benutzen...',
         painkillers = 'Schmerzmittel nehmen...',
         revive = 'Person wiederbeleben...',
