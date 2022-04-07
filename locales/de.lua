@@ -14,7 +14,7 @@ local Translations = {
         not_online = 'Spieler nicht online'
     },
     success = {
-        revived = 'du hast eine Person wiederbelebt',
+        revived = 'Du hast eine Person wiederbelebt',
         healthy_player = 'Spieler ist gesund',
         helped_player = 'Du hast der Person geholfen',
         wounds_healed = 'Deine Wunden wurden geheilt!',
