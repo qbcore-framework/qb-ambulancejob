@@ -96,14 +96,20 @@ end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
-    TriggerServerEvent("hospital:server:SetDoctor")
+    if PlayerJob.name == 'ambulance' then
+        onDuty = PlayerJob.onduty
+        if PlayerJob.onduty then
+            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+        else
+            TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+        end
+    end
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     exports.spawnmanager:setAutoSpawn(false)
     local ped = PlayerPedId()
     local player = PlayerId()
-    TriggerServerEvent("hospital:server:SetDoctor")
     CreateThread(function()
         Wait(5000)
         SetEntityMaxHealth(ped, 200)
@@ -127,13 +133,31 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
                 TriggerServerEvent("hospital:server:SetDeathStatus", false)
                 TriggerServerEvent("hospital:server:SetLaststandStatus", false)
             end
+
+
+            if PlayerJob.name == 'ambulance' and onDuty then
+                TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+            end
         end)
     end)
 end)
 
+RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
+    if PlayerJob.name == 'ambulance' and onDuty then
+        TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+    end
+end)
+
 RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
+    if PlayerJob.name == 'ambulance' and duty ~= onDuty then
+        if duty then
+            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+        else
+            TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+        end
+    end
+
     onDuty = duty
-    TriggerServerEvent("hospital:server:SetDoctor")
 end)
 
 function Status()
