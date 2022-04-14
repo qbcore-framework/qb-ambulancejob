@@ -831,8 +831,10 @@ local listen = false
                 exports['qb-core']:KeyPressed(38)
                 if variable == "checkin" then
                    TriggerEvent('qb-ambulancejob:checkin')
+                    listen = false
                 elseif variable == "beds" then
                     TriggerEvent('qb-ambulancejob:beds')
+                    listen = false
                 end
             end
             Wait(1)
