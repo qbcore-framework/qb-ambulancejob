@@ -51,7 +51,31 @@ function OnDeath()
                 loadAnimDict(deadAnimDict)
                 TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
             end
-            TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
+            local dispatch = Config.Integrations.CdDispatch
+
+            if not dispatch or not dispatch.enabled then
+                TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
+            else
+                local data = exports['cd_dispatch']:GetPlayerInfo()
+                TriggerServerEvent('cd_dispatch:AddNotification', {
+                    job_table = dispatch.jobs, 
+                    coords = data.coords,
+                    title = Lang:t('info.civ_died'),
+                    message = data.street, 
+                    flash = 0,
+                    unique_id = tostring(math.random(0000000,9999999)),
+                    blip = {
+                        sprite = dispatch.blip,
+                        scale = 1, 
+                        colour = 8,
+                        flashes = false, 
+                        text = Lang:t('info.civ_died'),
+                        time = (5*60*1000),
+                        sound = 1,
+                    }
+                })
+
+            end
         end
     end
 end
@@ -195,7 +219,30 @@ CreateThread(function()
                     end
 
                     if IsControlJustPressed(0, 47) and not emsNotified then
-                        TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
+                        local dispatch = Config.Integrations.CdDispatch
+
+                        if not dispatch or not dispatch.enabled then
+                            TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
+                        else
+                            local data = exports['cd_dispatch']:GetPlayerInfo()
+                            TriggerServerEvent('cd_dispatch:AddNotification', {
+                                job_table = dispatch.jobs, 
+                                coords = data.coords,
+                                title = Lang:t('info.civ_down'),
+                                message = data.street, 
+                                flash = 0,
+                                unique_id = tostring(math.random(0000000,9999999)),
+                                blip = {
+                                    sprite = dispatch.blip,
+                                    scale = 1, 
+                                    colour = 8,
+                                    flashes = false, 
+                                    text = Lang:t('info.civ_down'),
+                                    time = (5*60*1000),
+                                    sound = 1,
+                                }
+                            })
+                        end
                         emsNotified = true
                     end
                 end

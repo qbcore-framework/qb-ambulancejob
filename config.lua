@@ -1,9 +1,19 @@
 Config = {}
+Config.Integrations = {}
+
 
 Config.UseTarget = GetConvar('UseTarget', false)
 
 Config.MinimalDoctors = 2
 Config.WipeInventoryOnRespawn = true
+
+
+-- Resources Integrations
+Config.Integrations.CdDispatch = {
+    enabled = false, -- Use cd_dispatch for alerts instead of default alert system
+    jobs = {"ambulance"}, -- Table of jobs that receive alerts
+    blips = 61, -- Blip displayed on the map
+}
 
 Config.Locations = {
     ["checking"] = {

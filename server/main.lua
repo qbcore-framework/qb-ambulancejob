@@ -244,12 +244,34 @@ QBCore.Commands.Add('911e', Lang:t('info.ems_report'), {{name = 'message', help 
 	if args[1] then message = table.concat(args, " ") else message = Lang:t('info.civ_call') end
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
-    local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
-        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-            TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
-        end
-    end
+	local dispatch = Config.Integrations.CdDispatch
+
+	if not dispatch or not dispatch.enabled then
+		local players = QBCore.Functions.GetQBPlayers()
+		for k,v in pairs(players) do
+			if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+				TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
+			end
+		end
+	else
+		TriggerClientEvent('cd_dispatch:AddNotification', -1, {
+			job_table = dispatch.jobs,
+			coords = coords,
+			title = Lang:t('info.civ_call'),
+			message = message,
+			flash = 0,
+			unique_id = tostring(math.random(0000000,9999999)),
+			blip = {
+				sprite = dispatch.blips,
+				scale = 1.2,
+				colour = 3,
+				flashes = false,
+				text = Lang:t('info.civ_call'),
+				time = (5*60*1000),
+				sound = 1,
+			}
+		})
+	end
 end)
 
 QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(source, args)
