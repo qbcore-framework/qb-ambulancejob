@@ -471,7 +471,7 @@ CreateThread(function()
                 EMSHelicopter(k)
             else
                 inVehicle = false
-                CheckHelicopter = false
+                CheckHeli = false
                 exports['qb-core']:HideText()
             end
         end)
