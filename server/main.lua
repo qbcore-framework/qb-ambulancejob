@@ -118,7 +118,6 @@ RegisterNetEvent('hospital:server:SetArmor', function(amount)
     end
     Player.Functions.SetMetaData('armor', newArmor)
     Player.Functions.Save()
-    end
 end)
 
 RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
