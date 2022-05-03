@@ -843,7 +843,7 @@ local listen = false
 end 
 
 RegisterNetEvent('qb-ambulancejob:checkin', function()
-    if doctorCount >= Config.MinimalDoctors then
+    if Config.MinimalDoctors ~= 0 and doctorCount >= Config.MinimalDoctors then
         TriggerServerEvent("hospital:server:SendDoctorAlert")
     else
         TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
