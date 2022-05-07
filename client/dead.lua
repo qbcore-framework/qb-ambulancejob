@@ -80,7 +80,7 @@ function DeathTimer()
     end
 end
 
-local function DrawTxt(x, y, width, height, scale, text, r, g, b, a, outline)
+local function DrawTxt(x, y, width, height, scale, text, r, g, b, a, _)
     SetTextFont(4)
     SetTextProportional(0)
     SetTextScale(scale, scale)
@@ -135,7 +135,7 @@ emsNotified = false
 
 CreateThread(function()
 	while true do
-        sleep = 1000
+        local sleep = 1000
 		if isDead or InLaststand then
             sleep = 5
             local ped = PlayerPedId()
