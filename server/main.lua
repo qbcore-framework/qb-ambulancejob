@@ -62,7 +62,7 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
     local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
+    for _, v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
             TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
         end
@@ -167,7 +167,7 @@ end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function()
     local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
+    for _, v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
 			TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
 		end
@@ -193,10 +193,10 @@ end)
 
 -- Callbacks
 
-QBCore.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
+QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
 	local amount = 0
     local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
+    for _, v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
 			amount = amount + 1
 		end
@@ -204,7 +204,7 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(source, cb)
 	cb(amount)
 end)
 
-QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(source, cb, playerId)
+QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, playerId)
 	local Player = QBCore.Functions.GetPlayer(playerId)
 	local injuries = {}
 	injuries["WEAPONWOUNDS"] = {}
@@ -213,7 +213,7 @@ QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(source, cb,
 			if (PlayerInjuries[Player.PlayerData.source].isBleeding > 0) then
 				injuries["BLEED"] = PlayerInjuries[Player.PlayerData.source].isBleeding
 			end
-			for k, v in pairs(PlayerInjuries[Player.PlayerData.source].limbs) do
+			for k, _ in pairs(PlayerInjuries[Player.PlayerData.source].limbs) do
 				if PlayerInjuries[Player.PlayerData.source].limbs[k].isDamaged then
 					injuries[k] = PlayerInjuries[Player.PlayerData.source].limbs[k]
 				end
@@ -241,18 +241,19 @@ end)
 
 QBCore.Commands.Add('911e', Lang:t('info.ems_report'), {{name = 'message', help = Lang:t('info.message_sent')}}, false, function(source, args)
 	local src = source
+	local message
 	if args[1] then message = table.concat(args, " ") else message = Lang:t('info.civ_call') end
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
     local players = QBCore.Functions.GetQBPlayers()
-    for k,v in pairs(players) do
+    for _, v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
             TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
         end
     end
 end)
 
-QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(source, args)
+QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(source, _)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
@@ -262,7 +263,7 @@ QBCore.Commands.Add("status", Lang:t('info.check_health'), {}, false, function(s
 	end
 end)
 
-QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(source, args)
+QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(source, _)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
@@ -272,7 +273,7 @@ QBCore.Commands.Add("heal", Lang:t('info.heal_player'), {}, false, function(sour
 	end
 end)
 
-QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function(source, args)
+QBCore.Commands.Add("revivep", Lang:t('info.revive_player'), {}, false, function(source, _)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player.PlayerData.job.name == "ambulance" then
