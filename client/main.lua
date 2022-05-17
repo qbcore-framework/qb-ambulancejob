@@ -876,7 +876,7 @@ if Config.UseTarget == 'true' then
     CreateThread(function()
         for k, v in pairs(Config.Locations["checking"]) do
             exports['qb-target']:AddBoxZone("checking"..k, vector3(v.x, v.y, v.z), 3.5, 2, {
-                name = "checkin"..k,
+                name = "checking"..k,
                 heading = -72,
                 debugPoly = false,
                 minZ = v.z - 2,
