@@ -38,7 +38,7 @@ local function LoadAnimation(dict)
     end
 end
 
-function SetLaststand(bool, spawn)
+function SetLaststand(bool)
     local ped = PlayerPedId()
     if bool then
         Wait(1000)
@@ -53,7 +53,6 @@ function SetLaststand(bool, spawn)
 
         LaststandTime = Laststand.ReviveInterval
 
-        local ped = PlayerPedId()
         if IsPedInAnyVehicle(ped) then
             local veh = GetVehiclePedIsIn(ped)
             local vehseats = GetVehicleModelNumberOfSeats(GetHashKey(GetEntityModel(veh)))
@@ -66,7 +65,7 @@ function SetLaststand(bool, spawn)
             end
         else
             NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
-        end		
+        end
 		
         SetEntityHealth(ped, 150)
 
@@ -85,7 +84,7 @@ function SetLaststand(bool, spawn)
         CreateThread(function()
             while InLaststand do
                 ped = PlayerPedId()
-                player = PlayerId()
+                local player = PlayerId()
                 if LaststandTime - 1 > Laststand.MinimumRevive then
                     LaststandTime = LaststandTime - 1
                     Config.DeathTime = LaststandTime
@@ -163,7 +162,6 @@ end)
 
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = PlayerPedId()
-    isHealingPerson = true
     QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true, {
         disableMovement = false,
         disableCarMovement = false,
@@ -174,12 +172,10 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
         anim = healAnim,
         flags = 1,
     }, {}, {}, function() -- Done
-        isHealingPerson = false
         ClearPedTasks(ped)
         QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
         TriggerServerEvent("hospital:server:RevivePlayer", targetId)
     end, function() -- Cancel
-        isHealingPerson = false
         ClearPedTasks(ped)
         QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
