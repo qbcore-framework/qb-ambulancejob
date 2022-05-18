@@ -313,6 +313,12 @@ local function LeaveBed()
     bedObject = nil
     bedOccupyingData = nil
     isInHospitalBed = false
+	
+    QBCore.Functions.GetPlayerData(function(PlayerData)
+	if PlayerData.metadata["injail"] > 0 then
+		TriggerEvent("prison:client:Enter", PlayerData.metadata["injail"])
+	end
+    end)
 end
 
 local function IsInDamageList(damage)
