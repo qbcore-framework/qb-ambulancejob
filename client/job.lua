@@ -452,8 +452,8 @@ CreateThread(function()
     end
 end)
 
--- Convar Turns into strings
-if Config.UseTarget == 'true' then
+-- Convar turns into a boolean
+if Config.UseTarget then
     CreateThread(function()
         for k, v in pairs(Config.Locations["duty"]) do
             exports['qb-target']:AddBoxZone("duty"..k, vector3(v.x, v.y, v.z), 1.5, 1, {
