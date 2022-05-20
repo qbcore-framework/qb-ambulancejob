@@ -1,11 +1,37 @@
 Config = {}
+Config.UseTarget = GetConvar('UseTarget', 'false') == 'true' -- Use qb-target interactions (don't change this, go to your server.cfg and add setr UseTarget true)
+Config.MinimalDoctors = 2 -- How many players with the ambulance job to prevent the hospital check-in system from being used
+Config.WipeInventoryOnRespawn = true -- Enable or disable removing all the players items when they respawn at the hospital
+Config.Helicopter = "polmav" -- Helicopter model that players with the ambulance job can use
+Config.BillCost = 2000 -- Price that players are charged for using the hospital check-in system
+Config.DeathTime = 300 -- How long the timer is for players to bleed out completely and respawn at the hospital
+Config.PainkillerInterval = 60 -- Set the length of time painkillers last (per one)
+Config.HealthDamage = 5 -- Minumum damage done to health before checking for injuries
+Config.ArmorDamage = 5 -- Minumum damage done to armor before checking for injuries
+Config.ForceInjury = 35 -- Maximum amount of damage a player can take before limb damage & effects are forced to occur
+Config.AlwaysBleedChance = 70 -- Set the chance out of 100 that if a player is hit with a weapon, that also has a random chance, it will cause bleeding
+Config.MessageTimer = 12 -- How long it will take to display limb/bleed message
+Config.AIHealTimer = 20 -- How long it will take to be healed after checking in, in seconds
+Config.BleedTickRate = 30 -- How much time, in seconds, between bleed ticks
+Config.BleedMovementTick = 10 -- How many seconds is taken away from the bleed tick rate if the player is walking, jogging, or sprinting
+Config.BleedMovementAdvance = 3 -- How much time moving while bleeding adds
+Config.BleedTickDamage = 8 -- The base damage that is multiplied by bleed level everytime a bleed tick occurs
+Config.FadeOutTimer = 2 -- How many bleed ticks occur before fadeout happens
+Config.BlackoutTimer = 10 -- How many bleed ticks occur before blacking out
+Config.AdvanceBleedTimer = 10 -- How many bleed ticks occur before bleed level increases
+Config.HeadInjuryTimer = 30 -- How much time, in seconds, do head injury effects chance occur
+Config.ArmInjuryTimer = 30 -- How much time, in seconds, do arm injury effects chance occur
+Config.LegInjuryTimer = 15 -- How much time, in seconds, do leg injury effects chance occur
+Config.HeadInjuryChance = 25 -- The chance, in percent, that head injury side-effects get applied
+Config.LegInjuryChance = { -- The chance, in percent, that leg injury side-effects get applied
+    Running = 50,
+    Walking = 15
+}
+Config.MajorArmoredBleedChance = 45 -- The chance, in percent, that a player will get a bleed effect when taking heavy damage while wearing armor
+Config.DamageMinorToMajor = 35 -- How much damage would have to be applied for a minor weapon to be considered a major damage event. Put this at 100 if you want to disable it
+Config.AlertShowInfo = 2 -- How many injuries a player must have before being alerted about them
 
-Config.UseTarget = GetConvar('UseTarget', false)
-
-Config.MinimalDoctors = 2
-Config.WipeInventoryOnRespawn = true
-
-Config.Locations = {
+Config.Locations = { -- Edit the various interaction points for players or create new ones
     ["checking"] = {
 	    [1] = vector3(308.19, -595.35, 43.29),
 	    [2] = vector3(-254.54, 6331.78, 32.43), -- paleto
@@ -54,7 +80,7 @@ Config.Locations = {
     }
 }
 
-Config.AuthorizedVehicles = {
+Config.AuthorizedVehicles = { -- Vehicles players can use based on their ambulance job grade level
 	-- Grade 0
 	[0] = {
 		["ambulance"] = "Ambulance",
@@ -78,9 +104,7 @@ Config.AuthorizedVehicles = {
 	}
 }
 
-Config.Helicopter = "polmav"
-
-Config.Items = {
+Config.Items = { -- Items found in the ambulance shop for players with the ambulance job to purchase
     label = Lang:t('info.safe'),
     slots = 30,
     items = {
@@ -135,120 +159,7 @@ Config.Items = {
     }
 }
 
-Config.BillCost = 2000
-Config.DeathTime = 300
-Config.CheckTime = 10
-
-Config.PainkillerInterval = 60 -- seconds
-
---[[
-    GENERAL SETTINGS | THESE WILL AFFECT YOUR ENTIRE SERVER SO BE SURE TO SET THESE CORRECTLY
-    MaxHp : Maximum HP Allowed, set to -1 if you want to disable mythic_hospital from setting this
-        NOTE: Anything under 100 and you are dead
-    RegenRate :
-]]
-Config.MaxHp = 200
-Config.RegenRate = 0.0
-
---[[
-    HealthDamage : How Much Damage To Direct HP Must Be Applied Before Checks For Damage Happens
-    ArmorDamage : How Much Damage To Armor Must Be Applied Before Checks For Damage Happens | NOTE: This will in turn make stagger effect with armor happen only after that damage occurs
-]]
-Config.HealthDamage = 5
-Config.ArmorDamage = 5
-
---[[
-    MaxInjuryChanceMulti : How many times the HealthDamage value above can divide into damage taken before damage is forced to be applied
-    ForceInjury : Maximum amount of damage a player can take before limb damage & effects are forced to occur
-]]
-Config.MaxInjuryChanceMulti = 3
-Config.ForceInjury = 35
-Config.AlwaysBleedChance = 70
-
---[[
-    Message Timer : How long it will take to display limb/bleed message
-]]
-Config.MessageTimer = 12
-
---[[
-    AIHealTimer : How long it will take to be healed after checking in, in seconds
-]]
-Config.AIHealTimer = 20
-
---[[
-    BleedTickRate : How much time, in seconds, between bleed ticks
-]]
-Config.BleedTickRate = 30
-
---[[
-    BleedMovementTick : How many seconds is taken away from the bleed tick rate if the player is walking, jogging, or sprinting
-    BleedMovementAdvance : How Much Time Moving While Bleeding Adds (This Adds This Value To The Tick Count, Meaing The Above BleedTickRate Will Be Reached Faster)
-]]
-Config.BleedMovementTick = 10
-Config.BleedMovementAdvance = 3
-
---[[
-    The Base Damage That Is Multiplied By Bleed Level Every Time A Bleed Tick Occurs
-]]
-Config.BleedTickDamage = 8
-
---[[
-    FadeOutTimer : How many bleed ticks occur before fadeout happens
-    BlackoutTimer : How many bleed ticks occur before blacking out
-    AdvanceBleedTimer : How many bleed ticks occur before bleed level increases
-]]
-Config.FadeOutTimer = 2
-Config.BlackoutTimer = 10
-Config.AdvanceBleedTimer = 10
-
---[[
-    HeadInjuryTimer : How much time, in seconds, do head injury effects chance occur
-    ArmInjuryTimer : How much time, in seconds, do arm injury effects chance occur
-    LegInjuryTimer : How much time, in seconds, do leg injury effects chance occur
-]]
-Config.HeadInjuryTimer = 30
-Config.ArmInjuryTimer = 30
-Config.LegInjuryTimer = 15
-
---[[
-    The Chance, In Percent, That Certain Injury Side-Effects Get Applied
-]]
-Config.HeadInjuryChance = 25
-Config.ArmInjuryChance = 25
-Config.LegInjuryChance = {
-    Running = 50,
-    Walking = 15
-}
-
---[[
-    MajorArmoredBleedChance : The % Chance Someone Gets A Bleed Effect Applied When Taking Major Damage With Armor
-    MajorDoubleBleed : % Chance You Have To Receive Double Bleed Effect From Major Damage, This % is halved if the player has armor
-]]
-Config.MajorArmoredBleedChance = 45
-
---[[
-    DamgeMinorToMajor : How much damage would have to be applied for a minor weapon to be considered a major damage event. Put this at 100 if you want to disable it
-]]
-Config.DamageMinorToMajor = 35
-
---[[
-    AlertShowInfo :
-]]
-Config.AlertShowInfo = 2
-
---[[
-    These following lists uses tables defined in definitions.lua, you can technically use the hardcoded values but for sake
-    of ensuring future updates doesn't break it I'd highly suggest you check that file for the index you're wanting to use.
-
-    MinorInjurWeapons : Damage From These Weapons Will Apply Only Minor Injuries
-    MajorInjurWeapons : Damage From These Weapons Will Apply Only Major Injuries
-    AlwaysBleedChanceWeapons : Weapons that're in the included weapon classes will roll for a chance to apply a bleed effect if the damage wasn't enough to trigger an injury chance
-    CriticalAreas :
-    StaggerAreas : These are the body areas that would cause a stagger is hit by firearms,
-        Table Values: Armored = Can This Cause Stagger If Wearing Armor, Major = % Chance You Get Staggered By Major Damage, Minor = % Chance You Get Staggered By Minor Damage
-]]
-
-Config.WeaponClasses = {
+Config.WeaponClasses = { -- Define gta weapon classe numbers
     ['SMALL_CALIBER'] = 1,
     ['MEDIUM_CALIBER'] = 2,
     ['HIGH_CALIBER'] = 3,
@@ -264,7 +175,7 @@ Config.WeaponClasses = {
     ['NOTHING'] = 13
 }
 
-Config.MinorInjurWeapons = {
+Config.MinorInjurWeapons = { -- Define which weapons cause small injuries
     [Config.WeaponClasses['SMALL_CALIBER']] = true,
     [Config.WeaponClasses['MEDIUM_CALIBER']] = true,
     [Config.WeaponClasses['CUTTING']] = true,
@@ -273,33 +184,33 @@ Config.MinorInjurWeapons = {
     [Config.WeaponClasses['LIGHT_IMPACT']] = true,
 }
 
-Config.MajorInjurWeapons = {
+Config.MajorInjurWeapons = { -- Define which weapons cause large injuries
     [Config.WeaponClasses['HIGH_CALIBER']] = true,
     [Config.WeaponClasses['HEAVY_IMPACT']] = true,
     [Config.WeaponClasses['SHOTGUN']] = true,
     [Config.WeaponClasses['EXPLOSIVE']] = true,
 }
 
-Config.AlwaysBleedChanceWeapons = {
+Config.AlwaysBleedChanceWeapons = { -- Define which weapons will always cause bleedign
     [Config.WeaponClasses['SMALL_CALIBER']] = true,
     [Config.WeaponClasses['MEDIUM_CALIBER']] = true,
     [Config.WeaponClasses['CUTTING']] = true,
     [Config.WeaponClasses['WILDLIFE']] = false,
 }
 
-Config.ForceInjuryWeapons = {
+Config.ForceInjuryWeapons = { -- Define which weapons will always cause injuries
     [Config.WeaponClasses['HIGH_CALIBER']] = true,
     [Config.WeaponClasses['HEAVY_IMPACT']] = true,
     [Config.WeaponClasses['EXPLOSIVE']] = true,
 }
 
-Config.CriticalAreas = {
+Config.CriticalAreas = { -- Define body areas that will always cause bleeding if wearing armor or not
     ['UPPER_BODY'] = { armored = false },
     ['LOWER_BODY'] = { armored = true },
     ['SPINE'] = { armored = true },
 }
 
-Config.StaggerAreas = {
+Config.StaggerAreas = { -- Define body areas that will always cause staggering if wearing armor or not
     ['SPINE'] = { armored = true, major = 60, minor = 30 },
     ['UPPER_BODY'] = { armored = false, major = 60, minor = 30 },
     ['LLEG'] = { armored = true, major = 100, minor = 85 },
@@ -308,28 +219,28 @@ Config.StaggerAreas = {
     ['RFOOT'] = { armored = true, major = 100, minor = 100 },
 }
 
-Config.WoundStates = {
+Config.WoundStates = { -- Translate wound alerts
     Lang:t('states.irritated'),
     Lang:t('states.quite_painful'),
     Lang:t('states.painful'),
     Lang:t('states.really_painful'),
 }
 
-Config.BleedingStates = {
-    [1] = {label = Lang:t('states.little_bleed'), damage = 10, chance = 50},
-    [2] = {label = Lang:t('states.bleed'), damage = 15, chance = 65},
-    [3] = {label = Lang:t('states.lot_bleed'), damage = 20, chance = 65},
-    [4] = {label = Lang:t('states.big_bleed'), damage = 25, chance = 75},
+Config.BleedingStates = { -- Translate bleeding alerts
+    [1] = {label = Lang:t('states.little_bleed')},
+    [2] = {label = Lang:t('states.bleed')},
+    [3] = {label = Lang:t('states.lot_bleed')},
+    [4] = {label = Lang:t('states.big_bleed')},
 }
 
-Config.MovementRate = {
+Config.MovementRate = { -- Set the player movement rate based on the level of damage they have
     0.98,
     0.96,
     0.94,
     0.92,
 }
 
-Config.Bones = {
+Config.Bones = { -- Correspond bone hash numbers to their label
     [0]     = 'NONE',
     [31085] = 'HEAD',
     [31086] = 'HEAD',
@@ -388,7 +299,7 @@ Config.Bones = {
     [52301] = 'RFOOT',
 }
 
-Config.BoneIndexes = {
+Config.BoneIndexes = { -- Correspond bone labels to their hash number
     ['NONE'] = 0,
     -- ['HEAD'] = 31085,
     ['HEAD'] = 31086,
@@ -447,7 +358,7 @@ Config.BoneIndexes = {
     ['RFOOT'] = 52301,
 }
 
-Config.Weapons = {
+Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_STUNGUN`] = Config.WeaponClasses['NONE'],
     [`WEAPON_STUNGUN_MP`] = Config.WeaponClasses['NONE'],
     --[[ Small Caliber ]]--
@@ -569,7 +480,7 @@ Config.Weapons = {
     [`WEAPON_SMOKEGRENADE`] = Config.WeaponClasses['SUFFOCATING'],
 }
 
-Config.VehicleSettings = {
+Config.VehicleSettings = { -- Enable or disable vehicle extras when pulling them from the ambulance job vehicle spawner
     ["car1"] = { -- Model name
         ["extras"] = {
             ["1"] = false, -- on/off

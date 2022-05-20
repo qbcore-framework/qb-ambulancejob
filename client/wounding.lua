@@ -6,7 +6,7 @@ local painkillerAmount = 0
 
 local function DoBleedAlert()
     if not isDead and tonumber(isBleeding) > 0 then
-        QBCore.Functions.Notify("You are "..Config.BleedingStates[tonumber(isBleeding)].label, "error", 5000)
+        QBCore.Functions.Notify(Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[tonumber(isBleeding)].label}), "error", 5000)
     end
 end
 
@@ -139,7 +139,7 @@ CreateThread(function()
 	while true do
 		if #injured > 0 then
 			local level = 0
-			for k, v in pairs(injured) do
+			for _, v in pairs(injured) do
 				if v.severity > level then
 					level = v.severity
 				end
