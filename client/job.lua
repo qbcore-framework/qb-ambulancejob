@@ -228,7 +228,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
                     TriggerServerEvent("hospital:server:RevivePlayer", playerId)
                 end, function() -- Cancel
                     StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
-                    QBCore.Functions.Notify(Lang:t('error.cancled'), "error")
+                    QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
                 end)
             else
                 QBCore.Functions.Notify(Lang:t('error.no_player'), "error")
