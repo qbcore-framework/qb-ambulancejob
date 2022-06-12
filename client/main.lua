@@ -658,6 +658,10 @@ RegisterNetEvent('hospital:client:SetBed', function(id, isTaken)
     Config.Locations["beds"][id].taken = isTaken
 end)
 
+RegisterNetEvent('hospital:client:SetBed2', function(id, isTaken)
+    Config.Locations["jailbeds"][id].taken = isTaken
+end)
+
 RegisterNetEvent('hospital:client:RespawnAtHospital', function()
     TriggerServerEvent("hospital:server:RespawnAtHospital")
     if exports["qb-policejob"]:IsHandcuffed() then
