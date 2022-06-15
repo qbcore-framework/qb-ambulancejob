@@ -28,6 +28,7 @@ Config.LegInjuryChance = { -- The chance, in percent, that leg injury side-effec
     Walking = 15
 }
 Config.MajorArmoredBleedChance = 45 -- The chance, in percent, that a player will get a bleed effect when taking heavy damage while wearing armor
+Config.MaxInjuryChanceMulti = 3 -- How many times the HealthDamage value above can divide into damage taken before damage is forced to be applied
 Config.DamageMinorToMajor = 35 -- How much damage would have to be applied for a minor weapon to be considered a major damage event. Put this at 100 if you want to disable it
 Config.AlertShowInfo = 2 -- How many injuries a player must have before being alerted about them
 
