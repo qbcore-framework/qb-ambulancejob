@@ -31,7 +31,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 	if Player.PlayerData.metadata["injail"] > 0 then
 		for k, v in pairs(Config.Locations["jailbeds"]) do
 			if not v.taken then
-				TriggerClientEvent('hospital:client:SendToBed2', src, k, v, true)
+				TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
 				TriggerClientEvent('hospital:client:SetBed2', -1, k, true)
 				if Config.WipeInventoryOnRespawn then
 					Player.Functions.ClearInventory()
