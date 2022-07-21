@@ -2,6 +2,8 @@ local PlayerInjuries = {}
 local PlayerWeaponWounds = {}
 local QBCore = exports['qb-core']:GetCoreObject()
 local doctorCount = 0
+local doctorCalled = false
+
 -- Events
 
 -- Compatibility with txAdmin Menu's heal options.
@@ -195,12 +197,21 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function()
-    local players = QBCore.Functions.GetQBPlayers()
-    for _, v in pairs(players) do
-        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-			TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
-		end
-	end
+    local src = source
+    if not doctorCalled then
+        doctorCalled = true
+        local players = QBCore.Functions.GetQBPlayers()
+        for _, v in pairs(players) do
+            if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+                TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
+            end
+        end
+        SetTimeout(Config.DocCooldown * 60000, function()
+            doctorCalled = false
+        end)
+    else
+        TriggerClientEvent('QBCore:Notify', src, 'Doctor has already been notified', 'error')
+    end
 end)
 
 RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
