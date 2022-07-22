@@ -3,6 +3,7 @@ local PlayerWeaponWounds = {}
 local QBCore = exports['qb-core']:GetCoreObject()
 local doctorCount = 0
 local doctorCalled = false
+local Doctors = {}
 
 -- Events
 
@@ -162,15 +163,28 @@ end)
 
 RegisterNetEvent('hospital:server:AddDoctor', function(job)
 	if job == 'ambulance' then
+		local src = source
 		doctorCount = doctorCount + 1
 		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
+		Doctors[src] = true
 	end
 end)
 
 RegisterNetEvent('hospital:server:RemoveDoctor', function(job)
 	if job == 'ambulance' then
+		local src = source
 		doctorCount = doctorCount - 1
 		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
+		Doctors[src] = nil
+	end
+end)
+
+AddEventHandler("playerDropped", function()
+	local src = source
+	if Doctors[src] then
+		doctorCount = doctorCount - 1
+		TriggerClientEvent("hospital:client:SetDoctorCount", -1, doctorCount)
+		Doctors[src] = nil
 	end
 end)
 
