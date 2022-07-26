@@ -11,7 +11,7 @@ local function GetClosestPlayer()
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
 
-    for i=1, #closestPlayers, 1 do
+    for i = 1, #closestPlayers, 1 do
         if closestPlayers[i] ~= PlayerId() then
             local pos = GetEntityCoords(GetPlayerPed(closestPlayers[i]))
             local distance = #(pos - coords)
@@ -21,14 +21,15 @@ local function GetClosestPlayer()
                 closestDistance = distance
             end
         end
-	end
-	return closestPlayer, closestDistance
+    end
+    return closestPlayer, closestDistance
 end
 
 function TakeOutVehicle(vehicleInfo)
     local coords = Config.Locations["vehicle"][currentGarage]
-    QBCore.Functions.SpawnVehicle(vehicleInfo, function(veh)
-        SetVehicleNumberPlateText(veh, Lang:t('info.amb_plate')..tostring(math.random(1000, 9999)))
+    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
+        local veh = NetToVeh(netId)
+        SetVehicleNumberPlateText(veh, Lang:t('info.amb_plate') .. tostring(math.random(1000, 9999)))
         SetEntityHeading(veh, coords.w)
         exports['LegacyFuel']:SetFuel(veh, 100.0)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
@@ -37,7 +38,7 @@ function TakeOutVehicle(vehicleInfo)
         end
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
-    end, coords, true)
+    end, vehicleInfo, coords, true)
 end
 
 function MenuGarage()
@@ -50,7 +51,7 @@ function MenuGarage()
 
     local authorizedVehicles = Config.AuthorizedVehicles[QBCore.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(authorizedVehicles) do
-        vehicleMenu[#vehicleMenu+1] = {
+        vehicleMenu[#vehicleMenu + 1] = {
             header = label,
             txt = "",
             params = {
@@ -61,7 +62,7 @@ function MenuGarage()
             }
         }
     end
-    vehicleMenu[#vehicleMenu+1] = {
+    vehicleMenu[#vehicleMenu + 1] = {
         header = Lang:t('menu.close'),
         txt = "",
         params = {
@@ -152,7 +153,7 @@ function Status()
             }
         }
         for _, v in pairs(statusChecks) do
-            statusMenu[#statusMenu+1] = {
+            statusMenu[#statusMenu + 1] = {
                 header = v.label,
                 txt = "",
                 params = {
@@ -160,7 +161,7 @@ function Status()
                 }
             }
         end
-        statusMenu[#statusMenu+1] = {
+        statusMenu[#statusMenu + 1] = {
             header = Lang:t('menu.close'),
             txt = "",
             params = {
@@ -179,20 +180,22 @@ RegisterNetEvent('hospital:client:CheckStatus', function()
             if result then
                 for k, v in pairs(result) do
                     if k ~= "BLEED" and k ~= "WEAPONWOUNDS" then
-                        statusChecks[#statusChecks+1] = {bone = Config.BoneIndexes[k], label = v.label .." (".. Config.WoundStates[v.severity] ..")"}
+                        statusChecks[#statusChecks + 1] = { bone = Config.BoneIndexes[k],
+                            label = v.label .. " (" .. Config.WoundStates[v.severity] .. ")" }
                     elseif result["WEAPONWOUNDS"] then
                         for _, v2 in pairs(result["WEAPONWOUNDS"]) do
                             TriggerEvent('chat:addMessage', {
-                                color = { 255, 0, 0},
+                                color = { 255, 0, 0 },
                                 multiline = false,
-                                args = {Lang:t('info.status'), QBCore.Shared.Weapons[v2].damagereason}
+                                args = { Lang:t('info.status'), QBCore.Shared.Weapons[v2].damagereason }
                             })
                         end
                     elseif result["BLEED"] > 0 then
                         TriggerEvent('chat:addMessage', {
-                            color = { 255, 0, 0},
+                            color = { 255, 0, 0 },
                             multiline = false,
-                            args = {Lang:t('info.status'), Lang:t('info.is_status', {status = Config.BleedingStates[v].label})}
+                            args = { Lang:t('info.status'),
+                                Lang:t('info.is_status', { status = Config.BleedingStates[v].label }) }
                         })
                     else
                         QBCore.Functions.Notify(Lang:t('success.healthy_player'), 'success')
@@ -272,14 +275,14 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
 end)
 
 local check = false
- local function EMSControls(variable)
+local function EMSControls(variable)
     CreateThread(function()
         check = true
         while check do
             if IsControlJustPressed(0, 38) then
                 exports['qb-core']:KeyPressed(38)
                 if variable == "sign" then
-                   TriggerEvent('EMSToggle:Duty')
+                    TriggerEvent('EMSToggle:Duty')
                 elseif variable == "stash" then
                     TriggerEvent('qb-ambulancejob:stash')
                 elseif variable == "armory" then
@@ -301,8 +304,9 @@ end
 
 RegisterNetEvent('qb-ambulancejob:stash', function()
     if onDuty then
-        TriggerServerEvent("inventory:server:OpenInventory", "stash", "ambulancestash_"..QBCore.Functions.GetPlayerData().citizenid)
-        TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_"..QBCore.Functions.GetPlayerData().citizenid)
+        TriggerServerEvent("inventory:server:OpenInventory", "stash",
+            "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
+        TriggerEvent("inventory:client:SetCurrentStash", "ambulancestash_" .. QBCore.Functions.GetPlayerData().citizenid)
     end
 end)
 
@@ -321,14 +325,14 @@ local function EMSVehicle(k)
                 exports['qb-core']:KeyPressed(38)
                 CheckVehicle = false
                 local ped = PlayerPedId()
-                    if IsPedInAnyVehicle(ped, false) then
-                        QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
-                    else
-                        local currentVehicle = k
-                        MenuGarage(currentVehicle)
-                        currentGarage = currentVehicle
-                    end
+                if IsPedInAnyVehicle(ped, false) then
+                    QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+                else
+                    local currentVehicle = k
+                    MenuGarage(currentVehicle)
+                    currentGarage = currentVehicle
                 end
+            end
             Wait(1)
         end
     end)
@@ -343,22 +347,23 @@ local function EMSHelicopter(k)
                 exports['qb-core']:KeyPressed(38)
                 CheckHeli = false
                 local ped = PlayerPedId()
-                    if IsPedInAnyVehicle(ped, false) then
-                        QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
-                    else
-                        local currentHelictoper = k
-                        local coords = Config.Locations["helicopter"][currentHelictoper]
-                        QBCore.Functions.SpawnVehicle(Config.Helicopter, function(veh)
-                            SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate')..tostring(math.random(1000, 9999)))
-                            SetEntityHeading(veh, coords.w)
-                            SetVehicleLivery(veh, 1) -- Ambulance Livery
-                            exports['LegacyFuel']:SetFuel(veh, 100.0)
-                            TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
-                            TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
-                            SetVehicleEngineOn(veh, true, true)
-                        end, coords, true)
-                    end
+                if IsPedInAnyVehicle(ped, false) then
+                    QBCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+                else
+                    local currentHelictoper = k
+                    local coords = Config.Locations["helicopter"][currentHelictoper]
+                    QBCore.Functions.TriggerCallback('QBCore:Server:SpawnVehicle', function(netId)
+                        local veh = NetToVeh(netId)
+                        SetVehicleNumberPlateText(veh, Lang:t('info.heli_plate') .. tostring(math.random(1000, 9999)))
+                        SetEntityHeading(veh, coords.w)
+                        SetVehicleLivery(veh, 1) -- Ambulance Livery
+                        exports['LegacyFuel']:SetFuel(veh, 100.0)
+                        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+                        TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
+                        SetVehicleEngineOn(veh, true, true)
+                    end, Config.Helicopter, coords, true)
                 end
+            end
             Wait(1)
         end
     end)
@@ -366,7 +371,7 @@ end
 
 RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
     local ped = PlayerPedId()
-    for k, _ in pairs(Config.Locations["roof"])do
+    for k, _ in pairs(Config.Locations["roof"]) do
         DoScreenFadeOut(500)
         while not IsScreenFadedOut() do
             Wait(10)
@@ -386,7 +391,7 @@ end)
 
 RegisterNetEvent('qb-ambulancejob:elevator_main', function()
     local ped = PlayerPedId()
-    for k, _ in pairs(Config.Locations["main"])do
+    for k, _ in pairs(Config.Locations["main"]) do
         DoScreenFadeOut(500)
         while not IsScreenFadedOut() do
             Wait(10)
@@ -413,14 +418,14 @@ end)
 CreateThread(function()
     for k, v in pairs(Config.Locations["vehicle"]) do
         local boxZone = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
-            name="vehicle"..k,
+            name = "vehicle" .. k,
             debugPoly = false,
             heading = 70,
             minZ = v.z - 2,
             maxZ = v.z + 2,
         })
         boxZone:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name =="ambulance" and onDuty then
+            if isPointInside and PlayerJob.name == "ambulance" and onDuty then
                 exports['qb-core']:DrawText(Lang:t('text.veh_button'), 'left')
                 EMSVehicle(k)
             else
@@ -432,14 +437,14 @@ CreateThread(function()
 
     for k, v in pairs(Config.Locations["helicopter"]) do
         local boxZone = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
-            name="helicopter"..k,
+            name = "helicopter" .. k,
             debugPoly = false,
             heading = 70,
             minZ = v.z - 2,
             maxZ = v.z + 2,
         })
         boxZone:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name =="ambulance" and onDuty then
+            if isPointInside and PlayerJob.name == "ambulance" and onDuty then
                 exports['qb-core']:DrawText(Lang:t('text.heli_button'), 'left')
                 EMSHelicopter(k)
             else
@@ -454,8 +459,8 @@ end)
 if Config.UseTarget then
     CreateThread(function()
         for k, v in pairs(Config.Locations["duty"]) do
-            exports['qb-target']:AddBoxZone("duty"..k, vector3(v.x, v.y, v.z), 1.5, 1, {
-                name = "duty"..k,
+            exports['qb-target']:AddBoxZone("duty" .. k, vector3(v.x, v.y, v.z), 1.5, 1, {
+                name = "duty" .. k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -474,8 +479,8 @@ if Config.UseTarget then
             })
         end
         for k, v in pairs(Config.Locations["stash"]) do
-            exports['qb-target']:AddBoxZone("stash"..k, vector3(v.x, v.y, v.z), 1, 1, {
-                name = "stash"..k,
+            exports['qb-target']:AddBoxZone("stash" .. k, vector3(v.x, v.y, v.z), 1, 1, {
+                name = "stash" .. k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -494,8 +499,8 @@ if Config.UseTarget then
             })
         end
         for k, v in pairs(Config.Locations["armory"]) do
-            exports['qb-target']:AddBoxZone("armory"..k, vector3(v.x, v.y, v.z), 1, 1, {
-                name = "armory"..k,
+            exports['qb-target']:AddBoxZone("armory" .. k, vector3(v.x, v.y, v.z), 1, 1, {
+                name = "armory" .. k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -514,8 +519,8 @@ if Config.UseTarget then
             })
         end
         for k, v in pairs(Config.Locations["roof"]) do
-            exports['qb-target']:AddBoxZone("roof"..k, vector3(v.x, v.y, v.z), 2, 2, {
-                name = "roof"..k,
+            exports['qb-target']:AddBoxZone("roof" .. k, vector3(v.x, v.y, v.z), 2, 2, {
+                name = "roof" .. k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -534,8 +539,8 @@ if Config.UseTarget then
             })
         end
         for k, v in pairs(Config.Locations["main"]) do
-            exports['qb-target']:AddBoxZone("main"..k, vector3(v.x, v.y, v.z), 1.5, 1.5, {
-                name = "main"..k,
+            exports['qb-target']:AddBoxZone("main" .. k, vector3(v.x, v.y, v.z), 1.5, 1.5, {
+                name = "main" .. k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -558,8 +563,8 @@ else
     CreateThread(function()
         local signPoly = {}
         for k, v in pairs(Config.Locations["duty"]) do
-            signPoly[#signPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1, {
-                name="sign"..k,
+            signPoly[#signPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1, {
+                name = "sign" .. k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -567,14 +572,14 @@ else
             })
         end
 
-        local signCombo = ComboZone:Create(signPoly, {name = "signcombo", debugPoly = false})
+        local signCombo = ComboZone:Create(signPoly, { name = "signcombo", debugPoly = false })
         signCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name =="ambulance" then
+            if isPointInside and PlayerJob.name == "ambulance" then
                 if not onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.onduty_button'),'left')
+                    exports['qb-core']:DrawText(Lang:t('text.onduty_button'), 'left')
                     EMSControls("sign")
                 else
-                    exports['qb-core']:DrawText(Lang:t('text.offduty_button'),'left')
+                    exports['qb-core']:DrawText(Lang:t('text.offduty_button'), 'left')
                     EMSControls("sign")
                 end
             else
@@ -585,8 +590,8 @@ else
 
         local stashPoly = {}
         for k, v in pairs(Config.Locations["stash"]) do
-            stashPoly[#stashPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
-                name="stash"..k,
+            stashPoly[#stashPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
+                name = "stash" .. k,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -594,11 +599,11 @@ else
             })
         end
 
-        local stashCombo = ComboZone:Create(stashPoly, {name = "stashCombo", debugPoly = false})
+        local stashCombo = ComboZone:Create(stashPoly, { name = "stashCombo", debugPoly = false })
         stashCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name =="ambulance" then
+            if isPointInside and PlayerJob.name == "ambulance" then
                 if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.pstash_button'),'left')
+                    exports['qb-core']:DrawText(Lang:t('text.pstash_button'), 'left')
                     EMSControls("stash")
                 end
             else
@@ -609,8 +614,8 @@ else
 
         local armoryPoly = {}
         for k, v in pairs(Config.Locations["armory"]) do
-            armoryPoly[#armoryPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
-                name="armory"..k,
+            armoryPoly[#armoryPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
+                name = "armory" .. k,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -618,11 +623,11 @@ else
             })
         end
 
-        local armoryCombo = ComboZone:Create(armoryPoly, {name = "armoryCombo", debugPoly = false})
+        local armoryCombo = ComboZone:Create(armoryPoly, { name = "armoryCombo", debugPoly = false })
         armoryCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name =="ambulance" then
+            if isPointInside and PlayerJob.name == "ambulance" then
                 if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.armory_button'),'left')
+                    exports['qb-core']:DrawText(Lang:t('text.armory_button'), 'left')
                     EMSControls("armory")
                 end
             else
@@ -633,8 +638,8 @@ else
 
         local roofPoly = {}
         for k, v in pairs(Config.Locations["roof"]) do
-            roofPoly[#roofPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 2, 2, {
-                name="roof"..k,
+            roofPoly[#roofPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 2, 2, {
+                name = "roof" .. k,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -642,14 +647,14 @@ else
             })
         end
 
-        local roofCombo = ComboZone:Create(roofPoly, {name = "roofCombo", debugPoly = false})
+        local roofCombo = ComboZone:Create(roofPoly, { name = "roofCombo", debugPoly = false })
         roofCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name =="ambulance" then
+            if isPointInside and PlayerJob.name == "ambulance" then
                 if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.elevator_main'),'left')
+                    exports['qb-core']:DrawText(Lang:t('text.elevator_main'), 'left')
                     EMSControls("main")
                 else
-                    exports['qb-core']:DrawText(Lang:t('error.not_ems'),'left')
+                    exports['qb-core']:DrawText(Lang:t('error.not_ems'), 'left')
                 end
             else
                 check = false
@@ -659,8 +664,8 @@ else
 
         local mainPoly = {}
         for k, v in pairs(Config.Locations["main"]) do
-            mainPoly[#mainPoly+1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1.5, {
-                name="main"..k,
+            mainPoly[#mainPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1.5, {
+                name = "main" .. k,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -668,14 +673,14 @@ else
             })
         end
 
-        local mainCombo = ComboZone:Create(mainPoly, {name = "mainPoly", debugPoly = false})
+        local mainCombo = ComboZone:Create(mainPoly, { name = "mainPoly", debugPoly = false })
         mainCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name =="ambulance" then
+            if isPointInside and PlayerJob.name == "ambulance" then
                 if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.elevator_roof'),'left')
+                    exports['qb-core']:DrawText(Lang:t('text.elevator_roof'), 'left')
                     EMSControls("roof")
                 else
-                    exports['qb-core']:DrawText(Lang:t('error.not_ems'),'left')
+                    exports['qb-core']:DrawText(Lang:t('error.not_ems'), 'left')
                 end
             else
                 check = false
