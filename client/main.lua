@@ -626,6 +626,7 @@ end)
 
 RegisterNetEvent('hospital:client:KillPlayer', function()
     SetEntityHealth(PlayerPedId(), 0)
+    TriggerServerEvent("hospital:server:SetDeathStatus", true)
 end)
 
 RegisterNetEvent('hospital:client:HealInjuries', function(type)
