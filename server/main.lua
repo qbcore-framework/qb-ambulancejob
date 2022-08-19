@@ -245,6 +245,39 @@ RegisterNetEvent('hospital:server:CanHelp', function(helperId, canHelp)
 	end
 end)
 
+RegisterNetEvent('hospital:server:removeBandage', function()
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	if not Player then return end
+
+	Player.Functions.RemoveItem('bandage', 1)
+end)
+
+RegisterNetEvent('hospital:server:removeIfaks', function()
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	if not Player then return end
+
+	Player.Functions.RemoveItem('ifaks', 1)
+end)
+
+RegisterNetEvent('hospital:server:removePainkillers', function()
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	if not Player then return end
+
+	Player.Functions.RemoveItem('painkillers', 1)
+end)
+
+RegisterNetEvent('hospital:server:resetHungerThirst', function()
+	local Player = QBCore.Functions.GetPlayer(source)
+
+	if not Player then return end
+
+	Player.Functions.SetMetaData('hunger', 100)
+	Player.Functions.SetMetaData('thirst', 100)
+end)
+
 -- Callbacks
 
 QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
