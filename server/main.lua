@@ -276,6 +276,8 @@ RegisterNetEvent('hospital:server:resetHungerThirst', function()
 
 	Player.Functions.SetMetaData('hunger', 100)
 	Player.Functions.SetMetaData('thirst', 100)
+
+	TriggerClientEvent('hud:client:UpdateNeeds', source, 100, 100)
 end)
 
 -- Callbacks
