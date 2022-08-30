@@ -188,23 +188,6 @@ AddEventHandler("playerDropped", function()
 	end
 end)
 
-local function exploitBan(id, reason)
-    MySQL.insert('INSERT INTO bans (name, license, discord, ip, reason, expire, bannedby) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        {
-            GetPlayerName(id),
-            QBCore.Functions.GetIdentifier(id, 'license'),
-            QBCore.Functions.GetIdentifier(id, 'discord'),
-            QBCore.Functions.GetIdentifier(id, 'ip'),
-            reason,
-            2147483647,
-            'qb-jewelery'
-        })
-    TriggerEvent('qb-log:server:CreateLog', 'jewelery', 'Player Banned', 'red',
-        string.format('%s was banned by %s for %s', GetPlayerName(id), 'qb-jewelery', reason), true)
-    DropPlayer(id, 'You were permanently banned by the server for: Exploiting')
-end
-
-
 local flags = {}
 
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
