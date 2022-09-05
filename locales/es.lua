@@ -74,6 +74,7 @@ local Translations = {
     },
     menu = {
         amb_vehicles = 'Vehículos EMS',
+        status = 'Estado de salud',
         close = '⬅ Cerrar menu',
     },
     text = {
