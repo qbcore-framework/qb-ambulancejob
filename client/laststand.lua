@@ -1,5 +1,5 @@
 Laststand = Laststand or {}
-Laststand.ReviveInterval = 360
+Laststand.ReviveInterval = Config.BleedoutInterval
 Laststand.MinimumRevive = 300
 InLaststand = false
 LaststandTime = 0
