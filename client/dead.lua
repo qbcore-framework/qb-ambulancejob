@@ -94,6 +94,18 @@ local function DrawTxt(x, y, width, height, scale, text, r, g, b, a, _)
     DrawText(x - width/2, y - height/2 + 0.005)
 end
 
+function runRespawn(type)
+    if type == 'vanilla' then
+        return exports['spawnmanager']:spawnPlayer()
+    elseif type == 'hospital' then
+        return TriggerEvent('hospital:client:RespawnAtHospital')
+    elseif type == 'revive' then
+        return TriggerEvent('hospital:client:Revive')
+    else
+        return SetLaststand(true)
+    end
+end
+
 -- Damage Handler
 
 AddEventHandler('gameEventTriggered', function(event, data)
@@ -102,7 +114,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
         if not IsEntityAPed(victim) then return end
         if victimDied and NetworkGetPlayerIndexFromPed(victim) == PlayerId() and IsEntityDead(PlayerPedId()) then
             if not InLaststand then
-                SetLaststand(true)
+                runRespawn(Config.RespawnType)
             elseif InLaststand and not isDead then
                 SetLaststand(false)
                 local playerid = NetworkGetPlayerIndexFromPed(victim)
