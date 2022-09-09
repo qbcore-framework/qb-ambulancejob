@@ -29,6 +29,10 @@ healAnimDict = "mini@cpr@char_a@cpr_str"
 healAnim = "cpr_pumpchest"
 injured = {}
 
+_g = {
+    PlayerBlips = {}
+}
+
 BodyParts = {
     ['HEAD'] =          { label = Lang:t('body.head'),          causeLimp = false, isDamaged = false, severity = 0 },
     ['NECK'] =          { label = Lang:t('body.neck'),          causeLimp = false, isDamaged = false, severity = 0 },
@@ -525,7 +529,7 @@ end
 
 -- Events
 
-RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
+RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text, playerid)
     local street1, street2 = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local street1name = GetStreetNameFromHashKey(street1)
     local street2name = GetStreetNameFromHashKey(street2)
@@ -551,6 +555,14 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     BeginTextCommandSetBlipName('STRING')
     AddTextComponentString(blipText)
     EndTextCommandSetBlipName(blip)
+    table.insert(_g.PlayerBlips, {
+        blip = blip,
+        playerid = playerid
+    })
+    table.insert(_g.PlayerBlips, {
+        blip = blip2,
+        playerid = playerid
+    })
     while transG ~= 0 do
         Wait(180 * 4)
         transG = transG - 1
@@ -563,8 +575,18 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     end
 end)
 
+RegisterNetEvent("qb-ambulancejob:RemoveBlips")
+AddEventHandler("qb-ambulancejob:RemoveBlips", function(playerid)
+    for _, v in pairs(_g.PlayerBlips) do
+        if v.playerid == playerid then
+            RemoveBlip(v.blip)
+        end
+    end
+end)
+
 RegisterNetEvent('hospital:client:Revive', function()
     local player = PlayerPedId()
+    local playerid = GetPlayerServerId(PlayerId())
 
     if isDead or InLaststand then
         local pos = GetEntityCoords(player, true)
@@ -582,6 +604,7 @@ RegisterNetEvent('hospital:client:Revive', function()
     end
 
     TriggerServerEvent("hospital:server:RestoreWeaponDamage")
+    TriggerServerEvent("hospital:server:RemoveBlipsSv",playerid)
     SetEntityMaxHealth(player, 200)
     SetEntityHealth(player, 200)
     ClearPedBloodDamage(player)

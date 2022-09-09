@@ -96,7 +96,16 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
     local players = QBCore.Functions.GetQBPlayers()
     for _, v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-            TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text)
+            TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, text, src)
+        end
+    end
+end)
+
+RegisterNetEvent('hospital:server:RemoveBlipsSv',function(playerid)
+    local players = QBCore.Functions.GetQBPlayers()
+    for _, v in pairs(players) do
+        if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+            TriggerClientEvent('qb-ambulancejob:RemoveBlips', v.PlayerData.source,playerid)
         end
     end
 end)
@@ -337,7 +346,7 @@ QBCore.Commands.Add('911e', Lang:t('info.ems_report'), {{name = 'message', help 
     local players = QBCore.Functions.GetQBPlayers()
     for _, v in pairs(players) do
         if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-            TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message)
+            TriggerClientEvent('hospital:client:ambulanceAlert', v.PlayerData.source, coords, message, src)
         end
     end
 end)
