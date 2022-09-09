@@ -558,7 +558,7 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text,playeri
         playerid = playerid
     })
     table.insert(_g.PlayerBlips, {
-        blip = blip2,
+        blip2 = blip,
         playerid = playerid
     })    	
     while transG ~= 0 do
