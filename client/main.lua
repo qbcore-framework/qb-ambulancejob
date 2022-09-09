@@ -577,7 +577,7 @@ end)
 
 RegisterNetEvent("qb-ambulancejob:RemoveBlips")
 AddEventHandler("qb-ambulancejob:RemoveBlips", function(playerid)
-    for k, v in pairs(_g.PlayerBlips) do
+    for _, v in pairs(_g.PlayerBlips) do
         if v.playerid == playerid then
             RemoveBlip(v.blip)  
         end
