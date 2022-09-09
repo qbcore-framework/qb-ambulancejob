@@ -29,6 +29,9 @@ healAnimDict = "mini@cpr@char_a@cpr_str"
 healAnim = "cpr_pumpchest"
 injured = {}
 
+_g = {
+    PlayerBlips = {}
+}
 BodyParts = {
     ['HEAD'] =          { label = Lang:t('body.head'),          causeLimp = false, isDamaged = false, severity = 0 },
     ['NECK'] =          { label = Lang:t('body.neck'),          causeLimp = false, isDamaged = false, severity = 0 },
@@ -551,6 +554,16 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
     BeginTextCommandSetBlipName('STRING')
     AddTextComponentString(blipText)
     EndTextCommandSetBlipName(blip)
+
+    table.insert(_g.PlayerBlips, {
+        blip = blip,
+        playerid = playerid
+    })
+    table.insert(_g.PlayerBlips, {
+        blip = blip2,
+        playerid = playerid
+    })
+
     while transG ~= 0 do
         Wait(180 * 4)
         transG = transG - 1
@@ -561,6 +574,15 @@ RegisterNetEvent('hospital:client:ambulanceAlert', function(coords, text)
             return
         end
     end
+end)
+
+RegisterNetEvent("qb-ambulancejob:RemoveBlips")
+AddEventHandler("qb-ambulancejob:RemoveBlips", function(playerid)
+    for _, v in pairs(_g.PlayerBlips) do
+        if v.playerid == playerid then
+            RemoveBlip(v.blip)  
+        end
+    end   
 end)
 
 RegisterNetEvent('hospital:client:Revive', function()
