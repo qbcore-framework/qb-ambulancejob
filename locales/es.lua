@@ -74,6 +74,7 @@ local Translations = {
     },
     menu = {
         amb_vehicles = 'Vehículos EMS',
+        status = 'Estado de salud',
         close = '⬅ Cerrar menu',
     },
     text = {
@@ -126,7 +127,10 @@ local Translations = {
     }
 }
 
-Lang = Locale:new({
-    phrases = Translations,
-    warnOnMissing = true
-})
+if GetConvar('qb_locale', 'en') == 'es' then
+    Lang = Locale:new({
+        phrases = Translations,
+        warnOnMissing = true,
+        fallbackLang = Lang,
+    })
+end
