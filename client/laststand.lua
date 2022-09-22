@@ -38,9 +38,9 @@ local function LoadAnimation(dict)
     end
 end
 
-local function RagdollLoop()
+function RagdollLoop()
     CreateThread(function()
-        while InLaststand do
+        while InLaststand or isDead do
             Wait(5)
             SetPedToRagdoll(PlayerPedId(), 1000, 1000, 0, 0, 0, 0)
         end
