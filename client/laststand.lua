@@ -38,6 +38,15 @@ local function LoadAnimation(dict)
     end
 end
 
+local function RagdollLoop()
+    CreateThread(function()
+        while InLaststand do
+            Wait(5)
+            SetPedToRagdoll(PlayerPedId(), 1000, 1000, 0, 0, 0, 0)
+        end
+    end)
+end
+
 function SetLaststand(bool)
     local ped = PlayerPedId()
     if bool then
@@ -61,14 +70,18 @@ function SetLaststand(bool)
             NetworkResurrectLocalPlayer(pos.x, pos.y, pos.z + 0.5, heading, true, false)
         end
         SetEntityHealth(ped, 150)
+        InLaststand = true
         if IsPedInAnyVehicle(ped, false) then
             LoadAnimation("veh@low@front_ps@idle_duck")
             TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)
         else
-            LoadAnimation(lastStandDict)
-            TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
+            if not Config.Ragdoll then
+                LoadAnimation(lastStandDict)
+                TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
+            else
+                RagdollLoop()
+            end
         end
-        InLaststand = true
         TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
         CreateThread(function()
             while InLaststand do
