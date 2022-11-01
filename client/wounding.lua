@@ -119,11 +119,11 @@ end)
 
 -- Threads
 
-function PainKillerLoop(pkAmount)    
+function PainKillerLoop(pkAmount)
     if not onPainKillers then
         if pkAmount then
             painkillerAmount = pkAmount
-        end    
+        end
         onPainKillers = true
         while onPainKillers do
             Wait(1)
