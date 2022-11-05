@@ -10,7 +10,7 @@ local Translations = {
         possessions_taken = 'All your possessions have been taken...',
         not_enough_money = 'You don\'t have enough money on you...',
         cant_help = 'You can\'t help this person...',
-        not_ems = 'You are not EMS or not signed in',
+        not_ems = 'You are not EMS',
         not_online = 'Player Not Online'
     },
     success = {
@@ -74,27 +74,28 @@ local Translations = {
     },
     menu = {
         amb_vehicles = 'Ambulance Vehicles',
-        status = 'Health Status',
         close = '⬅ Close Menu',
     },
     text = {
-        pstash_button = '[E] - Personal stash',
+        pstash_button = '~g~E~w~ - Personal stash',
         pstash = 'Personal stash',
-        onduty_button = '[E] - Go On Duty',
-        offduty_button = '[E] - Go Off Duty',
+        onduty_button = '~g~E~w~ - Go On Duty',
+        offduty_button = '~r~E~w~ - Go Off Duty',
         duty = 'On/Off Duty',
-        armory_button = '[E] - Armory',
+        armory_button = '~g~E~w~ - Armory',
         armory = 'Armory',
-        veh_button = '[E] - Grab / Store Vehicle',
-        heli_button = '[E] - Grab / Store Helicopter',
-        elevator_roof = '[E] - Take the elevator to the roof',
-        elevator_main = '[E] - Take the elevator down',
-        bed_out = '[E] - To get out of bed..',
-        call_doc = '[E] - Call doctor',
+        storeveh_button = '~g~E~w~ - Store vehicle',
+        veh_button = '~g~E~w~ - Vehicles',
+        storeheli_button = '~g~E~w~ - Store helicopter',
+        heli_button = '~g~E~w~ - Take a helicopter',
+        elevator_roof = '~g~E~w~ - Take the elevator to the roof',
+        elevator_main = '~g~E~w~ - Take the elevator down',
+        bed_out = '~g~E~w~ - To get out of bed..',
+        call_doc = '~g~E~w~ - Call doctor',
         call = 'Call',
-        check_in = '[E] Check in',
+        check_in = '~g~E~w~ - Check in',
         check = 'Check In',
-        lie_bed = '[E] - To lie in bed'
+        lie_bed = '~g~E~w~ - To lie in bed'
     },
     body = {
         head = 'Head',
@@ -127,7 +128,7 @@ local Translations = {
     }
 }
 
-Lang = Lang or Locale:new({
+Lang = Locale:new({
     phrases = Translations,
     warnOnMissing = true
 })

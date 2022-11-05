@@ -9,8 +9,6 @@ local bedOccupyingData = nil
 local closestBed = nil
 local doctorCount = 0
 local CurrentDamageList = {}
-local cam = nil
-local playerArmor = nil
 inBedDict = "anim@gangops@morgue@table@"
 inBedAnim = "body_search"
 isInHospitalBed = false
@@ -25,6 +23,7 @@ isDead = false
 isStatusChecking = false
 statusChecks = {}
 statusCheckTime = 0
+isHealingPerson = false
 healAnimDict = "mini@cpr@char_a@cpr_str"
 healAnim = "cpr_pumpchest"
 injured = {}
@@ -53,7 +52,7 @@ local function GetAvailableBed(bedId)
     local pos = GetEntityCoords(PlayerPedId())
     local retval = nil
     if bedId == nil then
-        for k, _ in pairs(Config.Locations["beds"]) do
+        for k, v in pairs(Config.Locations["beds"]) do
             if not Config.Locations["beds"][k].taken then
                 if #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z)) < 500 then
                         retval = k
@@ -127,7 +126,7 @@ local function SetClosestBed()
     local pos = GetEntityCoords(PlayerPedId(), true)
     local current = nil
     local dist = nil
-    for k, _ in pairs(Config.Locations["beds"]) do
+    for k, v in pairs(Config.Locations["beds"]) do
         local dist2 = #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z))
         if current then
             if dist2 < dist then
@@ -145,7 +144,7 @@ local function SetClosestBed()
 end
 
 local function IsInjuryCausingLimp()
-    for _, v in pairs(BodyParts) do
+    for k, v in pairs(BodyParts) do
         if v.causeLimp and v.isDamaged then
             return true
         end
@@ -165,7 +164,7 @@ local function ProcessRunStuff(ped)
 end
 
 function ResetPartial()
-    for _, v in pairs(BodyParts) do
+    for k, v in pairs(BodyParts) do
         if v.isDamaged and v.severity <= 2 then
             v.isDamaged = false
             v.severity = 0
@@ -214,7 +213,7 @@ local function ResetAll()
     wasOnPainKillers = false
     injured = {}
 
-    for _, v in pairs(BodyParts) do
+    for k, v in pairs(BodyParts) do
         v.isDamaged = false
         v.severity = 0
     end
@@ -235,7 +234,8 @@ local function ResetAll()
         limbs = BodyParts,
         isBleeding = tonumber(isBleeding)
     })
-    TriggerServerEvent("hospital:server:resetHungerThirst")
+    TriggerServerEvent("QBCore:Server:SetMetaData", "hunger", 100)
+    TriggerServerEvent("QBCore:Server:SetMetaData", "thirst", 100)
 end
 
 local function loadAnimDict(dict)
@@ -312,18 +312,27 @@ local function LeaveBed()
     bedObject = nil
     bedOccupyingData = nil
     isInHospitalBed = false
+end
 
-    QBCore.Functions.GetPlayerData(function(PlayerData)
-	if PlayerData.metadata["injail"] > 0 then
-		TriggerEvent("prison:client:Enter", PlayerData.metadata["injail"])
-	end
-    end)
+local function DrawText3D(x, y, z, text)
+	SetTextScale(0.3, 0.3)
+    SetTextFont(4)
+    SetTextProportional(1)
+    SetTextColour(255, 255, 255, 215)
+    SetTextEntry("STRING")
+    SetTextCentre(true)
+    AddTextComponentString(text)
+    SetDrawOrigin(x,y,z, 0)
+    DrawText(0.0, 0.0)
+    local factor = (string.len(text)) / 400
+    DrawRect(0.0, 0.0+0.0110, 0.017+ factor, 0.03, 0, 0, 0, 75)
+    ClearDrawOrigin()
 end
 
 local function IsInDamageList(damage)
     local retval = false
     if CurrentDamageList then
-        for k, _ in pairs(CurrentDamageList) do
+        for k, v in pairs(CurrentDamageList) do
             if CurrentDamageList[k] == damage then
                 retval = true
             end
@@ -335,7 +344,7 @@ end
 local function CheckWeaponDamage(ped)
     local detected = false
     for k, v in pairs(QBCore.Shared.Weapons) do
-        if HasPedBeenDamagedByWeapon(ped, k, 0) then
+        if HasPedBeenDamagedByWeapon(ped, GetHashKey(k), 0) then
             detected = true
             if not IsInDamageList(k) then
                 TriggerEvent('chat:addMessage', {
@@ -414,7 +423,7 @@ local function CheckDamage(ped, bone, weapon, damageDone)
             if BodyParts[Config.Bones[bone]].severity < 4 then
                 BodyParts[Config.Bones[bone]].severity = BodyParts[Config.Bones[bone]].severity + 1
 
-                for _, v in pairs(injured) do
+                for k, v in pairs(injured) do
                     if v.part == Config.Bones[bone] then
                         v.severity = BodyParts[Config.Bones[bone]].severity
                     end
@@ -433,7 +442,7 @@ end
 
 local function ProcessDamage(ped)
     if not isDead and not InLaststand and not onPainKillers then
-        for _, v in pairs(injured) do
+        for k, v in pairs(injured) do
             if (v.part == 'LLEG' and v.severity > 1) or (v.part == 'RLEG' and v.severity > 1) or (v.part == 'LFOOT' and v.severity > 2) or (v.part == 'RFOOT' and v.severity > 2) then
                 if legCount >= Config.LegInjuryTimer then
                     if not IsPedRagdoll(ped) and IsPedOnFoot(ped) then
@@ -456,6 +465,8 @@ local function ProcessDamage(ped)
                 end
             elseif (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or (v.part == 'LFINGER' and v.severity > 2) or (v.part == 'RARM' and v.severity > 1) or (v.part == 'RHAND' and v.severity > 1) or (v.part == 'RFINGER' and v.severity > 2) then
                 if armcount >= Config.ArmInjuryTimer then
+                    local chance = math.random(100)
+
                     if (v.part == 'LARM' and v.severity > 1) or (v.part == 'LHAND' and v.severity > 1) or (v.part == 'LFINGER' and v.severity > 2) then
                         local isDisabled = 15
                         CreateThread(function()
@@ -657,10 +668,6 @@ RegisterNetEvent('hospital:client:SetBed', function(id, isTaken)
     Config.Locations["beds"][id].taken = isTaken
 end)
 
-RegisterNetEvent('hospital:client:SetBed2', function(id, isTaken)
-    Config.Locations["jailbeds"][id].taken = isTaken
-end)
-
 RegisterNetEvent('hospital:client:RespawnAtHospital', function()
     TriggerServerEvent("hospital:server:RespawnAtHospital")
     if exports["qb-policejob"]:IsHandcuffed() then
@@ -692,7 +699,8 @@ end)
 RegisterNetEvent('hospital:client:adminHeal', function()
     local ped = PlayerPedId()
     SetEntityHealth(ped, 200)
-    TriggerServerEvent("hospital:server:resetHungerThirst")
+    TriggerServerEvent("QBCore:Server:SetMetaData", "hunger", 100)
+    TriggerServerEvent("QBCore:Server:SetMetaData", "thirst", 100)
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
@@ -713,7 +721,7 @@ end)
 -- Threads
 
 CreateThread(function()
-    for _, station in pairs(Config.Locations["stations"]) do
+    for k, station in pairs(Config.Locations["stations"]) do
         local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
         SetBlipSprite(blip, 61)
         SetBlipAsShortRange(blip, true)
@@ -727,14 +735,13 @@ end)
 
 CreateThread(function()
     while true do
-        local sleep = 1000
+        sleep = 1000
         if isInHospitalBed and canLeaveBed then
             sleep = 0
-            exports['qb-core']:DrawText(Lang:t('text.bed_out'))
+            local pos = GetEntityCoords(PlayerPedId())
+            DrawText3D(pos.x, pos.y, pos.z, Lang:t('text.bed_out'))
             if IsControlJustReleased(0, 38) then
-                exports['qb-core']:KeyPressed(38)
                 LeaveBed()
-                exports['qb-core']:HideText()
             end
         end
         Wait(sleep)
@@ -826,148 +833,67 @@ CreateThread(function()
     end
 end)
 
-local listen = false
- local function CheckInControls(variable)
-    CreateThread(function()
-        listen = true
-        while listen do
-            if IsControlJustPressed(0, 38) then
-                exports['qb-core']:KeyPressed(38)
-                if variable == "checkin" then
-                   TriggerEvent('qb-ambulancejob:checkin')
-                    listen = false
-                elseif variable == "beds" then
-                    TriggerEvent('qb-ambulancejob:beds')
-                    listen = false
-                end
-            end
-            Wait(1)
-        end
-    end)
-end
-
-RegisterNetEvent('qb-ambulancejob:checkin', function()
-    if doctorCount >= Config.MinimalDoctors then
-        TriggerServerEvent("hospital:server:SendDoctorAlert")
-    else
-        TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
-        QBCore.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
-            disableMovement = true,
-            disableCarMovement = true,
-            disableMouse = false,
-            disableCombat = true,
-        }, {}, {}, {}, function() -- Done
-            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-            local bedId = GetAvailableBed()
-            if bedId then
-                TriggerServerEvent("hospital:server:SendToBed", bedId, true)
-            else
-                QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
-            end
-        end, function() -- Cancel
-            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
-            QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
-        end)
-    end
-end)
-
-RegisterNetEvent('qb-ambulancejob:beds', function()
-    if GetAvailableBed(closestBed) then
-        TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
-    else
-        QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
-    end
-end)
-
--- Convar turns into a boolean
-if Config.UseTarget then
-    CreateThread(function()
-        for k, v in pairs(Config.Locations["checking"]) do
-            exports['qb-target']:AddBoxZone("checking"..k, vector3(v.x, v.y, v.z), 3.5, 2, {
-                name = "checking"..k,
-                heading = -72,
-                debugPoly = false,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            }, {
-                options = {
-                    {
-                        type = "client",
-                        icon = "fa fa-clipboard",
-                        event = "qb-ambulancejob:checkin",
-                        label = "Check In",
-                    }
-                },
-                distance = 1.5
-            })
-        end
-
-        for k, v in pairs(Config.Locations["beds"]) do
-            exports['qb-target']:AddBoxZone("beds"..k,  v.coords, 2.5, 2.3, {
-                name = "beds"..k,
-                heading = -20,
-                debugPoly = false,
-                minZ = v.coords.z - 1,
-                maxZ = v.coords.z + 1,
-            }, {
-                options = {
-                    {
-                        type = "client",
-                        event = "qb-ambulancejob:beds",
-                        icon = "fas fa-bed",
-                        label = "Layin Bed",
-                    }
-                },
-                distance = 1.5
-            })
-        end
-    end)
-else
-    CreateThread(function()
-        local checkingPoly = {}
-        for k, v in pairs(Config.Locations["checking"]) do
-            checkingPoly[#checkingPoly+1] = BoxZone:Create(vector3(v.x, v.y, v.z), 3.5, 2, {
-                heading = -72,
-                name="checkin"..k,
-                debugPoly = false,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            })
-            local checkingCombo = ComboZone:Create(checkingPoly, {name = "checkingCombo", debugPoly = false})
-            checkingCombo:onPlayerInOut(function(isPointInside)
-                if isPointInside then
+CreateThread(function()
+    while true do
+        sleep = 1000
+        if LocalPlayer.state['isLoggedIn'] then
+            local pos = GetEntityCoords(PlayerPedId())
+            for k, checkins in pairs(Config.Locations["checking"]) do
+                if #(pos - checkins) < 1.5 then
+                    sleep = 5
                     if doctorCount >= Config.MinimalDoctors then
-                        exports['qb-core']:DrawText(Lang:t('text.call_doc'),'left')
-                        CheckInControls("checkin")
+                        DrawText3D(checkins.x, checkins.y, checkins.z, Lang:t('text.call_doc'))
                     else
-                        exports['qb-core']:DrawText(Lang:t('text.check_in'), 'left')
-                        CheckInControls("checkin")
+                        DrawText3D(checkins.x, checkins.y, checkins.z, Lang:t('text.check_in'))
                     end
-                else
-                    listen = false
-                    exports['qb-core']:HideText()
+                    if IsControlJustReleased(0, 38) then
+                        if doctorCount >= Config.MinimalDoctors then
+                            TriggerServerEvent("hospital:server:SendDoctorAlert")
+                        else
+                            TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
+                            QBCore.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
+                                disableMovement = true,
+                                disableCarMovement = true,
+                                disableMouse = false,
+                                disableCombat = true,
+                            }, {}, {}, {}, function() -- Done
+                                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+                                local bedId = GetAvailableBed()
+                                if bedId then
+                                    TriggerServerEvent("hospital:server:SendToBed", bedId, true)
+                                else
+                                    QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
+                                end
+                            end, function() -- Cancel
+                                TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+                                QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
+                            end)
+                        end
+                    end
+                elseif #(pos - checkins) < 4.5 then
+                    sleep = 5
+                    if doctorCount >= Config.MinimalDoctors then
+                        DrawText3D(checkins.x, checkins.y, checkins.z, Lang:t('text.call'))
+                    else
+                        DrawText3D(checkins.x, checkins.y, checkins.z, Lang:t('text.check'))
+                    end
                 end
-            end)
-        end
-        local bedPoly = {}
-        for k, v in pairs(Config.Locations["beds"]) do
-            bedPoly[#bedPoly+1] = BoxZone:Create(v.coords, 2.5, 2.3, {
-                name="beds"..k,
-                heading = -20,
-                debugPoly = false,
-                minZ = v.coords.z - 1,
-                maxZ = v.coords.z + 1,
-            })
-            local bedCombo = ComboZone:Create(bedPoly, {name = "bedCombo", debugPoly = false})
-            bedCombo:onPlayerInOut(function(isPointInside)
-                if isPointInside then
-                    exports['qb-core']:DrawText(Lang:t('text.lie_bed'), 'left')
-                    CheckInControls("beds")
-                else
-                    listen = false
-                    exports['qb-core']:HideText()
+            end
+
+            if closestBed and not isInHospitalBed then
+                if #(pos - vector3(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z)) < 2 then
+                    sleep = 5
+                    DrawText3D(Config.Locations["beds"][closestBed].coords.x, Config.Locations["beds"][closestBed].coords.y, Config.Locations["beds"][closestBed].coords.z + 0.3, Lang:t('text.lie_bed'))
+                    if IsControlJustReleased(0, 38) then
+                        if GetAvailableBed(closestBed) then
+                            TriggerServerEvent("hospital:server:SendToBed", closestBed, false)
+                        else
+                            QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
+                        end
+                    end
                 end
-            end)
+            end
         end
-    end)
-end
+        Wait(sleep)
+    end
+end)

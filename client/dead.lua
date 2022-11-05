@@ -141,7 +141,6 @@ CreateThread(function()
             EnableControlAction(0, 213, true)
             EnableControlAction(0, 249, true)
             EnableControlAction(0, 46, true)
-            EnableControlAction(0, 47, true)
 
             if isDead then
                 if not isInHospitalBed then
