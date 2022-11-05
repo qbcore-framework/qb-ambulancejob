@@ -1,6 +1,7 @@
 local prevPos = nil
 onPainKillers = false
 local painkillerAmount = 0
+local pkloop = false
 
 -- Functions
 
@@ -52,6 +53,10 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
         onPainKillers = true
+        if not pkloop then
+            pkloop = true
+            PainKillerLoop()
+        end
         if painkillerAmount < 3 then
             painkillerAmount = painkillerAmount + 1
         end
@@ -108,6 +113,10 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
         TriggerServerEvent("hospital:server:removePainkillers")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["painkillers"], "remove")
         onPainKillers = true
+        if not pkloop then
+            pkloop = true
+            PainKillerLoop()
+        end
         if painkillerAmount < 3 then
             painkillerAmount = painkillerAmount + 1
         end
@@ -119,7 +128,7 @@ end)
 
 -- Threads
 
-CreateThread(function()
+function PainKillerLoop()
     while true do
         Wait(1)
         if onPainKillers then
@@ -130,10 +139,11 @@ CreateThread(function()
                 onPainKillers = false
             end
         else
-            Wait(3000)
+            pklooped = false
+            break
         end
     end
-end)
+end
 
 CreateThread(function()
 	while true do
@@ -151,6 +161,7 @@ CreateThread(function()
 		end
 	end
 end)
+
 
 CreateThread(function()
     Wait(2500)

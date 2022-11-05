@@ -725,21 +725,24 @@ CreateThread(function()
     end
 end)
 
-CreateThread(function()
-    while true do
-        local sleep = 1000
-        if isInHospitalBed and canLeaveBed then
-            sleep = 0
-            exports['qb-core']:DrawText(Lang:t('text.bed_out'))
-            if IsControlJustReleased(0, 38) then
-                exports['qb-core']:KeyPressed(38)
-                LeaveBed()
-                exports['qb-core']:HideText()
+function BedLoop()
+    CreateThread(function()
+        while true do
+            local sleep = 1000
+            if isInHospitalBed and canLeaveBed then
+                sleep = 0
+                exports['qb-core']:DrawText(Lang:t('text.bed_out'))
+                if IsControlJustReleased(0, 38) then
+                    exports['qb-core']:KeyPressed(38)
+                    LeaveBed()
+                    exports['qb-core']:HideText()
+                    break
+                end
             end
+            Wait(sleep)
         end
-        Wait(sleep)
-    end
-end)
+    end)
+end
 
 CreateThread(function()
     while true do
@@ -840,6 +843,7 @@ local listen = false
                     TriggerEvent('qb-ambulancejob:beds')
                     listen = false
                 end
+                BedLoop()
             end
             Wait(1)
         end

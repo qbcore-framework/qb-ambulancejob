@@ -2,6 +2,7 @@ local deadAnimDict = "dead"
 local deadAnim = "dead_a"
 local hold = 5
 deathTime = 0
+local looped = false
 
 -- Functions
 
@@ -116,6 +117,10 @@ AddEventHandler('gameEventTriggered', function(event, data)
                 OnDeath()
                 DeathTimer()
             end
+            if not looped then
+                looped = true
+                DeathLoop()
+            end
         end
     end
 end)
@@ -124,9 +129,13 @@ end)
 
 emsNotified = false
 
-CreateThread(function()
+function DeathLoop()
 	while true do
         local sleep = 1000
+        if not isDead and not InLaststand then
+            looped = false
+            break
+        end
 		if isDead or InLaststand then
             sleep = 5
             local ped = PlayerPedId()
@@ -220,4 +229,4 @@ CreateThread(function()
 		end
         Wait(sleep)
 	end
-end)
+end

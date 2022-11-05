@@ -1,7 +1,8 @@
 Laststand = Laststand or {}
-Laststand.ReviveInterval = 360
+Laststand.ReviveInterval = Config.BleedoutInterval
 Laststand.MinimumRevive = 300
 InLaststand = false
+local deathtime = Config.DeathTime
 LaststandTime = 0
 lastStandDict = "combat@damage@writhe"
 lastStandAnim = "writhe_loop"
@@ -76,10 +77,10 @@ function SetLaststand(bool)
                 local player = PlayerId()
                 if LaststandTime - 1 > Laststand.MinimumRevive then
                     LaststandTime = LaststandTime - 1
-                    Config.DeathTime = LaststandTime
+                    deathtime = LaststandTime
                 elseif LaststandTime - 1 <= Laststand.MinimumRevive and LaststandTime - 1 ~= 0 then
                     LaststandTime = LaststandTime - 1
-                    Config.DeathTime = LaststandTime
+                    deathtime = LaststandTime
                 elseif LaststandTime - 1 <= 0 then
                     QBCore.Functions.Notify(Lang:t('error.bled_out'), "error")
                     SetLaststand(false)
