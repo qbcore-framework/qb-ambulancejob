@@ -49,26 +49,30 @@ BodyParts = {
 
 -- Functions
 
-local function GetAvailableBed(bedId)
-    local pos = GetEntityCoords(PlayerPedId())
-    local retval = nil
-    if bedId == nil then
-        for k, _ in pairs(Config.Locations["beds"]) do
-            if not Config.Locations["beds"][k].taken then
-                if #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z)) < 500 then
-                        retval = k
-                end
-            end
-        end
+RegisterNetEvent('qb-ambulancejob:checkin', function()
+    if doctorCount >= Config.MinimalDoctors then
+        TriggerServerEvent("hospital:server:SendDoctorAlert")
     else
-        if not Config.Locations["beds"][bedId].taken then
-            if #(pos - vector3(Config.Locations["beds"][bedId].coords.x, Config.Locations["beds"][bedId].coords.y, Config.Locations["beds"][bedId].coords.z))  < 500 then
-                retval = bedId
+        TriggerEvent('animations:client:EmoteCommandStart', {"notepad"})
+        QBCore.Functions.Progressbar("hospital_checkin", Lang:t('progress.checking_in'), 2000, false, true, {
+            disableMovement = true,
+            disableCarMovement = true,
+            disableMouse = false,
+            disableCombat = true,
+        }, {}, {}, {}, function() -- Done
+            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+            local bedId = GetAvailableBed()
+            if bedId then
+                TriggerServerEvent("hospital:server:SendToBed", bedId, true)
+            else
+                QBCore.Functions.Notify(Lang:t('error.beds_taken'), "error")
             end
-        end
+        end, function() -- Cancel
+            TriggerEvent('animations:client:EmoteCommandStart', {"c"})
+            QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
+        end)
     end
-    return retval
-end
+end)
 
 local function GetDamagingWeapon(ped)
     for k, v in pairs(Config.Weapons) do

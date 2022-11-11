@@ -21,11 +21,19 @@ end)
 RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
-	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
-	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
-	Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
+	if Player.PlayerData.metadata["injail"] > 0 then
+		TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["jailbeds"][bedId], isRevive)
+		TriggerClientEvent('hospital:client:SetBed2', -1, bedId, true)
+		Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
 		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
-	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+	else
+		TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
+		TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
+		Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
+		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
+		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+	end
 end)
 
 RegisterNetEvent('hospital:server:RespawnAtHospital', function()
