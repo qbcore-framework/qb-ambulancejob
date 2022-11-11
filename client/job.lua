@@ -5,27 +5,6 @@ local currentHospital
 
 -- Functions
 
-local function SetCarItemsInfo()
-	local items = {}
-	for _, item in pairs(Config.CarItems) do
-		local itemInfo = QBCore.Shared.Items[item.name:lower()]
-		items[item.slot] = {
-			name = itemInfo["name"],
-			amount = tonumber(item.amount),
-			info = item.info,
-			label = itemInfo["label"],
-			description = itemInfo["description"] and itemInfo["description"] or "",
-			weight = itemInfo["weight"],
-			type = itemInfo["type"],
-			unique = itemInfo["unique"],
-			useable = itemInfo["useable"],
-			image = itemInfo["image"],
-			slot = item.slot,
-		}
-	end
-	Config.CarItems = items
-end
-
 local function GetClosestPlayer()
     local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
@@ -56,10 +35,6 @@ function TakeOutVehicle(vehicleInfo)
         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
         if Config.VehicleSettings[vehicleInfo] ~= nil then
             QBCore.Shared.SetDefaultVehicleExtras(veh, Config.VehicleSettings[vehicleInfo].extras)
-        end
-        if Config.TrunkItems then
-            SetCarItemsInfo()
-            TriggerServerEvent("inventory:server:addTrunkItems", QBCore.Functions.GetPlate(veh), Config.CarItems)
         end
         TriggerEvent("vehiclekeys:client:SetOwner", QBCore.Functions.GetPlate(veh))
         SetVehicleEngineOn(veh, true, true)
