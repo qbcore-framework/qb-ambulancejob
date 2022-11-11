@@ -32,6 +32,7 @@ Config.MajorArmoredBleedChance = 45 -- The chance, in percent, that a player wil
 Config.MaxInjuryChanceMulti = 3 -- How many times the HealthDamage value above can divide into damage taken before damage is forced to be applied
 Config.DamageMinorToMajor = 35 -- How much damage would have to be applied for a minor weapon to be considered a major damage event. Put this at 100 if you want to disable it
 Config.AlertShowInfo = 2 -- How many injuries a player must have before being alerted about them
+Config.TrunkItems = false -- Do you want to place items in trunk of spawned vehicles
 
 Config.Locations = { -- Edit the various interaction points for players or create new ones
     ["checking"] = {
@@ -110,6 +111,30 @@ Config.AuthorizedVehicles = { -- Vehicles players can use based on their ambulan
 	[4] = {
 		["ambulance"] = "Ambulance",
 	}
+}
+
+Config.CarItems = {
+    [1] = {
+        name = "firstaid",
+        amount = 3,
+        info = {},
+        type = "item",
+        slot = 1,
+    },
+    [2] = {
+        name = "bandage",
+        amount = 5,
+        info = {},
+        type = "item",
+        slot = 2,
+    },
+    [3] = {
+        name = "weapon_fireextinguisher",
+        amount = 1,
+        info = {},
+        type = "item",
+        slot = 3,
+    },
 }
 
 Config.Items = { -- Items found in the ambulance shop for players with the ambulance job to purchase
