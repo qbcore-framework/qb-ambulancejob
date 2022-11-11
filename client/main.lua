@@ -53,10 +53,20 @@ local function GetAvailableBed(bedId)
     local pos = GetEntityCoords(PlayerPedId())
     local retval = nil
     if bedId == nil then
-        for k, _ in pairs(Config.Locations["beds"]) do
-            if not Config.Locations["beds"][k].taken then
-                if #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z)) < 500 then
+        if QBCore.Functions.GetPlayerData().metadata["injail"] > 0 then
+            for k, _ in pairs(Config.Locations["jailbeds"]) do
+                if not Config.Locations["jailbeds"][k].taken then
+                    if #(pos - vector3(Config.Locations["jailbeds"][k].coords.x, Config.Locations["jailbeds"][k].coords.y, Config.Locations["jailbeds"][k].coords.z)) < 500 then
                         retval = k
+                    end
+                end
+            end
+        else
+            for k, _ in pairs(Config.Locations["beds"]) do
+                if not Config.Locations["beds"][k].taken then
+                    if #(pos - vector3(Config.Locations["beds"][k].coords.x, Config.Locations["beds"][k].coords.y, Config.Locations["beds"][k].coords.z)) < 500 then
+                        retval = k
+                    end
                 end
             end
         end
