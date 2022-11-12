@@ -1,15 +1,12 @@
 local prevPos = nil
-onPainKillers = false
 local painkillerAmount = 0
-
+onPainKillers = false
 -- Functions
-
 local function DoBleedAlert()
     if not isDead and tonumber(isBleeding) > 0 then
         QBCore.Functions.Notify(Lang:t('info.bleed_alert', {bleedstate = Config.BleedingStates[tonumber(isBleeding)].label}), "error", 5000)
     end
 end
-
 local function RemoveBleed(level)
     if isBleeding ~= 0 then
         if isBleeding - level < 0 then
@@ -20,7 +17,6 @@ local function RemoveBleed(level)
         DoBleedAlert()
     end
 end
-
 local function ApplyBleed(level)
     if isBleeding ~= 4 then
         if isBleeding + level > 4 then
@@ -31,9 +27,7 @@ local function ApplyBleed(level)
         DoBleedAlert()
     end
 end
-
 -- Events
-
 RegisterNetEvent('hospital:client:UseIfaks', function()
     local ped = PlayerPedId()
     QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.ifaks'), 3000, false, true, {
@@ -63,7 +57,6 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
         QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
 end)
-
 RegisterNetEvent('hospital:client:UseBandage', function()
     local ped = PlayerPedId()
     QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.bandage'), 4000, false, true, {
@@ -91,7 +84,6 @@ RegisterNetEvent('hospital:client:UseBandage', function()
         QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
 end)
-
 RegisterNetEvent('hospital:client:UsePainkillers', function()
     local ped = PlayerPedId()
     QBCore.Functions.Progressbar("use_bandage", Lang:t('progress.painkillers'), 3000, false, true, {
@@ -116,9 +108,7 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
         QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
     end)
 end)
-
 -- Threads
-
 function PainKillerLoop(pkAmount)
     if not onPainKillers then
         if pkAmount then
@@ -137,7 +127,6 @@ function PainKillerLoop(pkAmount)
     end
 end
 exports('PainKillerLoop', PainKillerLoop)
-
 CreateThread(function()
 	while true do
 		if #injured > 0 then
@@ -154,7 +143,6 @@ CreateThread(function()
 		end
 	end
 end)
-
 CreateThread(function()
     Wait(2500)
     prevPos = GetEntityCoords(PlayerPedId(), true)

@@ -2,16 +2,8 @@ local deadAnimDict = "dead"
 local deadAnim = "dead_a"
 local hold = 5
 deathTime = 0
-
+emsNotified = false
 -- Functions
-
-local function loadAnimDict(dict)
-    while (not HasAnimDictLoaded(dict)) do
-        RequestAnimDict(dict)
-        Wait(5)
-    end
-end
-
 function OnDeath()
     if not isDead then
         isDead = true
@@ -55,7 +47,6 @@ function OnDeath()
         end
     end
 end
-
 function DeathTimer()
     hold = 5
     while isDead do
@@ -79,7 +70,12 @@ function DeathTimer()
         end
     end
 end
-
+local function loadAnimDict(dict)
+    while (not HasAnimDictLoaded(dict)) do
+        RequestAnimDict(dict)
+        Wait(5)
+    end
+end
 local function DrawTxt(x, y, width, height, scale, text, r, g, b, a, _)
     SetTextFont(4)
     SetTextProportional(0)
@@ -93,9 +89,7 @@ local function DrawTxt(x, y, width, height, scale, text, r, g, b, a, _)
     AddTextComponentString(text)
     DrawText(x - width/2, y - height/2 + 0.005)
 end
-
--- Damage Handler
-
+-- Events
 AddEventHandler('gameEventTriggered', function(event, data)
     if event == "CEventNetworkEntityDamage" then
         local victim, attacker, victimDied, weapon = data[1], data[2], data[4], data[7]
@@ -119,11 +113,7 @@ AddEventHandler('gameEventTriggered', function(event, data)
         end
     end
 end)
-
 -- Threads
-
-emsNotified = false
-
 CreateThread(function()
 	while true do
         local sleep = 1000
@@ -142,7 +132,6 @@ CreateThread(function()
             EnableControlAction(0, 249, true)
             EnableControlAction(0, 46, true)
             EnableControlAction(0, 47, true)
-
             if isDead then
                 if not isInHospitalBed then
                     if deathTime > 0 then
@@ -151,7 +140,6 @@ CreateThread(function()
                         DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', {holdtime = hold, cost = Config.BillCost}), 255, 255, 255, 255)
                     end
                 end
-
                 if IsPedInAnyVehicle(ped, false) then
                     loadAnimDict("veh@low@front_ps@idle_duck")
                     if not IsEntityPlayingAnim(ped, "veh@low@front_ps@idle_duck", "sit", 3) then
@@ -170,11 +158,9 @@ CreateThread(function()
                         end
                     end
                 end
-
                 SetCurrentPedWeapon(ped, `WEAPON_UNARMED`, true)
             elseif InLaststand then
                 sleep = 5
-
                 if LaststandTime > Laststand.MinimumRevive then
                     DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', {time = math.ceil(LaststandTime)}), 255, 255, 255, 255)
                 else
@@ -184,13 +170,11 @@ CreateThread(function()
                     else
                         DrawTxt(0.90, 1.40, 1.0, 1.0, 0.6, Lang:t('info.help_requested'), 255, 255, 255, 255)
                     end
-
                     if IsControlJustPressed(0, 47) and not emsNotified then
                         TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_down'))
                         emsNotified = true
                     end
                 end
-
                 if not isEscorted then
                     if IsPedInAnyVehicle(ped, false) then
                         loadAnimDict("veh@low@front_ps@idle_duck")

@@ -1,3 +1,5 @@
+-- Variables
+local isEscorting = false
 Laststand = Laststand or {}
 Laststand.ReviveInterval = 360
 Laststand.MinimumRevive = 300
@@ -6,16 +8,12 @@ LaststandTime = 0
 lastStandDict = "combat@damage@writhe"
 lastStandAnim = "writhe_loop"
 isEscorted = false
-local isEscorting = false
-
 -- Functions
-
 local function GetClosestPlayer()
     local closestPlayers = QBCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
-
     for i=1, #closestPlayers, 1 do
         if closestPlayers[i] ~= PlayerId() then
             local pos = GetEntityCoords(GetPlayerPed(closestPlayers[i]))
@@ -27,17 +25,14 @@ local function GetClosestPlayer()
             end
         end
 	end
-
 	return closestPlayer, closestDistance
 end
-
 local function LoadAnimation(dict)
     while not HasAnimDictLoaded(dict) do
         RequestAnimDict(dict)
         Wait(100)
     end
 end
-
 function SetLaststand(bool)
     local ped = PlayerPedId()
     if bool then
@@ -110,17 +105,13 @@ function SetLaststand(bool)
     end
     TriggerServerEvent("hospital:server:SetLaststandStatus", bool)
 end
-
 -- Events
-
 RegisterNetEvent('hospital:client:SetEscortingState', function(bool)
     isEscorting = bool
 end)
-
 RegisterNetEvent('hospital:client:isEscorted', function(bool)
     isEscorted = bool
 end)
-
 RegisterNetEvent('hospital:client:UseFirstAid', function()
     if not isEscorting then
         local player, distance = GetClosestPlayer()
@@ -132,7 +123,6 @@ RegisterNetEvent('hospital:client:UseFirstAid', function()
         QBCore.Functions.Notify(Lang:t('error.impossible'), 'error')
     end
 end)
-
 RegisterNetEvent('hospital:client:CanHelp', function(helperId)
     if InLaststand then
         if LaststandTime <= 300 then
@@ -144,7 +134,6 @@ RegisterNetEvent('hospital:client:CanHelp', function(helperId)
         TriggerServerEvent('hospital:server:CanHelp', helperId, false)
     end
 end)
-
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = PlayerPedId()
     QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true, {
