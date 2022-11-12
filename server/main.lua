@@ -1,6 +1,7 @@
 local PlayerInjuries = {}
 local PlayerWeaponWounds = {}
 local QBCore = exports['qb-core']:GetCoreObject()
+local updatingDoctors = false
 local doctorCount = 0
 local doctorCalled = false
 local Doctors = {}
@@ -161,6 +162,21 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	end
 end)
 
+RegisterNetEvent('hospital:server:UpdateCurrentDoctors', function()
+    local amount = 0
+    local players = QBCore.Functions.GetQBPlayers()
+    if updatingDoctors then return end
+    updatingDoctors = true
+    for _, v in pairs(players) do
+        if v and v.PlayerData.job.type == "ems" and v.PlayerData.job.onduty then
+            amount += 1
+        end
+    end
+    TriggerClientEvent("police:SetDoctorCount", -1, amount)
+    updatingDoctors = false
+end)
+
+-- Deprecate AddDoctor & RemoveDoctor
 RegisterNetEvent('hospital:server:AddDoctor', function(job)
 	if job == 'ambulance' then
 		local src = source

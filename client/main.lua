@@ -712,7 +712,9 @@ end)
 
 -- Threads
 
+-- Deprecated due to qb-jobs
 CreateThread(function()
+    if not QBCore.Shared.QBJobsStatus then return end
     for _, station in pairs(Config.Locations["stations"]) do
         local blip = AddBlipForCoord(station.coords.x, station.coords.y, station.coords.z)
         SetBlipSprite(blip, 61)
