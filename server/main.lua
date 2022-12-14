@@ -188,8 +188,6 @@ AddEventHandler("playerDropped", function()
 	end
 end)
 
-local flags = {}
-
 RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
@@ -211,28 +209,20 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 				TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
 			end
 		else
-			local license = Player.PlayerData.license
-			if flags[license] then
-				flags[license] = flags[license] + 1
-			else
-				flags[license] = 1
-			end
-			if flags[license] >= 3 then
-				MySQL.insert('INSERT INTO bans (name, license, discord, ip, reason, expire, bannedby) VALUES (?, ?, ?, ?, ?, ?, ?)',
-					{
-						GetPlayerName(src),
-						QBCore.Functions.GetIdentifier(src, 'license'),
-						QBCore.Functions.GetIdentifier(src, 'discord'),
-						QBCore.Functions.GetIdentifier(src, 'ip'),
-						"Trying to revive theirselves or other players",
-						2147483647,
-						'qb-ambulancejob'
-					}
-				)
-				TriggerEvent('qb-log:server:CreateLog', 'ambulancejob', 'Player Banned', 'red',
-					string.format('%s was banned by %s for %s', GetPlayerName(src), 'qb-ambulancejob', "Trying to revive theirselves or other players"), true)
-				DropPlayer(src, 'You were permanently banned by the server for: Exploiting')
-			end
+			MySQL.insert('INSERT INTO bans (name, license, discord, ip, reason, expire, bannedby) VALUES (?, ?, ?, ?, ?, ?, ?)',
+				{
+					GetPlayerName(src),
+					QBCore.Functions.GetIdentifier(src, 'license'),
+					QBCore.Functions.GetIdentifier(src, 'discord'),
+					QBCore.Functions.GetIdentifier(src, 'ip'),
+					"Trying to revive theirselves or other players",
+					2147483647,
+					'qb-ambulancejob'
+				}
+			)
+			TriggerEvent('qb-log:server:CreateLog', 'ambulancejob', 'Player Banned', 'red',
+				string.format('%s was banned by %s for %s', GetPlayerName(src), 'qb-ambulancejob', "Trying to revive theirselves or other players"), true)
+			DropPlayer(src, 'You were permanently banned by the server for: Exploiting')
 		end
 	end
 end)
