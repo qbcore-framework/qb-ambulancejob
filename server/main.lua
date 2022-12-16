@@ -194,18 +194,32 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 	local Patient = QBCore.Functions.GetPlayer(playerId)
 	local oldMan = isOldMan or false
 	if Patient then
-		if oldMan then
-			if Player.Functions.RemoveMoney("cash", 5000, "revived-player") then
+		if Player.PlayerData.job.name == "ambulance" or QBCore.Functions.HasItem(src, "firstaid", 1) then
+			if oldMan then
+				if Player.Functions.RemoveMoney("cash", 5000, "revived-player") then
+					Player.Functions.RemoveItem('firstaid', 1)
+					TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], "remove")
+					TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
+				else
+					TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_enough_money'), "error")
+				end
+			else
 				Player.Functions.RemoveItem('firstaid', 1)
 				TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], "remove")
 				TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
-			else
-				TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_enough_money'), "error")
 			end
 		else
-			Player.Functions.RemoveItem('firstaid', 1)
-			TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], "remove")
-			TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
+			MySQL.insert('INSERT INTO bans (name, license, discord, ip, reason, expire, bannedby) VALUES (?, ?, ?, ?, ?, ?, ?)', {
+				GetPlayerName(src),
+				QBCore.Functions.GetIdentifier(src, 'license'),
+				QBCore.Functions.GetIdentifier(src, 'discord'),
+				QBCore.Functions.GetIdentifier(src, 'ip'),
+				"Trying to revive theirselves or other players",
+				2147483647,
+				'qb-ambulancejob'
+			})
+			TriggerEvent('qb-log:server:CreateLog', 'ambulancejob', 'Player Banned', 'red', string.format('%s was banned by %s for %s', GetPlayerName(src), 'qb-ambulancejob', "Trying to revive theirselves or other players"), true)
+			DropPlayer(src, 'You were permanently banned by the server for: Exploiting')
 		end
 	end
 end)
