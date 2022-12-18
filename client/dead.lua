@@ -48,8 +48,12 @@ function OnDeath()
                 loadAnimDict("veh@low@front_ps@idle_duck")
                 TaskPlayAnim(player, "veh@low@front_ps@idle_duck", "sit", 1.0, 1.0, -1, 1, 0, 0, 0, 0)
             else
-                loadAnimDict(deadAnimDict)
-                TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                if not Config.Ragdoll then
+                    loadAnimDict(deadAnimDict)
+                    TaskPlayAnim(player, deadAnimDict, deadAnim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
+                else
+                    RagdollLoop()
+                end
             end
             TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.civ_died'))
         end
