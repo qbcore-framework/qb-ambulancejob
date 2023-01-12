@@ -971,3 +971,4 @@ else
         end
     end)
 end
+exports('getisInHospitalBed', function() return isInHospitalBed end)
