@@ -82,12 +82,12 @@ end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
-    if PlayerJob.name == 'ambulance' then
+    if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then
         onDuty = PlayerJob.onduty
         if PlayerJob.onduty then
-            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.type)
         else
-            TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+            TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.type)
         end
     end
 end)
@@ -119,25 +119,25 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
                 TriggerServerEvent("hospital:server:SetDeathStatus", false)
                 TriggerServerEvent("hospital:server:SetLaststandStatus", false)
             end
-            if PlayerJob.name == 'ambulance' and onDuty then
-                TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+            if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') and onDuty then
+                TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.type)
             end
         end)
     end)
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    if PlayerJob.name == 'ambulance' and onDuty then
-        TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+    if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') and onDuty then
+        TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.type)
     end
 end)
 
 RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
-    if PlayerJob.name == 'ambulance' and duty ~= onDuty then
+    if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') and duty ~= onDuty then
         if duty then
-            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.name)
+            TriggerServerEvent("hospital:server:AddDoctor", PlayerJob.type)
         else
-            TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.name)
+            TriggerServerEvent("hospital:server:RemoveDoctor", PlayerJob.type)
         end
     end
 
@@ -423,7 +423,7 @@ CreateThread(function()
             maxZ = v.z + 2,
         })
         boxZone:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" and onDuty then
+            if isPointInside and (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') and onDuty then
                 exports['qb-core']:DrawText(Lang:t('text.veh_button'), 'left')
                 EMSVehicle(k)
             else
@@ -442,7 +442,7 @@ CreateThread(function()
             maxZ = v.z + 2,
         })
         boxZone:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" and onDuty then
+            if isPointInside and (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') and onDuty then
                 exports['qb-core']:DrawText(Lang:t('text.heli_button'), 'left')
                 EMSHelicopter(k)
             else
@@ -470,7 +470,10 @@ if Config.UseTarget then
                         event = "EMSToggle:Duty",
                         icon = "fa fa-clipboard",
                         label = "Sign In/Off duty",
-                        job = "ambulance"
+                        canInteract = function()
+                            if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then return true end
+                            return false
+                        end
                     }
                 },
                 distance = 1.5
@@ -490,7 +493,10 @@ if Config.UseTarget then
                         event = "qb-ambulancejob:stash",
                         icon = "fa fa-hand",
                         label = "Open Stash",
-                        job = "ambulance"
+                        canInteract = function()
+                            if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then return true end
+                            return false
+                        end
                     }
                 },
                 distance = 1.5
@@ -510,7 +516,10 @@ if Config.UseTarget then
                         event = "qb-ambulancejob:armory",
                         icon = "fa fa-hand",
                         label = "Open Armory",
-                        job = "ambulance"
+                        canInteract = function()
+                            if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then return true end
+                            return false
+                        end
                     }
                 },
                 distance = 1.5
@@ -530,7 +539,10 @@ if Config.UseTarget then
                         event = "qb-ambulancejob:elevator_roof",
                         icon = "fas fa-hand-point-up",
                         label = "Take Elevator",
-                        job = "ambulance"
+                        canInteract = function()
+                            if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then return true end
+                            return false
+                        end
                     },
                 },
                 distance = 8
@@ -550,7 +562,10 @@ if Config.UseTarget then
                         event = "qb-ambulancejob:elevator_main",
                         icon = "fas fa-hand-point-up",
                         label = "Take Elevator",
-                        job = "ambulance"
+                        canInteract = function()
+                            if (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then return true end
+                            return false
+                        end
                     },
                 },
                 distance = 8
@@ -572,7 +587,7 @@ else
 
         local signCombo = ComboZone:Create(signPoly, { name = "signcombo", debugPoly = false })
         signCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+            if isPointInside and (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then
                 if not onDuty then
                     exports['qb-core']:DrawText(Lang:t('text.onduty_button'), 'left')
                     EMSControls("sign")
@@ -599,7 +614,7 @@ else
 
         local stashCombo = ComboZone:Create(stashPoly, { name = "stashCombo", debugPoly = false })
         stashCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+            if isPointInside and (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then
                 if onDuty then
                     exports['qb-core']:DrawText(Lang:t('text.pstash_button'), 'left')
                     EMSControls("stash")
@@ -623,7 +638,7 @@ else
 
         local armoryCombo = ComboZone:Create(armoryPoly, { name = "armoryCombo", debugPoly = false })
         armoryCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+            if isPointInside and (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then
                 if onDuty then
                     exports['qb-core']:DrawText(Lang:t('text.armory_button'), 'left')
                     EMSControls("armory")
@@ -647,7 +662,7 @@ else
 
         local roofCombo = ComboZone:Create(roofPoly, { name = "roofCombo", debugPoly = false })
         roofCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+            if isPointInside and (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then
                 if onDuty then
                     exports['qb-core']:DrawText(Lang:t('text.elevator_main'), 'left')
                     EMSControls("main")
@@ -673,7 +688,7 @@ else
 
         local mainCombo = ComboZone:Create(mainPoly, { name = "mainPoly", debugPoly = false })
         mainCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == "ambulance" then
+            if isPointInside and (PlayerJob.name == 'ambulance' or PlayerJob.type == 'ems') then
                 if onDuty then
                     exports['qb-core']:DrawText(Lang:t('text.elevator_roof'), 'left')
                     EMSControls("roof")
