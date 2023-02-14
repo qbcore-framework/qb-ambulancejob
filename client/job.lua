@@ -687,3 +687,101 @@ else
         end)
     end)
 end
+
+--##### Carry Players #####--
+
+carrying = false
+RegisterNetEvent('qb-ambulancejob:client:DragPlayer', function()
+    local player, distance = QBCore.Functions.GetClosestPlayer()
+    local dict = "anim@heists@box_carry@"
+    if player ~= -1 and distance < 2.5 then
+        local playerId = GetPlayerServerId(player)
+        RequestAnimDict(dict)
+        while not HasAnimDictLoaded(dict) do Wait(0) end
+        if not carrying then
+            carrying = true
+            TaskPlayAnim(PlayerPedId(), dict, "idle", 8.0, 8.0, -1, 50, 0, false, false, false)
+        else
+            carrying = false
+            StopAnimTask(PlayerPedId(),"anim@heists@box_carry@","idle",1.0)
+        end
+        TriggerServerEvent("qb-ambulancejob:server:DragPlayer", playerId)
+    else
+        QBCore.Functions.Notify(Lang:t("error.no_player"), "error")
+    end
+end)
+
+isEscorted = false
+RegisterNetEvent('qb-ambulancejob:client:GetDragged', function(playerId)
+    local ped = PlayerPedId()
+    QBCore.Functions.GetPlayerData(function(PlayerData)
+        if PlayerData.metadata["isdead"] or PlayerData.metadata["inlaststand"] then
+            if not isEscorted then
+                ClearPedTasks(ped)
+                local dict = "amb@code_human_in_car_idles@generic@ps@base"
+                RequestAnimDict(dict)
+                while not HasAnimDictLoaded(dict) do Wait(0) end
+                TaskPlayAnim(ped, dict, "base", 8.0, -8, -1, 33, 0, 0, 40, 0)
+                isEscorted = true
+                local dragger = GetPlayerPed(GetPlayerFromServerId(playerId))
+                SetEntityCoords(ped, GetOffsetFromEntityInWorldCoords(dragger, 0.0, 0.45, 0.0))
+                AttachEntityToEntity(ped, dragger, 9816, 0.015, 0.38, 0.11, 0.9, 0.30, 90.0, false, false, false, false, 2, true)
+            else
+                isEscorted = false
+                DetachEntity(ped, true, false)
+            end
+        end
+    end)
+end)
+
+RegisterNetEvent('qb-ambulancejob:client:PutPlayerInVehicle', function()
+    local player, distance = QBCore.Functions.GetClosestPlayer()
+    if player ~= -1 and distance < 2.5 then
+        local playerId = GetPlayerServerId(player)
+        TriggerServerEvent("qb-ambulancejob:server:PutPlayerInVehicle", playerId)
+        carrying = false
+        StopAnimTask(PlayerPedId(),"anim@heists@box_carry@","idle",1.0)
+    else
+        QBCore.Functions.Notify(Lang:t("error.no_player"), "error")
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:client:PutInVehicle', function()
+    local ped = PlayerPedId()
+    if isEscorted then
+        local vehicle = QBCore.Functions.GetClosestVehicle()
+        QBCore.Debug(vehicle)
+        if DoesEntityExist(vehicle) then
+            for i = GetVehicleMaxNumberOfPassengers(vehicle), 0, -1 do
+                if IsVehicleSeatFree(vehicle, i) then
+                    isEscorted = false
+                    ClearPedTasks(ped)
+                    DetachEntity(ped, true, false)
+                    Wait(100)
+                    SetPedIntoVehicle(ped, vehicle, i)
+                    return
+                end
+            end
+        end
+    end
+end)
+
+RegisterNetEvent('qb-ambulancejob:client:SetPlayerOutVehicle', function()
+    local player, distance = QBCore.Functions.GetClosestPlayer()
+    if player ~= -1 and distance < 4.5 then
+        local playerId = GetPlayerServerId(player)
+        local dict = "anim@heists@box_carry@"
+        RequestAnimDict(dict)
+        while not HasAnimDictLoaded(dict) do Wait(0) end
+        if not carrying then
+            carrying = true
+            TaskPlayAnim(PlayerPedId(), dict, "idle", 8.0, 8.0, -1, 50, 0, false, false, false)
+        else
+            carrying = false
+            StopAnimTask(PlayerPedId(),"anim@heists@box_carry@","idle",1.0)
+        end
+        TriggerServerEvent("qb-ambulancejob:server:DragPlayer", playerId)
+    else
+        QBCore.Functions.Notify(Lang:t("error.no_player"), "error")
+    end
+end)

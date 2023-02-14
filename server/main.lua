@@ -294,6 +294,43 @@ RegisterNetEvent('hospital:server:resetHungerThirst', function()
 	TriggerClientEvent('hud:client:UpdateNeeds', source, 100, 100)
 end)
 
+RegisterNetEvent('qb-ambulancejob:server:DragPlayer', function(playerId)
+    local src = source
+    local playerPed = GetPlayerPed(src)
+    local targetPed = GetPlayerPed(playerId)
+    local playerCoords = GetEntityCoords(playerPed)
+    local targetCoords = GetEntityCoords(targetPed)
+    if #(playerCoords - targetCoords) > 4.5 then return DropPlayer(src, "Attempted exploit abuse") end
+
+    local Player = QBCore.Functions.GetPlayer(source)
+    local EscortPlayer = QBCore.Functions.GetPlayer(playerId)
+    if not Player or not EscortPlayer then return end
+	print("Dragging player "..tostring(EscortPlayer.PlayerData.source))
+    -- if Player.PlayerData.job.type == "EMS" then
+        TriggerClientEvent("qb-ambulancejob:client:GetDragged", EscortPlayer.PlayerData.source, Player.PlayerData.source)
+    -- else
+    --     TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_dead"), 'error')
+    -- end
+end)
+
+RegisterNetEvent('qb-ambulancejob:server:PutPlayerInVehicle', function(playerId)
+    local src = source
+    local playerPed = GetPlayerPed(src)
+    local targetPed = GetPlayerPed(playerId)
+    local playerCoords = GetEntityCoords(playerPed)
+    local targetCoords = GetEntityCoords(targetPed)
+    if #(playerCoords - targetCoords) > 2.5 then return DropPlayer(src, "Attempted exploit abuse") end
+
+    local EscortPlayer = QBCore.Functions.GetPlayer(playerId)
+    if not QBCore.Functions.GetPlayer(src) or not EscortPlayer then return end
+
+    if EscortPlayer.PlayerData.metadata["inlaststand"] or EscortPlayer.PlayerData.metadata["isdead"] then
+        TriggerClientEvent("qb-ambulancejob:client:PutInVehicle", EscortPlayer.PlayerData.source)
+    else
+        TriggerClientEvent('QBCore:Notify', src, Lang:t("error.not_dead"), 'error')
+    end
+end)
+
 -- Callbacks
 
 QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
