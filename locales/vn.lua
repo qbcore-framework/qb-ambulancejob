@@ -11,7 +11,8 @@ local Translations = {
         not_enough_money = 'Bạn không có đủ tiền...',
         cant_help = 'Bạn không thể cứu người này...',
         not_ems = 'Bạn không phải Bác sĩ',
-        not_online = 'Người chơi không trực tuyến'
+        not_online = 'Người chơi không trực tuyến',
+        not_dead = 'There is no dead player nearby!'
     },
     success = {
         revived = 'Bạn đã hồi sinh một người',

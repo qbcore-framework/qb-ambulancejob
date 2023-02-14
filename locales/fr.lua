@@ -11,7 +11,8 @@ local Translations = {
         not_enough_money = 'Vous n\'avez pas assez d\'argent sur vous...',
         cant_help = 'Vous ne pouvez pas aider cette personne...',
         not_ems = 'Vous n\'êtes pas EMS',
-        not_online = 'Le joueur n\'est pas connecté'
+        not_online = 'Le joueur n\'est pas connecté',
+        not_dead = 'There is no dead player nearby!'
     },
     success = {
         revived = 'Vous avez réanimé quelqu\'un',

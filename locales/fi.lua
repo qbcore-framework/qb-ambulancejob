@@ -11,7 +11,8 @@ local Translations = {
         not_enough_money = 'Sinulla ei ole tarpeeksi rahaa mukana...',
         cant_help = 'Henkilöä ei voi enään auttaa...',
         not_ems = 'Et ole ensihoitaja',
-        not_online = 'Pelaaja ei ole onlinessa'
+        not_online = 'Pelaaja ei ole onlinessa',
+        not_dead = 'There is no dead player nearby!'
     },
     success = {
         revived = 'Elvytit henkilön!',

@@ -11,7 +11,8 @@ local Translations = {
         not_enough_money = 'Nemáš dostatok peňazí...',
         cant_help = 'Nemôžeš pomôcť tejto osobe...',
         not_ems = 'Nie si EMS',
-        not_online = 'Hráč nie je online'
+        not_online = 'Hráč nie je online',
+        not_dead = 'There is no dead player nearby!'
     },
     success = {
         revived = 'Oživil si osobu',

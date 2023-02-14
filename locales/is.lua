@@ -11,7 +11,8 @@ local Translations = {
         not_enough_money = 'Þú átt ekki nægan pening á þér...',
         cant_help = 'Þú getur ekki hjálpað þessari manneskju...',
         not_ems = 'Þú ert ekki EMS eða ekki skráður inn',
-        not_online = 'Spilari ekki á netinu'
+        not_online = 'Spilari ekki á netinu',
+        not_dead = 'There is no dead player nearby!'
     },
     success = {
         revived = 'Þú endurlífgaðir mann',
