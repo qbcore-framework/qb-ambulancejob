@@ -200,6 +200,10 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 					Player.Functions.RemoveItem('firstaid', 1)
 					TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], "remove")
 					TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
+					Patient.Functions.RemoveMoney("bank", Config.RevivePlayer)
+                			exports['qb-management']:AddMoney("ambulance", Config.RevivePlayer)
+                			TriggerClientEvent('hospital:client:SendBillEmail', src, Config.RevivePlayer)
+                			Player.Functions.AddMoney("bank", Config.Commission)
 				else
 					TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_enough_money'), "error")
 				end
