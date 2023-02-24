@@ -224,7 +224,7 @@ RegisterNetEvent('hospital:client:RevivePlayer', function()
             }, {
                 animDict = healAnimDict,
                 anim = healAnim,
-                flags = 33,
+                flags = 16,
             }, {}, {}, function() -- Done
                 StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                 QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
@@ -255,7 +255,7 @@ RegisterNetEvent('hospital:client:TreatWounds', function()
             }, {
                 animDict = healAnimDict,
                 anim = healAnim,
-                flags = 33,
+                flags = 16,
             }, {}, {}, function() -- Done
                 StopAnimTask(PlayerPedId(), healAnimDict, "exit", 1.0)
                 QBCore.Functions.Notify(Lang:t('success.helped_player'), 'success')
