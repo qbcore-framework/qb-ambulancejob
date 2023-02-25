@@ -175,7 +175,7 @@ CreateThread(function()
             elseif InLaststand then
                 sleep = 5
 
-                if LaststandTime > Laststand.MinimumRevive then
+                if LaststandTime > Config.MinimumRevive then
                     DrawTxt(0.94, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out', {time = math.ceil(LaststandTime)}), 255, 255, 255, 255)
                 else
                     DrawTxt(0.845, 1.44, 1.0, 1.0, 0.6, Lang:t('info.bleed_out_help', {time = math.ceil(LaststandTime)}), 255, 255, 255, 255)
