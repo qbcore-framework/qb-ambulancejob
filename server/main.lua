@@ -307,6 +307,15 @@ QBCore.Functions.CreateCallback('hospital:GetDoctors', function(_, cb)
 	cb(amount)
 end)
 
+QBCore.Functions.CreateCallback('hospital:server:getDeathStatus', function(_, cb, playerId)
+    local Player = QBCore.Functions.GetPlayer(playerId)
+    local status = {
+        dead = Player.PlayerData.metadata.isdead,
+        lastStand = Player.PlayerData.metadata.inlaststand
+    }
+    cb(status)
+end)
+
 QBCore.Functions.CreateCallback('hospital:GetPlayerStatus', function(_, cb, playerId)
 	local Player = QBCore.Functions.GetPlayer(playerId)
 	local injuries = {}
