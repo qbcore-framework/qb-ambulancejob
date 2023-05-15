@@ -58,6 +58,7 @@ end
 
 function DeathTimer()
     hold = 5
+    deathTime = 3 -- Add Death time Value to correct the Arithemetic error
     while isDead do
         Wait(1000)
         deathTime = deathTime - 1
@@ -145,7 +146,7 @@ CreateThread(function()
 
             if isDead then
                 if not isInHospitalBed then
-                    if deathTime > 0 then
+                    if deathTime and deathTime > 0 then -- Check if deathTime exists before comparing it
                         DrawTxt(0.93, 1.44, 1.0,1.0,0.6, Lang:t('info.respawn_txt', {deathtime = math.ceil(deathTime)}), 255, 255, 255, 255)
                     else
                         DrawTxt(0.865, 1.44, 1.0, 1.0, 0.6, Lang:t('info.respawn_revive', {holdtime = hold, cost = Config.BillCost}), 255, 255, 255, 255)
