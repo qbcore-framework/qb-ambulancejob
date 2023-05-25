@@ -85,7 +85,7 @@ Config.Locations = { -- Edit the various interaction points for players or creat
         [3] = {coords = vector4(1771.8, 2598.02, 45.66, 89.05), taken = false, model = 2117668672},
         [4] = {coords = vector4(1771.85, 2591.85, 45.66, 91.51), taken = false, model = 2117668672},
     },
-    ["hospital"] = { -- Reworked from QBCore to have multiple hospital locations
+    ["hospital"] = { -- Define hospitals and beds here
         [1]  = {
             ["name"] = Lang:t('info.pb_hospital'),
             ["location"] = vector3(308.36, -595.25, 43.28),
