@@ -25,7 +25,7 @@ RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive, hospital
 	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true, hospitalIndex)
 	Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
 	exports['qb-management']:AddMoney("ambulance", Config.BillCost)
-	TriggerClientEvent('hospital:client:SendBillEmail', src, billCost, Config.Locations["hospital"][hospitalIndex]["name"])
+	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost, Config.Locations["hospital"][hospitalIndex]["name"])
 end)
 
 RegisterNetEvent('hospital:server:RespawnAtHospital', function(hospitalIndex)

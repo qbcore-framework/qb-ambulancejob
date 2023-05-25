@@ -53,7 +53,6 @@ BodyParts = {
 -- If all beds are taken it will just place them in the first bed
 local function getClosestAvailableBed(hospitalIndex)
     local hospital = Config.Locations["hospital"][hospitalIndex]
-    local coords = GetEntityCoords(PlayerPedId())
 
     -- Loop through beds at this hospital and find the first non taken bed
     for bedId, bed in pairs(hospital.beds) do
@@ -728,7 +727,6 @@ end)
 CreateThread(function()
     while true do
         Wait(1000)
-        SetClosestBed()
         if isStatusChecking then
             statusCheckTime = statusCheckTime - 1
             if statusCheckTime <= 0 then
@@ -829,11 +827,11 @@ RegisterNetEvent('qb-ambulancejob:checkin', function()
     local coords = GetEntityCoords(PlayerPedId())
 
      -- Support for figuring out which hospital to check the player into
-    for k,v in pairs(Config.Locations["hospital"]) do
+    for k,_ in pairs(Config.Locations["hospital"]) do
         local hospital = vector3(Config.Locations["hospital"][k]["location"].x, Config.Locations["hospital"][k]["location"].y, Config.Locations["hospital"][k]["location"].z)
         local distance = #(coords - hospital)
         -- Check if the player is close enough to hospital checkin location
-        if distance < 3 then 
+        if distance < 3 then
             if doctorCount >= Config.MinimalDoctors then
                 TriggerServerEvent("hospital:server:SendDoctorAlert", Config.Locations["hospital"][k]["name"])
                 QBCore.Functions.Notify("Called a Doctor", "primary")
@@ -958,7 +956,7 @@ else
                     },
                 })
                 local bedCombo = ComboZone:Create(bedPoly, {name = "bedCombo", debugPoly = false})
-                bedCombo:onPlayerInOut(function(isPointInside, point, zone)
+                bedCombo:onPlayerInOut(function(isPointInside, _, zone)
                     if isPointInside and not isInHospitalBed then
                         exports['qb-core']:DrawText(Lang:t('text.lie_bed'), 'left')
                         local bedId = zone.data.bedId
