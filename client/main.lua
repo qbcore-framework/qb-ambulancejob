@@ -22,6 +22,9 @@ armcount = 0
 headCount = 0
 playerHealth = nil
 isDead = false
+isStatusChecking = false
+statusChecks = {}
+statusCheckTime = 0
 healAnimDict = "mini@cpr@char_a@cpr_str"
 healAnim = "cpr_pumpchest"
 injured = {}
@@ -719,6 +722,20 @@ CreateThread(function()
     while true do
         Wait((1000 * Config.MessageTimer))
         DoLimbAlert()
+    end
+end)
+
+CreateThread(function()
+    while true do
+        Wait(1000)
+        SetClosestBed()
+        if isStatusChecking then
+            statusCheckTime = statusCheckTime - 1
+            if statusCheckTime <= 0 then
+                statusChecks = {}
+                isStatusChecking = false
+            end
+        end
     end
 end)
 
