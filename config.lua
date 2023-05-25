@@ -102,7 +102,7 @@ Config.Locations = { -- Edit the various interaction points for players or creat
         },
         [2]  = {
             ["name"] = Lang:t('info.paleto_hospital'), 
-            ["location"] = vector3(-264.14, 6313.79, 32.44),
+            ["location"] = vector3(-254.54, 6331.78, 32.43),
             ["beds"] = {
                 [1] = {coords = vector4(-252.43, 6312.25, 32.34, 313.48), taken = false, model = 2117668672},
                 [2] = {coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672},
