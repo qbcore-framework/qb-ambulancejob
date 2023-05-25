@@ -47,14 +47,14 @@ RegisterNetEvent('hospital:client:UseIfaks', function()
 		flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerServerEvent("QBCore:Server:RemoveItem", "ifaks", 1)
+        TriggerServerEvent("hospital:server:removeIfaks")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["ifaks"], "remove")
         TriggerServerEvent('hud:server:RelieveStress', math.random(12, 24))
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
-        onPainKillers = true
         if painkillerAmount < 3 then
             painkillerAmount = painkillerAmount + 1
         end
+        PainKillerLoop()
         if math.random(1, 100) < 50 then
             RemoveBleed(1)
         end
@@ -77,7 +77,7 @@ RegisterNetEvent('hospital:client:UseBandage', function()
 		flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "anim@amb@business@weed@weed_inspecting_high_dry@", "weed_inspecting_high_base_inspector", 1.0)
-        TriggerServerEvent("QBCore:Server:RemoveItem", "bandage", 1)
+        TriggerServerEvent("hospital:server:removeBandage")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["bandage"], "remove")
         SetEntityHealth(ped, GetEntityHealth(ped) + 10)
         if math.random(1, 100) < 50 then
@@ -105,12 +105,12 @@ RegisterNetEvent('hospital:client:UsePainkillers', function()
 		flags = 49,
     }, {}, {}, function() -- Done
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
-        TriggerServerEvent("QBCore:Server:RemoveItem", "painkillers", 1)
+        TriggerServerEvent("hospital:server:removePainkillers")
         TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["painkillers"], "remove")
-        onPainKillers = true
         if painkillerAmount < 3 then
             painkillerAmount = painkillerAmount + 1
         end
+        PainKillerLoop()
     end, function() -- Cancel
         StopAnimTask(ped, "mp_suicide", "pill", 1.0)
         QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
@@ -119,21 +119,24 @@ end)
 
 -- Threads
 
-CreateThread(function()
-    while true do
-        Wait(1)
-        if onPainKillers then
+function PainKillerLoop(pkAmount)
+    if not onPainKillers then
+        if pkAmount then
+            painkillerAmount = pkAmount
+        end
+        onPainKillers = true
+        while onPainKillers do
+            Wait(1)
             painkillerAmount = painkillerAmount - 1
             Wait(Config.PainkillerInterval * 1000)
             if painkillerAmount <= 0 then
                 painkillerAmount = 0
                 onPainKillers = false
             end
-        else
-            Wait(3000)
         end
     end
-end)
+end
+exports('PainKillerLoop', PainKillerLoop)
 
 CreateThread(function()
 	while true do
