@@ -18,17 +18,17 @@ AddEventHandler('txAdmin:events:healedPlayer', function(eventData)
 	TriggerClientEvent("hospital:client:HealInjuries", eventData.id, "full")
 end)
 
-RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive)
+RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive, hospitalIndex)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
-	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["beds"][bedId], isRevive)
-	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true)
+	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations["hospital"][hospitalIndex]["beds"][bedId], isRevive)
+	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true, hospitalIndex)
 	Player.Functions.RemoveMoney("bank", Config.BillCost , "respawned-at-hospital")
-		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
-	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+	exports['qb-management']:AddMoney("ambulance", Config.BillCost)
+	TriggerClientEvent('hospital:client:SendBillEmail', src, billCost, Config.Locations["hospital"][hospitalIndex]["name"])
 end)
 
-RegisterNetEvent('hospital:server:RespawnAtHospital', function()
+RegisterNetEvent('hospital:server:RespawnAtHospital', function(hospitalIndex)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player.PlayerData.metadata["injail"] > 0 then
@@ -42,7 +42,7 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 					TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
 				end
 				Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-					exports['qb-management']:AddMoney("ambulance", Config.BillCost)
+				exports['qb-management']:AddMoney("ambulance", Config.BillCost)
 				TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
 				return
 			end
@@ -56,36 +56,36 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function()
 			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-			exports['qb-management']:AddMoney("ambulance", Config.BillCost)
+		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
 		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
     else
-		for k, v in pairs(Config.Locations["beds"]) do
+		for k, v in pairs(Config.Locations["hospital"][hospitalIndex]["beds"]) do
 			if not v.taken then
 				TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
-				TriggerClientEvent('hospital:client:SetBed', -1, k, true)
+				TriggerClientEvent('hospital:client:SetBed', -1, k, true, hospitalIndex)
 				if Config.WipeInventoryOnRespawn then
 					Player.Functions.ClearInventory()
 					MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
 					TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
 				end
 				Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-					exports['qb-management']:AddMoney("ambulance", Config.BillCost)
-				TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+				exports['qb-management']:AddMoney("ambulance", Config.BillCost)
+				TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost, Config.Locations["hospital"][hospitalIndex]["name"])
 				return
 			end
 		end
-		--print("All beds were full, placing in first bed as fallback")
 
-		TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations["beds"][1], true)
-		TriggerClientEvent('hospital:client:SetBed', -1, 1, true)
+		-- All beds were full, placing in first bed as fallback
+		TriggerClientEvent('hospital:client:SendToBed', src, 1,  Config.Locations["hospital"][hospitalIndex]["beds"][1], true)
+		TriggerClientEvent('hospital:client:SetBed', -1, 1, true, hospitalIndex)
 		if Config.WipeInventoryOnRespawn then
 			Player.Functions.ClearInventory()
 			MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
 			TriggerClientEvent('QBCore:Notify', src, Lang:t('error.possessions_taken'), 'error')
 		end
 		Player.Functions.RemoveMoney("bank", Config.BillCost, "respawned-at-hospital")
-			exports['qb-management']:AddMoney("ambulance", Config.BillCost)
-		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
+		exports['qb-management']:AddMoney("ambulance", Config.BillCost)
+		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost, Config.Locations["hospital"][hospitalIndex]["name"])
 	end
 end)
 
@@ -101,8 +101,8 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
     end
 end)
 
-RegisterNetEvent('hospital:server:LeaveBed', function(id)
-    TriggerClientEvent('hospital:client:SetBed', -1, id, false)
+RegisterNetEvent('hospital:server:LeaveBed', function(id, hospitalIndex)
+    TriggerClientEvent('hospital:client:SetBed', -1, id, false, hospitalIndex)
 end)
 
 RegisterNetEvent('hospital:server:SyncInjuries', function(data)
@@ -224,14 +224,14 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 	end
 end)
 
-RegisterNetEvent('hospital:server:SendDoctorAlert', function()
+RegisterNetEvent('hospital:server:SendDoctorAlert', function(hospitalName)
     local src = source
     if not doctorCalled then
         doctorCalled = true
         local players = QBCore.Functions.GetQBPlayers()
         for _, v in pairs(players) do
             if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-                TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed'), 'ambulance')
+                TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed', {hospital = hospitalName}), 'ambulance')
             end
         end
         SetTimeout(Config.DocCooldown * 60000, function()
