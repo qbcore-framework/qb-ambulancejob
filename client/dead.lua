@@ -121,8 +121,8 @@ AddEventHandler('gameEventTriggered', function(event, data)
                 local playerName = GetPlayerName(playerid) .. " " .. "("..GetPlayerServerId(playerid)..")" or Lang:t('info.self_death')
                 local killerId = NetworkGetPlayerIndexFromPed(attacker)
                 local killerName = GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or Lang:t('info.self_death')
-                local weaponLabel = QBCore.Shared.Weapons[weapon].label or 'Unknown'
-                local weaponName = QBCore.Shared.Weapons[weapon].name or 'Unknown'
+                local weaponLabel = (QBCore.Shared.Weapons and QBCore.Shared.Weapons[weapon] and QBCore.Shared.Weapons[weapon].label) or 'Unknown'
+                local weaponName = (QBCore.Shared.Weapons and QBCore.Shared.Weapons[weapon] and QBCore.Shared.Weapons[weapon].name) or 'Unknown'
                 TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = playerName, playerid = GetPlayerServerId(playerid)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = playerName, weaponlabel = weaponLabel, weaponname = weaponName}))
                 deathTime = Config.DeathTime
                 OnDeath()
