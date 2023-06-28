@@ -6,6 +6,7 @@ Config.WipeInventoryOnRespawn = true -- Enable or disable removing all the playe
 Config.Helicopter = "polmav" -- Helicopter model that players with the ambulance job can use
 Config.BillCost = 2000 -- Price that players are charged for using the hospital check-in system
 Config.DeathTime = 300 -- How long the timer is for players to bleed out completely and respawn at the hospital
+Config.RespawnType = "laststand" -- Which respawn type to use on Death (laststand, hospital, vanilla, revive)
 Config.ReviveInterval = 360 -- How long the timer is for players to revive a player in laststand
 Config.MinimumRevive = 300 -- How long the timer is for players to revive a player in laststand
 Config.PainkillerInterval = 60 -- Set the length of time painkillers last (per one)

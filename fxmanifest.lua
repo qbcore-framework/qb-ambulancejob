@@ -4,6 +4,10 @@ game 'gta5'
 description 'QB-AmbulanceJob'
 version '1.2.4'
 
+dependencies {
+	'spawnmanager'
+}
+
 shared_scripts {
 	'@qb-core/shared/locale.lua',
 	'locales/en.lua',
