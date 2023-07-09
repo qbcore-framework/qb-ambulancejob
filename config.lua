@@ -386,8 +386,7 @@ Config.Weapons = { -- Correspond weapon names to their class number
 	[`WEAPON_CERAMICPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
 	[`WEAPON_NAVYREVOLVER`] = Config.WeaponClasses['SMALL_CALIBER'],
 	[`WEAPON_GADGETPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
-	[`WEAPON_PISTOLXM3`] = Config.WeaponClasses['SMALL_CALIBER'],	
-
+	[`WEAPON_PISTOLXM3`] = Config.WeaponClasses['SMALL_CALIBER'],
     --[[ Medium Caliber ]]--
     [`WEAPON_ADVANCEDRIFLE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
     [`WEAPON_ASSAULTSMG`] = Config.WeaponClasses['MEDIUM_CALIBER'],
