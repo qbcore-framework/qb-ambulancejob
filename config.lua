@@ -383,6 +383,10 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_SNSPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
     [`WEAPON_SNSPISTOL_MK2`] = Config.WeaponClasses['SMALL_CALIBER'],
     [`WEAPON_VINTAGEPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
+	[`WEAPON_CERAMICPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
+	[`WEAPON_NAVYREVOLVER`] = Config.WeaponClasses['SMALL_CALIBER'],
+	[`WEAPON_GADGETPISTOL`] = Config.WeaponClasses['SMALL_CALIBER'],
+	[`WEAPON_PISTOLXM3`] = Config.WeaponClasses['SMALL_CALIBER'],	
 
     --[[ Medium Caliber ]]--
     [`WEAPON_ADVANCEDRIFLE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
@@ -403,6 +407,7 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_SMG_MK2`] = Config.WeaponClasses['MEDIUM_CALIBER'],
     [`WEAPON_SPECIALCARBINE`] = Config.WeaponClasses['MEDIUM_CALIBER'],
     [`WEAPON_SPECIALCARBINE_MK2`] = Config.WeaponClasses['MEDIUM_CALIBER'],
+	[`WEAPON_TECPISTOL`] = Config.WeaponClasses['MEDIUM_CALIBER'],
 
     --[[ High Caliber ]]--
     [`WEAPON_ASSAULTRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
@@ -418,6 +423,8 @@ Config.Weapons = { -- Correspond weapon names to their class number
     [`WEAPON_MUSKET`] = Config.WeaponClasses['HIGH_CALIBER'],
     [`WEAPON_RAILGUN`] = Config.WeaponClasses['HIGH_CALIBER'],
     [`WEAPON_HEAVYRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
+	[`WEAPON_MILITARYRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
+	[`WEAPON_TACTICALRIFLE`] = Config.WeaponClasses['HIGH_CALIBER'],
 
     --[[ Shotguns ]]--
     [`WEAPON_ASSAULTSHOTGUN`] = Config.WeaponClasses['SHOTGUN'],
