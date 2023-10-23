@@ -41,6 +41,18 @@ function TakeOutVehicle(vehicleInfo)
     end, vehicleInfo, coords, true)
 end
 
+local function getAuthorizedVehicles(grade)
+    local accessibleVehicles = {}
+    for availableGrade, vehicles in pairs(Config.AuthorizedVehicles) do
+        if grade >= availableGrade then
+            for vehicleName, vehicleLabel in pairs(vehicles) do
+                accessibleVehicles[vehicleName] = vehicleLabel
+            end
+        end
+    end
+    return accessibleVehicles
+end
+
 function MenuGarage()
     local vehicleMenu = {
         {
@@ -49,7 +61,7 @@ function MenuGarage()
         }
     }
 
-    local authorizedVehicles = Config.AuthorizedVehicles[QBCore.Functions.GetPlayerData().job.grade.level]
+    local authorizedVehicles = getAuthorizedVehicles(QBCore.Functions.GetPlayerData().job.grade.level)
     for veh, label in pairs(authorizedVehicles) do
         vehicleMenu[#vehicleMenu + 1] = {
             header = label,
@@ -310,7 +322,28 @@ end)
 
 RegisterNetEvent('qb-ambulancejob:armory', function()
     if onDuty then
-        TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", Config.Items)
+        local authorizedItemsList = {}
+        local playerGrade = PlayerJob.grade.level
+        for grade = 0, playerGrade do
+            if Config.Items[grade] then
+                for _, item in ipairs(Config.Items[grade]) do
+                    authorizedItemsList[#authorizedItemsList+1] = {
+                        name = item.name,
+                        price = item.price,
+                        amount = item.amount,
+                        info = item.info,
+                        type = item.type,
+                        slot = #authorizedItemsList + 1
+                    }
+                end
+            end
+        end
+        local authorizedItems = {
+            label = Lang:t('info.safe'),
+            slots = #authorizedItemsList,
+            items = authorizedItemsList
+        }
+        TriggerServerEvent("inventory:server:OpenInventory", "shop", "hospital", authorizedItems)
     end
 end)
 

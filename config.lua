@@ -74,7 +74,7 @@ Config.Locations = { -- Edit the various interaction points for players or creat
         [6] = {coords = vector4(360.32, -587.19, 43.02, 152.08), taken = false, model = -1091386327},
         [7] = {coords = vector4(349.82, -583.33, 43.02, 152.08), taken = false, model = -1091386327},
         [8] = {coords = vector4(326.98, -576.17, 43.02, 152.08), taken = false, model = -1091386327},
-	--- paleto
+	    --- paleto
 	    [9] = {coords = vector4(-252.43, 6312.25, 32.34, 313.48), taken = false, model = 2117668672},
         [10] = {coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672},
         [11] = {coords = vector4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672},
@@ -90,82 +90,20 @@ Config.Locations = { -- Edit the various interaction points for players or creat
     }
 }
 
-Config.AuthorizedVehicles = { -- Vehicles players can use based on their ambulance job grade level
-	-- Grade 0
+Config.AuthorizedVehicles = { -- Grade is key, don't add same vehicle in multiple grades. Higher rank can see lower
 	[0] = {
-		["ambulance"] = "Ambulance",
-	},
-	-- Grade 1
-	[1] = {
-		["ambulance"] = "Ambulance",
-
-	},
-	-- Grade 2
-	[2] = {
-		["ambulance"] = "Ambulance",
-	},
-	-- Grade 3
-	[3] = {
-		["ambulance"] = "Ambulance",
-	},
-	-- Grade 4
-	[4] = {
-		["ambulance"] = "Ambulance",
-	}
+        ["ambulance"] = "Ambulance"
+    }
 }
 
-Config.Items = { -- Items found in the ambulance shop for players with the ambulance job to purchase
-    label = Lang:t('info.safe'),
-    slots = 30,
-    items = {
-        [1] = {
-            name = "radio",
-            price = 0,
-            amount = 50,
-            info = {},
-            type = "item",
-            slot = 1,
-        },
-        [2] = {
-            name = "bandage",
-            price = 0,
-            amount = 50,
-            info = {},
-            type = "item",
-            slot = 2,
-        },
-        [3] = {
-            name = "painkillers",
-            price = 0,
-            amount = 50,
-            info = {},
-            type = "item",
-            slot = 3,
-        },
-        [4] = {
-            name = "firstaid",
-            price = 0,
-            amount = 50,
-            info = {},
-            type = "item",
-            slot = 4,
-        },
-        [5] = {
-            name = "weapon_flashlight",
-            price = 0,
-            amount = 50,
-            info = {},
-            type = "item",
-            slot = 5,
-        },
-        [6] = {
-            name = "weapon_fireextinguisher",
-            price = 0,
-            amount = 50,
-            info = {},
-            type = "item",
-            slot = 6,
-        },
+Config.Items = { -- Grade is key, don't add same item in multiple grades. Higher rank can see lower
+    [0] = {
+        {name = "radio",                   price = 0, amount = 50, info = {}, type = "item"},
+        {name = "bandage",                 price = 0, amount = 50, info = {}, type = "item"},
+        {name = "painkillers",             price = 0, amount = 50, info = {}, type = "item"},
+        {name = "firstaid",                price = 0, amount = 50, info = {}, type = "item"},
+        {name = "weapon_flashlight",       price = 0, amount = 50, info = {}, type = "item"},
+        {name = "weapon_fireextinguisher", price = 0, amount = 50, info = {}, type = "item"},
     }
 }
 
