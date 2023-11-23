@@ -32,8 +32,8 @@ local Translations = {
         bleed_out_help = 'YOU WILL BLEED OUT IN: ~r~%{time}~s~ SECONDS, YOU CAN BE HELPED',
         request_help = 'PRESS [~r~G~s~] TO REQUEST HELP',
         help_requested = 'EMS PERSONNEL HAVE BEEN NOTIFIED',
-        amb_plate = 'AMBU', -- Should only be 4 characters long due to the last 4 being a random 4 digits
-        heli_plate = 'LIFE',  -- Should only be 4 characters long due to the last 4 being a random 4 digits
+        amb_plate = 'AMBU',  -- Should only be 4 characters long due to the last 4 being a random 4 digits
+        heli_plate = 'LIFE', -- Should only be 4 characters long due to the last 4 being a random 4 digits
         status = 'Status Check',
         is_staus = 'Is %{status}',
         healthy = 'You are completely healthy again!',
@@ -122,8 +122,8 @@ local Translations = {
         checking_in = 'Checking in...',
     },
     logs = {
-        death_log_title = "%{playername} (%{playerid}) is dead",
-        death_log_message = "%{killername} has killed %{playername} with a **%{weaponlabel}** (%{weaponname})",
+        death_log_title = '%{playername} (%{playerid}) is dead',
+        death_log_message = '%{killername} has killed %{playername} with a **%{weaponlabel}** (%{weaponname})',
     }
 }
 
