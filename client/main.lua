@@ -926,7 +926,7 @@ if Config.UseTarget then
                         type = 'client',
                         event = 'qb-ambulancejob:beds',
                         icon = 'fas fa-bed',
-                        label = 'Layin Bed',
+                        label = 'Lay in Bed',
                     }
                 },
                 distance = 1.5
