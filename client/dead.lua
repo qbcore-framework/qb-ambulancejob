@@ -134,6 +134,9 @@ CreateThread(function()
         if isDead or InLaststand then
             sleep = 5
             local ped = PlayerPedId()
+            if IsPauseMenuActive() then
+                SetFrontendActive(false)
+            end
             DisableAllControlActions(0)
             EnableControlAction(0, 1, true)
             EnableControlAction(0, 2, true)
