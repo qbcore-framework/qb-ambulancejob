@@ -1,8 +1,8 @@
 Laststand = Laststand or {}
 InLaststand = false
 LaststandTime = 0
-lastStandDict = "combat@damage@writhe"
-lastStandAnim = "writhe_loop"
+lastStandDict = 'combat@damage@writhe'
+lastStandAnim = 'writhe_loop'
 isEscorted = false
 local isEscorting = false
 
@@ -14,7 +14,7 @@ local function GetClosestPlayer()
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
 
-    for i=1, #closestPlayers, 1 do
+    for i = 1, #closestPlayers, 1 do
         if closestPlayers[i] ~= PlayerId() then
             local pos = GetEntityCoords(GetPlayerPed(closestPlayers[i]))
             local distance = #(pos - coords)
@@ -24,9 +24,9 @@ local function GetClosestPlayer()
                 closestDistance = distance
             end
         end
-	end
+    end
 
-	return closestPlayer, closestDistance
+    return closestPlayer, closestDistance
 end
 
 local function LoadAnimation(dict)
@@ -43,7 +43,7 @@ function SetLaststand(bool)
         while GetEntitySpeed(ped) > 0.5 or IsPedRagdoll(ped) do Wait(10) end
         local pos = GetEntityCoords(ped)
         local heading = GetEntityHeading(ped)
-        TriggerServerEvent("InteractSound_SV:PlayOnSource", "demo", 0.1)
+        TriggerServerEvent('InteractSound_SV:PlayOnSource', 'demo', 0.1)
         LaststandTime = Config.ReviveInterval
         if IsPedInAnyVehicle(ped) then
             local veh = GetVehiclePedIsIn(ped)
@@ -60,8 +60,8 @@ function SetLaststand(bool)
         end
         SetEntityHealth(ped, 150)
         if IsPedInAnyVehicle(ped, false) then
-            LoadAnimation("veh@low@front_ps@idle_duck")
-            TaskPlayAnim(ped, "veh@low@front_ps@idle_duck", "sit", 1.0, 8.0, -1, 1, -1, false, false, false)
+            LoadAnimation('veh@low@front_ps@idle_duck')
+            TaskPlayAnim(ped, 'veh@low@front_ps@idle_duck', 'sit', 1.0, 8.0, -1, 1, -1, false, false, false)
         else
             LoadAnimation(lastStandDict)
             TaskPlayAnim(ped, lastStandDict, lastStandAnim, 1.0, 8.0, -1, 1, -1, false, false, false)
@@ -79,13 +79,13 @@ function SetLaststand(bool)
                     LaststandTime = LaststandTime - 1
                     Config.DeathTime = LaststandTime
                 elseif LaststandTime - 1 <= 0 then
-                    QBCore.Functions.Notify(Lang:t('error.bled_out'), "error")
+                    QBCore.Functions.Notify(Lang:t('error.bled_out'), 'error')
                     SetLaststand(false)
                     local killer_2, killerWeapon = NetworkGetEntityKillerOfPlayer(player)
                     local killer = GetPedSourceOfDeath(ped)
                     if killer_2 ~= 0 and killer_2 ~= -1 then killer = killer_2 end
                     local killerId = NetworkGetPlayerIndexFromPed(killer)
-                    local killerName = killerId ~= -1 and GetPlayerName(killerId) .. " " .. "("..GetPlayerServerId(killerId)..")" or Lang:t('info.self_death')
+                    local killerName = killerId ~= -1 and GetPlayerName(killerId) .. ' ' .. '(' .. GetPlayerServerId(killerId) .. ')' or Lang:t('info.self_death')
                     local weaponLabel = Lang:t('info.wep_unknown')
                     local weaponName = Lang:t('info.wep_unknown')
                     local weaponItem = QBCore.Shared.Weapons[killerWeapon]
@@ -93,7 +93,7 @@ function SetLaststand(bool)
                         weaponLabel = weaponItem.label
                         weaponName = weaponItem.name
                     end
-                    TriggerServerEvent("qb-log:server:CreateLog", "death", Lang:t('logs.death_log_title', {playername = GetPlayerName(-1), playerid = GetPlayerServerId(player)}), "red", Lang:t('logs.death_log_message', {killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName}))
+                    TriggerServerEvent('qb-log:server:CreateLog', 'death', Lang:t('logs.death_log_title', { playername = GetPlayerName(-1), playerid = GetPlayerServerId(player) }), 'red', Lang:t('logs.death_log_message', { killername = killerName, playername = GetPlayerName(player), weaponlabel = weaponLabel, weaponname = weaponName }))
                     deathTime = 0
                     OnDeath()
                     DeathTimer()
@@ -102,11 +102,11 @@ function SetLaststand(bool)
             end
         end)
     else
-        TaskPlayAnim(ped, lastStandDict, "exit", 1.0, 8.0, -1, 1, -1, false, false, false)
+        TaskPlayAnim(ped, lastStandDict, 'exit', 1.0, 8.0, -1, 1, -1, false, false, false)
         InLaststand = false
         LaststandTime = 0
     end
-    TriggerServerEvent("hospital:server:SetLaststandStatus", bool)
+    TriggerServerEvent('hospital:server:SetLaststandStatus', bool)
 end
 
 -- Events
@@ -145,7 +145,7 @@ end)
 
 RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     local ped = PlayerPedId()
-    QBCore.Functions.Progressbar("hospital_revive", Lang:t('progress.revive'), math.random(30000, 60000), false, true, {
+    QBCore.Functions.Progressbar('hospital_revive', Lang:t('progress.revive'), math.random(30000, 60000), false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -157,9 +157,9 @@ RegisterNetEvent('hospital:client:HelpPerson', function(targetId)
     }, {}, {}, function() -- Done
         ClearPedTasks(ped)
         QBCore.Functions.Notify(Lang:t('success.revived'), 'success')
-        TriggerServerEvent("hospital:server:RevivePlayer", targetId)
+        TriggerServerEvent('hospital:server:RevivePlayer', targetId)
     end, function() -- Cancel
         ClearPedTasks(ped)
-        QBCore.Functions.Notify(Lang:t('error.canceled'), "error")
+        QBCore.Functions.Notify(Lang:t('error.canceled'), 'error')
     end)
 end)

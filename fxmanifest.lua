@@ -1,7 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
-
-description 'QB-AmbulanceJob'
+lua54 'yes'
+author 'Kakarot'
+description 'Player health, death, and wounding system with ems job'
 version '1.2.4'
 
 shared_scripts {
@@ -23,8 +24,6 @@ client_scripts {
 }
 
 server_scripts {
-    '@oxmysql/lib/MySQL.lua',
-    'server/main.lua'
+	'@oxmysql/lib/MySQL.lua',
+	'server/main.lua'
 }
-
-lua54 'yes'
