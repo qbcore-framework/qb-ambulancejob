@@ -85,11 +85,11 @@ Config.Locations = {                -- Edit the various interaction points for p
         { coords = vector4(1771.8, 2598.02, 45.66, 89.05),   taken = false, model = 2117668672 },
         { coords = vector4(1771.85, 2591.85, 45.66, 91.51),  taken = false, model = 2117668672 },
     },
-    ["hospital"] = { -- Define hospitals and beds here
+    ['hospital'] = { -- Define hospitals and beds here
         [1]  = {
-            ["name"] = Lang:t('info.pb_hospital'),
-            ["location"] = vector3(308.36, -595.25, 43.28),
-            ["beds"] = {
+            ['name'] = Lang:t('info.pb_hospital'),
+            ['location'] = vector3(308.36, -595.25, 43.28),
+            ['beds'] = {
                 [1] = {coords = vector4(353.1, -584.6, 43.11, 152.08), taken = false, model = 1631638868},
                 [2] = {coords = vector4(356.79, -585.86, 43.11, 152.08), taken = false, model = 1631638868},
                 [3] = {coords = vector4(354.12, -593.12, 43.1, 336.32), taken = false, model = 2117668672},
@@ -101,16 +101,16 @@ Config.Locations = {                -- Edit the various interaction points for p
             },
         },
         [2]  = {
-            ["name"] = Lang:t('info.paleto_hospital'),
-            ["location"] = vector3(-254.54, 6331.78, 32.43),
-            ["beds"] = {
+            ['name'] = Lang:t('info.paleto_hospital'),
+            ['location'] = vector3(-254.54, 6331.78, 32.43),
+            ['beds'] = {
                 [1] = {coords = vector4(-252.43, 6312.25, 32.34, 313.48), taken = false, model = 2117668672},
                 [2] = {coords = vector4(-247.04, 6317.95, 32.34, 134.64), taken = false, model = 2117668672},
                 [3] = {coords = vector4(-255.98, 6315.67, 32.34, 313.91), taken = false, model = 2117668672},
             },
         },
     },
-    ["stations"] = {
+    ['stations'] = {
         { label = Lang:t('info.pb_hospital'), coords = vector3(304.27, -600.33, 43.28) }
     }
 }
