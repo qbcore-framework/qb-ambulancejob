@@ -68,7 +68,7 @@ local Translations = {
         painful = 'כואב',
         really_painful = 'ממש כואב',
         little_bleed = '...מדמם טיפה',
-        bleed = 'מדמם..''
+        bleed = '...מדמם'
         lot_bleed = '...מדמם הרבה',
         big_bleed = '...מדמם המון',
     },
