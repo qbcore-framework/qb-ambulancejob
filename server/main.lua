@@ -23,7 +23,7 @@ RegisterNetEvent('hospital:server:SendToBed', function(bedId, isRevive, hospital
 	local Player = QBCore.Functions.GetPlayer(src)
 	TriggerClientEvent('hospital:client:SendToBed', src, bedId, Config.Locations['hospital'][hospitalIndex]['beds'][bedId], isRevive)
 	TriggerClientEvent('hospital:client:SetBed', -1, bedId, true, hospitalIndex)
-	Player.Functions.RemoveMoney('bank', Config.BillCost , 'respawned-at-hospital')
+	Player.Functions.RemoveMoney('bank', Config.BillCost, 'respawned-at-hospital')
 	exports['qb-banking']:AddMoney('ambulance', Config.BillCost, 'Player treatment')
 	TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost, Config.Locations['hospital'][hospitalIndex]['name'])
 end)
@@ -32,10 +32,11 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function(hospitalIndex)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player.PlayerData.metadata['injail'] > 0 then
-		for k, v in pairs(Config.Locations['jailbeds']) do
+		for i = 1, #Config.Locations['jailbeds'] do
+			local v = Config.Locations['jailbeds'][i]
 			if not v.taken then
-				TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
-				TriggerClientEvent('hospital:client:SetBed2', -1, k, true)
+				TriggerClientEvent('hospital:client:SendToBed', src, i, v, true)
+				TriggerClientEvent('hospital:client:SetBed2', -1, i, true)
 				if Config.WipeInventoryOnRespawn then
 					Player.Functions.ClearInventory()
 					MySQL.Async.execute('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
@@ -58,11 +59,12 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function(hospitalIndex)
 		Player.Functions.RemoveMoney('bank', Config.BillCost, 'respawned-at-hospital')
 		exports['qb-banking']:AddMoney('ambulance', Config.BillCost, 'Player treatment')
 		TriggerClientEvent('hospital:client:SendBillEmail', src, Config.BillCost)
-    else
-		for k, v in pairs(Config.Locations['hospital'][hospitalIndex]['beds']) do
+	else
+		for i = 1, #Config.Locations['hospital'][hospitalIndex]['beds'] do
+			local v = Config.Locations['hospital'][hospitalIndex]['beds'][i]
 			if not v.taken then
-				TriggerClientEvent('hospital:client:SendToBed', src, k, v, true)
-				TriggerClientEvent('hospital:client:SetBed', -1, k, true, hospitalIndex)
+				TriggerClientEvent('hospital:client:SendToBed', src, i, v, true)
+				TriggerClientEvent('hospital:client:SetBed', -1, i, true, hospitalIndex)
 				if Config.WipeInventoryOnRespawn then
 					Player.Functions.ClearInventory()
 					MySQL.update('UPDATE players SET inventory = ? WHERE citizenid = ?', { json.encode({}), Player.PlayerData.citizenid })
@@ -74,9 +76,8 @@ RegisterNetEvent('hospital:server:RespawnAtHospital', function(hospitalIndex)
 				return
 			end
 		end
-
 		-- All beds were full, placing in first bed as fallback
-		TriggerClientEvent('hospital:client:SendToBed', src, 1,  Config.Locations['hospital'][hospitalIndex]['beds'][1], true)
+		TriggerClientEvent('hospital:client:SendToBed', src, 1, Config.Locations['hospital'][hospitalIndex]['beds'][1], true)
 		TriggerClientEvent('hospital:client:SetBed', -1, 1, true, hospitalIndex)
 		if Config.WipeInventoryOnRespawn then
 			Player.Functions.ClearInventory()
@@ -102,7 +103,7 @@ RegisterNetEvent('hospital:server:ambulanceAlert', function(text)
 end)
 
 RegisterNetEvent('hospital:server:LeaveBed', function(id, hospitalIndex)
-    TriggerClientEvent('hospital:client:SetBed', -1, id, false, hospitalIndex)
+	TriggerClientEvent('hospital:client:SetBed', -1, id, false, hospitalIndex)
 end)
 
 RegisterNetEvent('hospital:server:SyncInjuries', function(data)
@@ -154,8 +155,8 @@ RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	local Patient = QBCore.Functions.GetPlayer(playerId)
 	if Patient then
 		if Player.PlayerData.job.name == 'ambulance' then
-			Player.Functions.RemoveItem('bandage', 1)
-			TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['bandage'], 'remove')
+			exports['qb-inventory']:RemoveItem(src, 'bandage', 1, false, 'hospital:server:TreatWounds')
+			TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['bandage'], 'remove')
 			TriggerClientEvent('hospital:client:HealInjuries', Patient.PlayerData.source, 'full')
 		end
 	end
@@ -197,15 +198,15 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 		if Player.PlayerData.job.name == 'ambulance' or QBCore.Functions.HasItem(src, 'firstaid', 1) then
 			if oldMan then
 				if Player.Functions.RemoveMoney('cash', 5000, 'revived-player') then
-					Player.Functions.RemoveItem('firstaid', 1)
-					TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], 'remove')
+					exports['qb-inventory']:RemoveItem(src, 'firstaid', 1, false, 'hospital:server:RevivePlayer')
+					TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], 'remove')
 					TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
 				else
 					TriggerClientEvent('QBCore:Notify', src, Lang:t('error.not_enough_money'), 'error')
 				end
 			else
-				Player.Functions.RemoveItem('firstaid', 1)
-				TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], 'remove')
+				exports['qb-inventory']:RemoveItem(src, 'firstaid', 1, false, 'hospital:server:RevivePlayer')
+				TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['firstaid'], 'remove')
 				TriggerClientEvent('hospital:client:Revive', Patient.PlayerData.source)
 			end
 		else
@@ -225,21 +226,21 @@ RegisterNetEvent('hospital:server:RevivePlayer', function(playerId, isOldMan)
 end)
 
 RegisterNetEvent('hospital:server:SendDoctorAlert', function(hospitalName)
-    local src = source
-    if not doctorCalled then
-        doctorCalled = true
-        local players = QBCore.Functions.GetQBPlayers()
-        for _, v in pairs(players) do
-            if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
-                TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed', {hospital = hospitalName}), 'ambulance')
-            end
-        end
-        SetTimeout(Config.DocCooldown * 60000, function()
-            doctorCalled = false
-        end)
-    else
-        TriggerClientEvent('QBCore:Notify', src, 'Doctor has already been notified', 'error')
-    end
+	local src = source
+	if not doctorCalled then
+		doctorCalled = true
+		local players = QBCore.Functions.GetQBPlayers()
+		for _, v in pairs(players) do
+			if v.PlayerData.job.name == 'ambulance' and v.PlayerData.job.onduty then
+				TriggerClientEvent('QBCore:Notify', v.PlayerData.source, Lang:t('info.dr_needed', { hospital = hospitalName }), 'ambulance')
+			end
+		end
+		SetTimeout(Config.DocCooldown * 60000, function()
+			doctorCalled = false
+		end)
+	else
+		TriggerClientEvent('QBCore:Notify', src, 'Doctor has already been notified', 'error')
+	end
 end)
 
 RegisterNetEvent('hospital:server:UseFirstAid', function(targetId)
@@ -261,26 +262,20 @@ end)
 
 RegisterNetEvent('hospital:server:removeBandage', function()
 	local Player = QBCore.Functions.GetPlayer(source)
-
 	if not Player then return end
-
-	Player.Functions.RemoveItem('bandage', 1)
+	exports['qb-inventory']:RemoveItem(source, 'bandage', 1, false, 'hospital:server:removeBandage')
 end)
 
 RegisterNetEvent('hospital:server:removeIfaks', function()
 	local Player = QBCore.Functions.GetPlayer(source)
-
 	if not Player then return end
-
-	Player.Functions.RemoveItem('ifaks', 1)
+	exports['qb-inventory']:RemoveItem(source, 'ifaks', 1, false, 'hospital:server:removeIfaks')
 end)
 
 RegisterNetEvent('hospital:server:removePainkillers', function()
 	local Player = QBCore.Functions.GetPlayer(source)
-
 	if not Player then return end
-
-	Player.Functions.RemoveItem('painkillers', 1)
+	exports['qb-inventory']:RemoveItem(source, 'painkillers', 1, false, 'hospital:server:removePainkillers')
 end)
 
 RegisterNetEvent('hospital:server:resetHungerThirst', function()
@@ -292,6 +287,15 @@ RegisterNetEvent('hospital:server:resetHungerThirst', function()
 	Player.Functions.SetMetaData('thirst', 100)
 
 	TriggerClientEvent('hud:client:UpdateNeeds', source, 100, 100)
+end)
+
+RegisterNetEvent('qb-ambulancejob:server:stash', function()
+	local src = source
+	local Player = QBCore.Functions.GetPlayer(src)
+	if not Player then return end
+	local citizenId = Player.PlayerData.citizenid
+	local stashName = 'ambulancestash_' .. citizenId
+	exports['qb-inventory']:OpenInventory(src, stashName)
 end)
 
 -- Callbacks

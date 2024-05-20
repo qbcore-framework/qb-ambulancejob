@@ -296,9 +296,7 @@ local function EMSControls(variable)
                 if variable == 'sign' then
                     TriggerEvent('EMSToggle:Duty')
                 elseif variable == 'stash' then
-                    TriggerEvent('qb-ambulancejob:stash')
-                elseif variable == 'armory' then
-                    TriggerEvent('qb-ambulancejob:armory')
+                    TriggerServerEvent('qb-ambulancejob:server:stash')
                 elseif variable == 'storeheli' then
                     TriggerEvent('qb-ambulancejob:storeheli')
                 elseif variable == 'takeheli' then
@@ -313,40 +311,6 @@ local function EMSControls(variable)
         end
     end)
 end
-
-RegisterNetEvent('qb-ambulancejob:stash', function()
-    if onDuty then
-        TriggerServerEvent('inventory:server:OpenInventory', 'stash', 'ambulancestash_' .. QBCore.Functions.GetPlayerData().citizenid)
-        TriggerEvent('inventory:client:SetCurrentStash', 'ambulancestash_' .. QBCore.Functions.GetPlayerData().citizenid)
-    end
-end)
-
-RegisterNetEvent('qb-ambulancejob:armory', function()
-    if onDuty then
-        local authorizedItemsList = {}
-        local playerGrade = PlayerJob.grade.level
-        for grade = 0, playerGrade do
-            if Config.Items[grade] then
-                for _, item in ipairs(Config.Items[grade]) do
-                    authorizedItemsList[#authorizedItemsList + 1] = {
-                        name = item.name,
-                        price = item.price,
-                        amount = item.amount,
-                        info = item.info,
-                        type = item.type,
-                        slot = #authorizedItemsList + 1
-                    }
-                end
-            end
-        end
-        local authorizedItems = {
-            label = Lang:t('info.safe'),
-            slots = #authorizedItemsList,
-            items = authorizedItemsList
-        }
-        TriggerServerEvent('inventory:server:OpenInventory', 'shop', 'hospital', authorizedItems)
-    end
-end)
 
 local CheckVehicle = false
 local function EMSVehicle(k)
@@ -392,7 +356,7 @@ local function EMSHelicopter(k)
                         exports['LegacyFuel']:SetFuel(veh, 100.0)
                         TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
                         TriggerEvent('vehiclekeys:client:SetOwner', QBCore.Functions.GetPlate(veh))
-                        SetVehicleEngineOn(veh, true, true)
+                        SetVehicleEngineOn(veh, true, true, false)
                     end, Config.Helicopter, coords, true)
                 end
             end
@@ -403,40 +367,28 @@ end
 
 RegisterNetEvent('qb-ambulancejob:elevator_roof', function()
     local ped = PlayerPedId()
-    for k, _ in pairs(Config.Locations['roof']) do
+    for i = 1, #Config.Locations['roof'] do
         DoScreenFadeOut(500)
-        while not IsScreenFadedOut() do
-            Wait(10)
-        end
-
-        currentHospital = k
-
+        while not IsScreenFadedOut() do Wait(10) end
+        currentHospital = i
         local coords = Config.Locations['main'][currentHospital]
-        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+        SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
         SetEntityHeading(ped, coords.w)
-
         Wait(100)
-
         DoScreenFadeIn(1000)
     end
 end)
 
 RegisterNetEvent('qb-ambulancejob:elevator_main', function()
     local ped = PlayerPedId()
-    for k, _ in pairs(Config.Locations['main']) do
+    for i = 1, #Config.Locations['main'] do
         DoScreenFadeOut(500)
-        while not IsScreenFadedOut() do
-            Wait(10)
-        end
-
-        currentHospital = k
-
+        while not IsScreenFadedOut() do Wait(10) end
+        currentHospital = i
         local coords = Config.Locations['roof'][currentHospital]
-        SetEntityCoords(ped, coords.x, coords.y, coords.z, 0, 0, 0, false)
+        SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
         SetEntityHeading(ped, coords.w)
-
         Wait(100)
-
         DoScreenFadeIn(1000)
     end
 end)
@@ -448,9 +400,10 @@ RegisterNetEvent('EMSToggle:Duty', function()
 end)
 
 CreateThread(function()
-    for k, v in pairs(Config.Locations['vehicle']) do
-        local boxZone = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
-            name = 'vehicle' .. k,
+    for i = 1, #Config.Locations['vehicle'] do
+        local v = Config.Locations['vehicle'][i]
+        local boxZone = BoxZone:Create(vector3(v.x, v.y, v.z), 5, 5, {
+            name = 'vehicle' .. i,
             debugPoly = false,
             heading = 70,
             minZ = v.z - 2,
@@ -459,7 +412,7 @@ CreateThread(function()
         boxZone:onPlayerInOut(function(isPointInside)
             if isPointInside and PlayerJob.name == 'ambulance' and onDuty then
                 exports['qb-core']:DrawText(Lang:t('text.veh_button'), 'left')
-                EMSVehicle(k)
+                EMSVehicle(i)
             else
                 CheckVehicle = false
                 exports['qb-core']:HideText()
@@ -467,9 +420,10 @@ CreateThread(function()
         end)
     end
 
-    for k, v in pairs(Config.Locations['helicopter']) do
-        local boxZone = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 5, 5, {
-            name = 'helicopter' .. k,
+    for i = 1, #Config.Locations['helicopter'] do
+        local v = Config.Locations['helicopter'][i]
+        local boxZone = BoxZone:Create(vector3(v.x, v.y, v.z), 5, 5, {
+            name = 'helicopter' .. i,
             debugPoly = false,
             heading = 70,
             minZ = v.z - 2,
@@ -478,7 +432,7 @@ CreateThread(function()
         boxZone:onPlayerInOut(function(isPointInside)
             if isPointInside and PlayerJob.name == 'ambulance' and onDuty then
                 exports['qb-core']:DrawText(Lang:t('text.heli_button'), 'left')
-                EMSHelicopter(k)
+                EMSHelicopter(i)
             else
                 CheckHeli = false
                 exports['qb-core']:HideText()
@@ -490,9 +444,10 @@ end)
 -- Convar turns into a boolean
 if Config.UseTarget then
     CreateThread(function()
-        for k, v in pairs(Config.Locations['duty']) do
-            exports['qb-target']:AddBoxZone('duty' .. k, vector3(v.x, v.y, v.z), 1.5, 1, {
-                name = 'duty' .. k,
+        for i = 1, #Config.Locations['duty'] do
+            local v = Config.Locations['duty'][i]
+            exports['qb-target']:AddBoxZone('duty' .. i, vector3(v.x, v.y, v.z), 1.5, 1, {
+                name = 'duty' .. i,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -510,9 +465,10 @@ if Config.UseTarget then
                 distance = 1.5
             })
         end
-        for k, v in pairs(Config.Locations['stash']) do
-            exports['qb-target']:AddBoxZone('stash' .. k, vector3(v.x, v.y, v.z), 1, 1, {
-                name = 'stash' .. k,
+        for i = 1, #Config.Locations['stash'] do
+            local v = Config.Locations['stash'][i]
+            exports['qb-target']:AddBoxZone('stash' .. i, vector3(v.x, v.y, v.z), 1, 1, {
+                name = 'stash' .. i,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -520,8 +476,8 @@ if Config.UseTarget then
             }, {
                 options = {
                     {
-                        type = 'client',
-                        event = 'qb-ambulancejob:stash',
+                        type = 'server',
+                        event = 'qb-ambulancejob:server:stash',
                         icon = 'fa fa-hand',
                         label = 'Open Stash',
                         job = 'ambulance'
@@ -530,29 +486,10 @@ if Config.UseTarget then
                 distance = 1.5
             })
         end
-        for k, v in pairs(Config.Locations['armory']) do
-            exports['qb-target']:AddBoxZone('armory' .. k, vector3(v.x, v.y, v.z), 1, 1, {
-                name = 'armory' .. k,
-                debugPoly = false,
-                heading = -20,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            }, {
-                options = {
-                    {
-                        type = 'client',
-                        event = 'qb-ambulancejob:armory',
-                        icon = 'fa fa-hand',
-                        label = 'Open Armory',
-                        job = 'ambulance'
-                    }
-                },
-                distance = 1.5
-            })
-        end
-        for k, v in pairs(Config.Locations['roof']) do
-            exports['qb-target']:AddBoxZone('roof' .. k, vector3(v.x, v.y, v.z), 2, 2, {
-                name = 'roof' .. k,
+        for i = 1, #Config.Locations['roof'] do
+            local v = Config.Locations['roof'][i]
+            exports['qb-target']:AddBoxZone('roof' .. i, vector3(v.x, v.y, v.z), 2, 2, {
+                name = 'roof' .. i,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -570,9 +507,10 @@ if Config.UseTarget then
                 distance = 8
             })
         end
-        for k, v in pairs(Config.Locations['main']) do
-            exports['qb-target']:AddBoxZone('main' .. k, vector3(v.x, v.y, v.z), 1.5, 1.5, {
-                name = 'main' .. k,
+        for i = 1, #Config.Locations['main'] do
+            local v = Config.Locations['main'][i]
+            exports['qb-target']:AddBoxZone('main' .. i, vector3(v.x, v.y, v.z), 1.5, 1.5, {
+                name = 'main' .. i,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -594,9 +532,10 @@ if Config.UseTarget then
 else
     CreateThread(function()
         local signPoly = {}
-        for k, v in pairs(Config.Locations['duty']) do
-            signPoly[#signPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1, {
-                name = 'sign' .. k,
+        for i = 1, #Config.Locations['duty'] do
+            local v = Config.Locations['duty'][i]
+            signPoly[#signPoly + 1] = BoxZone:Create(vector3(v.x, v.y, v.z), 1.5, 1, {
+                name = 'sign' .. i,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -621,9 +560,10 @@ else
         end)
 
         local stashPoly = {}
-        for k, v in pairs(Config.Locations['stash']) do
-            stashPoly[#stashPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
-                name = 'stash' .. k,
+        for i = 1, #Config.Locations['stash'] do
+            local v = Config.Locations['stash'][i]
+            stashPoly[#stashPoly + 1] = BoxZone:Create(vector3(v.x, v.y, v.z), 1, 1, {
+                name = 'stash' .. i,
                 debugPoly = false,
                 heading = -20,
                 minZ = v.z - 2,
@@ -644,34 +584,11 @@ else
             end
         end)
 
-        local armoryPoly = {}
-        for k, v in pairs(Config.Locations['armory']) do
-            armoryPoly[#armoryPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1, 1, {
-                name = 'armory' .. k,
-                debugPoly = false,
-                heading = 70,
-                minZ = v.z - 2,
-                maxZ = v.z + 2,
-            })
-        end
-
-        local armoryCombo = ComboZone:Create(armoryPoly, { name = 'armoryCombo', debugPoly = false })
-        armoryCombo:onPlayerInOut(function(isPointInside)
-            if isPointInside and PlayerJob.name == 'ambulance' then
-                if onDuty then
-                    exports['qb-core']:DrawText(Lang:t('text.armory_button'), 'left')
-                    EMSControls('armory')
-                end
-            else
-                check = false
-                exports['qb-core']:HideText()
-            end
-        end)
-
         local roofPoly = {}
-        for k, v in pairs(Config.Locations['roof']) do
-            roofPoly[#roofPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 2, 2, {
-                name = 'roof' .. k,
+        for i = 1, #Config.Locations['roof'] do
+            local v = Config.Locations['roof'][i]
+            roofPoly[#roofPoly + 1] = BoxZone:Create(vector3(v.x, v.y, v.z), 2, 2, {
+                name = 'roof' .. i,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
@@ -695,9 +612,10 @@ else
         end)
 
         local mainPoly = {}
-        for k, v in pairs(Config.Locations['main']) do
-            mainPoly[#mainPoly + 1] = BoxZone:Create(vector3(vector3(v.x, v.y, v.z)), 1.5, 1.5, {
-                name = 'main' .. k,
+        for i = 1, #Config.Locations['main'] do
+            local v = Config.Locations['main'][i]
+            mainPoly[#mainPoly + 1] = BoxZone:Create(vector3(v.x, v.y, v.z), 1.5, 1.5, {
+                name = 'main' .. i,
                 debugPoly = false,
                 heading = 70,
                 minZ = v.z - 2,
