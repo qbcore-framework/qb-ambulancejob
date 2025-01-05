@@ -639,21 +639,25 @@ end)
 RegisterNetEvent('hospital:client:RespawnAtHospital', function()
     local hospitalIndex = 1 -- Default hospital to respawn at
     if Config.RespawnAtNearestHospital and #Config.Locations["hospital"] > 0 then
-        local closestH = nil
-        local minDist = nil
-        for i=1, #Config.Locations["hospital"] do
-            if closestH then
-                local newDist = Vdist(Config.Locations["hospital"][i]["location"].x, Config.Locations["hospital"][i]["location"].y, Config.Locations["hospital"][i]["location"].z, GetEntityCoords(PlayerPedId()))
-                if newDist < minDist then
-                    closestH = i
-                    minDist = newDist
+        local closestHospital, lowestDist
+        local playerPed = PlayerPedId()
+        
+        if playerPed > 0 and DoesEntityExist(playerPed) then
+            local playerCoords = GetEntityCoords(playerPed)
+    
+            for i=1, #Config.Locations["hospital"] do
+                local dist = #(Config.Locations["hospital"][i]["location"] - playerCoords)
+                
+                if closestHospital == nil or dist < lowestDist then
+                    closestHospital = i
+                    lowestDist = dist
                 end
-            else
-                closestH = i
-                minDist = Vdist(Config.Locations["hospital"][i]["location"].x, Config.Locations["hospital"][i]["location"].y, Config.Locations["hospital"][i]["location"].z, GetEntityCoords(PlayerPedId()))
             end
         end
-        hospitalIndex = closestH
+        
+        if closestHospital ~= nil then
+            hospitalIndex = closestHospital
+        end
     end
     TriggerServerEvent('hospital:server:RespawnAtHospital', hospitalIndex)
     if exports['qb-policejob']:IsHandcuffed() then
