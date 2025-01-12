@@ -696,7 +696,6 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     local ped = PlayerPedId()
     TriggerServerEvent('hospital:server:SetDeathStatus', false)
     TriggerServerEvent('hospital:server:SetLaststandStatus', false)
-    TriggerServerEvent('hospital:server:SetArmor', GetPedArmour(ped))
     if bedOccupying then
         TriggerServerEvent('hospital:server:LeaveBed', bedOccupying, hospitalLocation)
     end
@@ -789,9 +788,6 @@ CreateThread(function()
                     if weapon then
                         if armorDamaged and (bodypart == 'SPINE' or bodypart == 'UPPER_BODY') or weapon == Config.WeaponClasses['NOTHING'] then
                             checkDamage = false -- Don't check damage if the it was a body shot and the weapon class isn't that strong
-                            if armorDamaged then
-                                TriggerServerEvent('hospital:server:SetArmor', GetPedArmour(ped))
-                            end
                         end
 
                         if checkDamage then

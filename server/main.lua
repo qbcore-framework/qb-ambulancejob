@@ -141,14 +141,6 @@ RegisterNetEvent('hospital:server:SetLaststandStatus', function(bool)
 	end
 end)
 
-RegisterNetEvent('hospital:server:SetArmor', function(amount)
-	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	if Player then
-		Player.Functions.SetMetaData('armor', amount)
-	end
-end)
-
 RegisterNetEvent('hospital:server:TreatWounds', function(playerId)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
