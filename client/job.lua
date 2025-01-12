@@ -120,7 +120,6 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
         QBCore.Functions.GetPlayerData(function(PlayerData)
             PlayerJob = PlayerData.job
             onDuty = PlayerData.job.onduty
-            SetPedArmour(PlayerPedId(), PlayerData.metadata['armor'])
             if (not PlayerData.metadata['inlaststand'] and PlayerData.metadata['isdead']) then
                 deathTime = Config.ReviveInterval
                 OnDeath()
