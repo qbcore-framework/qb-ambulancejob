@@ -789,9 +789,6 @@ CreateThread(function()
                     if weapon then
                         if armorDamaged and (bodypart == 'SPINE' or bodypart == 'UPPER_BODY') or weapon == Config.WeaponClasses['NOTHING'] then
                             checkDamage = false -- Don't check damage if the it was a body shot and the weapon class isn't that strong
-                            if armorDamaged then
-                                TriggerServerEvent('hospital:server:SetArmor', GetPedArmour(ped))
-                            end
                         end
 
                         if checkDamage then
@@ -811,6 +808,10 @@ CreateThread(function()
             end
 
             CheckWeaponDamage(ped)
+        end
+
+        if playerArmor ~= armor then
+            TriggerServerEvent('hospital:server:SetArmor', GetPedArmour(ped))
         end
 
         playerHealth = health
