@@ -92,14 +92,28 @@ RegisterNetEvent('ambulance:client:TakeOutVehicle', function(data)
     TakeOutVehicle(vehicle)
 end)
 
-RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
-    PlayerJob = JobInfo
-    if PlayerJob.name == 'ambulance' then
-        onDuty = PlayerJob.onduty
-        if PlayerJob.onduty then
-            TriggerServerEvent('hospital:server:AddDoctor', PlayerJob.name)
-        else
-            TriggerServerEvent('hospital:server:RemoveDoctor', PlayerJob.name)
+RegisterNetEvent('QBCore:Client:OnPlayerUpdated', function(key, val)
+    if key == 'job' then
+        local JobInfo = val
+        PlayerJob = JobInfo
+        if PlayerJob.name == 'ambulance' then
+            onDuty = PlayerJob.onduty
+            if PlayerJob.onduty then
+                TriggerServerEvent('hospital:server:AddDoctor', PlayerJob.name)
+            else
+                TriggerServerEvent('hospital:server:RemoveDoctor', PlayerJob.name)
+            end
+        end
+    elseif key == 'all' then
+        local JobInfo = val.job
+        PlayerJob = JobInfo
+        if PlayerJob.name == 'ambulance' then
+            onDuty = PlayerJob.onduty
+            if PlayerJob.onduty then
+                TriggerServerEvent('hospital:server:AddDoctor', PlayerJob.name)
+            else
+                TriggerServerEvent('hospital:server:RemoveDoctor', PlayerJob.name)
+            end
         end
     end
 end)
