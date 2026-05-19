@@ -1,5 +1,4 @@
-QBCore = exports['qb-core']:GetCoreObject()
-
+QBCore = exports['qb-core']:GetCoreObject({ 'Functions', 'Shared' })
 local getOutDict = 'switch@franklin@bed'
 local getOutAnim = 'sleep_getup_rubeyes'
 local canLeaveBed = true
@@ -638,23 +637,23 @@ end)
 
 RegisterNetEvent('hospital:client:RespawnAtHospital', function()
     local hospitalIndex = 1 -- Default hospital to respawn at
-    if Config.RespawnAtNearestHospital and #Config.Locations["hospital"] > 0 then
+    if Config.RespawnAtNearestHospital and #Config.Locations['hospital'] > 0 then
         local closestHospital, lowestDist
         local playerPed = PlayerPedId()
-        
+
         if playerPed > 0 and DoesEntityExist(playerPed) then
             local playerCoords = GetEntityCoords(playerPed)
-    
-            for i=1, #Config.Locations["hospital"] do
-                local dist = #(Config.Locations["hospital"][i]["location"] - playerCoords)
-                
+
+            for i = 1, #Config.Locations['hospital'] do
+                local dist = #(Config.Locations['hospital'][i]['location'] - playerCoords)
+
                 if closestHospital == nil or dist < lowestDist then
                     closestHospital = i
                     lowestDist = dist
                 end
             end
         end
-        
+
         if closestHospital ~= nil then
             hospitalIndex = closestHospital
         end
